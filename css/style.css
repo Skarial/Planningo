@@ -149,9 +149,9 @@ body {
 
 .month-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(140px, 1fr));
-  gap: 12px;
-  min-width: 980px;
+  grid-template-columns: repeat(7, minmax(72px, 1fr));
+  gap: 6px;
+  min-width: 504px; /* 7 × 72 */
 }
 
 .day-header {
@@ -164,6 +164,7 @@ body {
   border-radius: var(--radius-md);
   padding: 10px;
   text-align: center;
+  aspect-ratio: 1 / 1;
 }
 
 .empty-day {
