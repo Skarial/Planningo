@@ -4,7 +4,7 @@ import { showHome, showDay, showMonth } from "../router.js";
 import { setConsultedDate } from "../state/consulted-date.js";
 import { getConfig, setConfig } from "../data/storage.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+export function initMenu() {
   let isOpen = false;
 
   const menu = document.getElementById("side-menu");
@@ -116,4 +116,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     closeMenu();
   });
-});
+}

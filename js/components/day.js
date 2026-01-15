@@ -1,3 +1,5 @@
+// day.js : affiche le jour consulté + le lendemain (lecture seule)
+
 import { getAllServices, getPlanningEntry } from "../data/storage.js";
 import { getPeriodeForDate } from "../utils/periods.js";
 import { toISODateLocal, formatDateFR, getDayNameFullFR } from "../utils.js";
@@ -8,60 +10,62 @@ import { toISODateLocal, formatDateFR, getDayNameFullFR } from "../utils.js";
 
 export async function renderDay(dateISO) {
   if (!dateISO) {
-    showHome();
+    console.error("renderDay appelé sans dateISO");
     return;
   }
 
-  const el = document.getElementById("view-day");
-  el.innerHTML = "";
+  const container = document.getElementById("view-day");
+  if (!container) {
+    console.error("Conteneur view-day introuvable");
+    return;
+  }
 
-  // =======================
-  // DONNÉES
-  // =======================
+  // Chargement des services une seule fois
+  const allServices = await getAllServices();
+  if (!Array.isArray(allServices)) {
+    console.error("allServices invalide", allServices);
+    return;
+  }
 
+  // Dates : jour consulté + lendemain
   const base = new Date(dateISO);
   const next = new Date(base);
   next.setDate(base.getDate() + 1);
 
-  const services = await getAllServices();
-
-  // =======================
-  // RENDER JOURS
-  // =======================
-
   for (const d of [base, next]) {
     const iso = toISODateLocal(d);
-
     const entry = await getPlanningEntry(iso);
+
     const serviceCode = entry?.serviceCode || "REPOS";
     const isExtra = entry?.extra === true;
 
     const card = document.createElement("div");
     card.className = "card";
 
-    // --- 1. Nom du jour (FIX CERTAIN)
+    // 1) Nom du jour
     const dayNameEl = document.createElement("div");
     dayNameEl.className = "day-name-full";
     dayNameEl.textContent = getDayNameFullFR(d);
 
-    // --- 2. Date
+    // 2) Date
     const dateEl = document.createElement("div");
     dateEl.className = "day-date";
     dateEl.textContent = formatDateFR(iso);
 
-    // --- 3. Service
+    // 3) Service
     const serviceEl = document.createElement("div");
     serviceEl.className = "card-service";
     serviceEl.textContent = serviceCode;
     if (serviceCode === "REPOS") serviceEl.classList.add("repos");
 
-    // --- 4. Horaires (FIX CERTAIN)
-    const timeEl = await buildHoraires(serviceCode, iso, services);
+    // 4) Horaires (isolé)
+    const timeEl = await buildHorairesDay(serviceCode, iso, allServices);
 
     // Injection
     card.append(dayNameEl, dateEl, serviceEl);
     if (timeEl) card.appendChild(timeEl);
 
+    // 5) Heures supplémentaires (si service présent)
     if (serviceCode !== "REPOS" && isExtra) {
       const extra = document.createElement("div");
       extra.className = "extra-label";
@@ -69,7 +73,7 @@ export async function renderDay(dateISO) {
       card.appendChild(extra);
     }
 
-    el.appendChild(card);
+    container.appendChild(card);
   }
 }
 
@@ -77,10 +81,10 @@ export async function renderDay(dateISO) {
 // HORAIRES (ISOLÉ)
 // =======================
 
-async function buildHoraires(serviceCode, iso, services) {
+async function buildHorairesDay(serviceCode, iso, allServices) {
   if (serviceCode === "REPOS") return null;
 
-  const service = services.find((s) => s.code === serviceCode);
+  const service = allServices.find((s) => s.code === serviceCode);
   if (!service || !Array.isArray(service.periodes)) return null;
 
   const periodeActive = await getPeriodeForDate(iso);
@@ -105,7 +109,3 @@ async function buildHoraires(serviceCode, iso, services) {
 
   return el;
 }
-
-// =======================
-// DB LECTURE JOUR
-// =======================

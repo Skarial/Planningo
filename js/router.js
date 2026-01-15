@@ -1,3 +1,5 @@
+// router.js : une seule vue visible à la fois, affichage par masquage DOM
+
 import { renderHome } from "./components/home.js";
 import { getConsultedDate } from "./state/consulted-date.js";
 import { renderDay } from "./components/day.js";
@@ -15,22 +17,14 @@ function hideAllViews() {
 }
 
 export function showHome() {
-  const home = getView("home");
-  if (!home) return;
-
-  hideAllViews();
-  home.style.display = "block";
-  home.innerHTML = "";
+  const view = activateView("home");
+  if (!view) return;
   renderHome();
 }
 
 export function showDay() {
-  const day = getView("day");
-  if (!day) return;
-
-  hideAllViews();
-  day.style.display = "block";
-  day.innerHTML = "";
+  const view = activateView("day");
+  if (!view) return;
 
   const date = getConsultedDate();
   if (!date) {
@@ -42,11 +36,20 @@ export function showDay() {
 }
 
 export function showMonth() {
-  const month = getView("month");
-  if (!month) return;
+  const view = activateView("month");
+  if (!view) return;
+  renderMonth();
+}
+
+function activateView(name) {
+  const view = getView(name);
+  if (!view) {
+    console.warn(`Vue inexistante : ${name}`);
+    return null;
+  }
 
   hideAllViews();
-  month.style.display = "block";
-  month.innerHTML = "";
-  renderMonth();
+  view.style.display = "block";
+  view.innerHTML = "";
+  return view;
 }

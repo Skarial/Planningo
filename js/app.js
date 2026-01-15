@@ -13,17 +13,27 @@ const __APP_SIGNATURE__ = {
 
 import { initServicesIfNeeded } from "./data/services-init.js";
 import { showHome } from "./router.js";
-import "./components/menu.js";
+import { initMenu } from "./components/menu.js";
 
 // =======================
 // INIT APP (UNIQUE)
 // =======================
 
-window.addEventListener("DOMContentLoaded", async () => {
+window.addEventListener("DOMContentLoaded", initApp);
+
+async function initApp() {
   await initServicesIfNeeded();
+  initUI();
+  initTimeLogic();
+}
+function initUI() {
+  initMenu();
   showHome();
+}
+
+function initTimeLogic() {
   scheduleMidnightRefresh();
-});
+}
 
 // =======================
 // RAFRAÎCHISSEMENT À MINUIT
