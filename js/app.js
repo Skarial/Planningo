@@ -3,7 +3,7 @@
   © 2026 – Tous droits réservés
   Code source original – usage interne / personnel
 */
-export const APP_VERSION = "1.0.7";
+export const APP_VERSION = "1.0.8";
 const __APP_SIGNATURE__ = {
   created: "2026-01",
   context: "internal tool / personal project",
@@ -132,6 +132,7 @@ console.log("APP CHARGÉE – version", APP_VERSION);
 window.addEventListener("error", (e) => {
   console.error("ERREUR NON CAPTURÉE :", e.message);
 });
+
 
 
 
