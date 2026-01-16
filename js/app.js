@@ -4,7 +4,7 @@
   Code source original – usage interne / personnel
 */
 
-const APP_VERSION = "1.0.1";
+const APP_VERSION = "1.0.2";
 
 const __APP_SIGNATURE__ = {
   created: "2026-01",
@@ -89,25 +89,34 @@ if ("serviceWorker" in navigator) {
 function showUpdateBannerOncePerVersion() {
   const lastSeenVersion = localStorage.getItem("lastSeenAppVersion");
 
-  // déjà vu pour cette version → on ne montre rien
+  // Déjà vu pour cette version → rien à faire
   if (lastSeenVersion === APP_VERSION) return;
 
   if (document.getElementById("update-banner")) return;
 
   const banner = document.createElement("div");
+  banner.id = "update-banner";
   banner.className = "update-banner";
 
   banner.innerHTML = `
-  <div class="update-banner-text">
-    Une mise à jour est disponible.<br>
-    Fermez l'application depuis le multitâche pour l'appliquer.
-    Sinon, elle sera installée automatiquement à la prochaine ouverture.
-  </div>
-  <button class="update-banner-btn">OK</button>
-`;
+    <div class="update-banner-text">
+      Une mise à jour est disponible.
+    </div>
+    <div class="update-banner-actions">
+      <button class="update-banner-reload">Recharger maintenant</button>
+      <button class="update-banner-btn">Plus tard</button>
+    </div>
+  `;
 
   document.body.appendChild(banner);
 
+  // Recharger immédiatement
+  banner.querySelector(".update-banner-reload").onclick = () => {
+    localStorage.setItem("lastSeenAppVersion", APP_VERSION);
+    window.location.reload();
+  };
+
+  // Ignorer pour cette version
   banner.querySelector(".update-banner-btn").onclick = () => {
     localStorage.setItem("lastSeenAppVersion", APP_VERSION);
     banner.remove();
