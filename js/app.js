@@ -59,7 +59,8 @@ function scheduleMidnightRefresh() {
 // SERVICE WORKER — CYCLE MAÎTRISÉ
 // =======================
 
-let waitingWorker = null;
+let swRegistration = null;
+let updatePending = false;
 
 function initServiceWorker() {
   if (
@@ -75,10 +76,11 @@ function initServiceWorker() {
       `./service-worker.js?v=${APP_VERSION}`,
     );
 
-    // Un nouveau SW est prêt mais PAS actif
+    swRegistration = reg;
+
     navigator.serviceWorker.addEventListener("message", (event) => {
       if (event.data?.type === "SW_READY") {
-        waitingWorker = reg.waiting;
+        updatePending = true;
         showUpdateBanner();
       }
     });
@@ -110,11 +112,17 @@ function showUpdateBanner() {
 
   // Mise à jour volontaire
   banner.querySelector(".update-banner-reload").onclick = () => {
-    if (!waitingWorker) return;
+    if (!swRegistration) return;
 
-    waitingWorker.postMessage("ACTIVATE_NEW_SW");
+    const worker =
+      swRegistration.waiting ||
+      swRegistration.installing ||
+      swRegistration.active;
 
-    // reload volontaire, contrôlé
+    if (!worker) return;
+
+    worker.postMessage("ACTIVATE_NEW_SW");
+
     setTimeout(() => {
       window.location.reload();
     }, 300);
