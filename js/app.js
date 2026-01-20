@@ -4,7 +4,7 @@
   Code source original – usage interne / personnel
 */
 
-export const APP_VERSION = "1.0.10";
+export const APP_VERSION = "1.0.12";
 
 import { registerServiceWorker } from "./sw/sw-register.js";
 import { initServicesIfNeeded } from "./data/services-init.js";
@@ -141,5 +141,7 @@ console.log("APP CHARGÉE – version", APP_VERSION);
 window.addEventListener("error", (e) => {
   console.error("ERREUR NON CAPTURÉE :", e.message);
 });
+
+
 
 
