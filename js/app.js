@@ -79,9 +79,9 @@ function initServiceWorker() {
 
     try {
       const reg = await navigator.serviceWorker.register(
-        "./service-worker.js",
+        "../service-worker.js",
         {
-          scope: "./",
+          scope: "../",
         },
       );
 
