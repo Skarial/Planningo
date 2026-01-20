@@ -4,7 +4,7 @@
   Code source original – usage interne / personnel
 */
 export const APP_VERSION = "1.0.8";
-
+import { registerServiceWorker } from "./sw/sw-register.js";
 import { initServicesIfNeeded } from "./data/services-init.js";
 import { showHome } from "./router.js";
 import { initMenu } from "./components/menu.js";
@@ -19,7 +19,7 @@ async function initApp() {
   await initServicesIfNeeded();
   initUI();
   initTimeLogic();
-  initServiceWorker();
+  registerServiceWorker();
 }
 
 function initUI() {
