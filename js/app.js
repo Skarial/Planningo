@@ -1,9 +1,6 @@
 /*
   Application Planning PWA
-  © 2026 – Tous droits réservés
-  Code source original – usage interne / personnel
 */
-
 export const APP_VERSION = "1.0.12";
 
 import { registerServiceWorker } from "./sw/sw-register.js";
@@ -12,87 +9,44 @@ import { showHome } from "./router.js";
 import { initMenu } from "./components/menu.js";
 
 // =======================
-// INIT APP (UNIQUE)
+// INIT
 // =======================
 
 window.addEventListener("DOMContentLoaded", initApp);
-
-// Quand l’utilisateur revient sur l’app (onglet / arrière-plan)
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") {
-    checkWaitingServiceWorker();
-  }
-});
+document.addEventListener("visibilitychange", onVisibilityReturn);
 
 async function initApp() {
   await initServicesIfNeeded();
-  initUI();
-  initTimeLogic();
-
-  // Enregistrement SW + callback update
-  registerServiceWorker(onServiceWorkerUpdateAvailable);
-}
-
-function initUI() {
   initMenu();
   showHome();
-}
+  registerServiceWorker();
 
-function initTimeLogic() {
-  scheduleMidnightRefresh();
-}
-
-// =======================
-// RAFRAÎCHISSEMENT À MINUIT
-// =======================
-
-function scheduleMidnightRefresh() {
-  const now = new Date();
-
-  const nextMidnight = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate() + 1,
-    0,
-    0,
-    1,
-  );
-
-  const delay = nextMidnight.getTime() - now.getTime();
-
-  setTimeout(() => {
-    console.log("Minuit détecté – nouvelle journée disponible");
-    // ❌ aucun reload automatique
-  }, delay);
+  checkAndNotifyUpdate();
 }
 
 // =======================
-// SERVICE WORKER — UPDATE DISPONIBLE
+// UPDATE DETECTION (ROBUSTE)
 // =======================
 
-let pendingSWRegistration = null;
+function checkAndNotifyUpdate() {
+  const lastSeen = localStorage.getItem("lastSeenAppVersion");
 
-function onServiceWorkerUpdateAvailable(registration) {
-  pendingSWRegistration = registration;
-  showUpdateBanner(registration);
+  if (lastSeen !== APP_VERSION) {
+    showUpdateBanner();
+  }
 }
 
-// Vérifie au retour si un SW est déjà en attente
-async function checkWaitingServiceWorker() {
-  if (!("serviceWorker" in navigator)) return;
-
-  const reg = await navigator.serviceWorker.getRegistration();
-  if (reg && reg.waiting) {
-    pendingSWRegistration = reg;
-    showUpdateBanner(reg);
+function onVisibilityReturn() {
+  if (document.visibilityState === "visible") {
+    checkAndNotifyUpdate();
   }
 }
 
 // =======================
-// BANNIÈRE DE MISE À JOUR
+// BANNIÈRE
 // =======================
 
-function showUpdateBanner(reg) {
+function showUpdateBanner() {
   if (document.getElementById("update-banner")) return;
 
   const banner = document.createElement("div");
@@ -101,47 +55,25 @@ function showUpdateBanner(reg) {
 
   banner.innerHTML = `
     <div class="update-banner-text">
-      Une nouvelle version de l’application est disponible.
+      Une nouvelle version est disponible.
     </div>
     <div class="update-banner-actions">
-      <button class="update-banner-reload">Mettre à jour</button>
-      <button class="update-banner-btn">Plus tard</button>
+      <button id="update-now">Mettre à jour</button>
+      <button id="update-later">Plus tard</button>
     </div>
   `;
 
   document.body.appendChild(banner);
 
-  // Validation volontaire
-  banner.querySelector(".update-banner-reload").onclick = () => {
-    if (!reg.waiting) return;
-
-    reg.waiting.postMessage("SKIP_WAITING");
-
-    // Reload uniquement quand le nouveau SW contrôle la page
-    navigator.serviceWorker.addEventListener(
-      "controllerchange",
-      () => {
-        window.location.reload();
-      },
-      { once: true },
-    );
+  document.getElementById("update-now").onclick = () => {
+    localStorage.setItem("lastSeenAppVersion", APP_VERSION);
+    window.location.reload();
   };
 
-  banner.querySelector(".update-banner-btn").onclick = () => {
+  document.getElementById("update-later").onclick = () => {
+    localStorage.setItem("lastSeenAppVersion", APP_VERSION);
     banner.remove();
   };
 }
-
-// =======================
-// LOG & SÉCURITÉ DEV
-// =======================
-
-console.log("APP CHARGÉE – version", APP_VERSION);
-
-window.addEventListener("error", (e) => {
-  console.error("ERREUR NON CAPTURÉE :", e.message);
-});
-
-
 
 
