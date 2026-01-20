@@ -56,11 +56,8 @@ function scheduleMidnightRefresh() {
 }
 
 // =======================
-// SERVICE WORKER — CYCLE MAÎTRISÉ
+// SERVICE WORKER — ARCHI STANDARD
 // =======================
-
-let swRegistration = null;
-let updatePending = false;
 
 function initServiceWorker() {
   if (
@@ -76,13 +73,19 @@ function initServiceWorker() {
       `./service-worker.js?v=${APP_VERSION}`,
     );
 
-    swRegistration = reg;
+    // Détection fiable des mises à jour
+    reg.addEventListener("updatefound", () => {
+      const newWorker = reg.installing;
+      if (!newWorker) return;
 
-    navigator.serviceWorker.addEventListener("message", (event) => {
-      if (event.data?.type === "SW_READY") {
-        updatePending = true;
-        showUpdateBanner();
-      }
+      newWorker.addEventListener("statechange", () => {
+        if (
+          newWorker.state === "installed" &&
+          navigator.serviceWorker.controller
+        ) {
+          showUpdateBanner(reg);
+        }
+      });
     });
   });
 }
@@ -91,7 +94,7 @@ function initServiceWorker() {
 // BANNIÈRE DE MISE À JOUR
 // =======================
 
-function showUpdateBanner() {
+function showUpdateBanner(reg) {
   if (document.getElementById("update-banner")) return;
 
   const banner = document.createElement("div");
@@ -110,25 +113,22 @@ function showUpdateBanner() {
 
   document.body.appendChild(banner);
 
-  // Mise à jour volontaire
-  banner.querySelector(".update-banner-reload").onclick = () => {
-    if (!swRegistration) return;
+  banner.querySelector(".update-banner-reload").onclick = async () => {
+    const waiting = reg.waiting;
+    if (!waiting) return;
 
-    const worker =
-      swRegistration.waiting ||
-      swRegistration.installing ||
-      swRegistration.active;
+    waiting.postMessage("SKIP_WAITING");
 
-    if (!worker) return;
-
-    worker.postMessage("ACTIVATE_NEW_SW");
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 300);
+    // Rechargement uniquement quand le nouveau SW prend le contrôle
+    navigator.serviceWorker.addEventListener(
+      "controllerchange",
+      () => {
+        window.location.reload();
+      },
+      { once: true },
+    );
   };
 
-  // Ignorer pour cette session
   banner.querySelector(".update-banner-btn").onclick = () => {
     banner.remove();
   };
