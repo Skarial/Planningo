@@ -2,43 +2,59 @@
 
 import { getPlanningEntry, getAllServices } from "../data/storage.js";
 import { toISODateLocal } from "../utils.js";
-import { getPeriodeForDate } from "../utils/periods.js";
+import { getActivePeriodeLibelle } from "../utils/periods.js";
 
 let currentWeekStart = getMonday(new Date());
 
 // =======================
 // RENDER PUBLIC
 // =======================
+
 function renderTodayButton(container) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "today-nav";
+
+  const btnPrev = document.createElement("button");
+  btnPrev.className = "today-arrow";
+  btnPrev.textContent = "←";
+
   const btn = document.createElement("button");
   btn.className = "today-reset-btn";
   btn.textContent = "Revenir à aujourd’hui";
+
+  const btnNext = document.createElement("button");
+  btnNext.className = "today-arrow";
+  btnNext.textContent = "→";
+
+  btnPrev.addEventListener("click", () => {
+    currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+    renderHome();
+  });
+
+  btnNext.addEventListener("click", () => {
+    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+    renderHome();
+  });
 
   btn.addEventListener("click", () => {
     currentWeekStart = getMonday(new Date());
     renderHome();
   });
 
-  container.appendChild(btn);
+  wrapper.append(btnPrev, btn, btnNext);
+  container.appendChild(wrapper);
 
-  // état initial
   updateTodayButtonVisibility(container);
 }
 
 function updateTodayButtonVisibility(container) {
-  const btn = container.querySelector(".today-reset-btn");
-  if (!btn) return;
+  const wrapper = container.querySelector(".today-nav");
+  if (!wrapper) return;
 
   const todayMonday = getMonday(new Date()).getTime();
   const currentMonday = currentWeekStart.getTime();
 
-  if (todayMonday === currentMonday) {
-    btn.classList.add("hidden");
-    btn.disabled = true;
-  } else {
-    btn.classList.remove("hidden");
-    btn.disabled = false;
-  }
+  wrapper.style.display = todayMonday === currentMonday ? "none" : "flex";
 }
 
 export async function renderHome() {
@@ -50,10 +66,8 @@ export async function renderHome() {
 
   container.innerHTML = "";
 
-  // 1) Bouton FIXE (hors zone scroll)
   renderTodayButton(container);
 
-  // 2) Zone scrollable SEULEMENT pour la semaine
   const scrollContainer = document.createElement("div");
   scrollContainer.className = "home-scroll";
   container.appendChild(scrollContainer);
@@ -79,6 +93,7 @@ async function renderWeek(container) {
     return;
   }
 
+  const activePeriode = await getActivePeriodeLibelle();
   const todayISO = toISODateLocal(new Date());
 
   for (let i = 0; i < 7; i++) {
@@ -91,7 +106,11 @@ async function renderWeek(container) {
     const serviceCode = entry?.serviceCode || "REPOS";
     const isExtra = entry?.extra === true;
 
-    const horaireHTML = await buildHorairesHome(serviceCode, iso, allServices);
+    const horaireHTML = buildHorairesHome(
+      serviceCode,
+      activePeriode,
+      allServices,
+    );
 
     const card = document.createElement("div");
     card.className = "card week-day-card";
@@ -146,19 +165,16 @@ function initWeekSwipe(container) {
 
     const endX = e.changedTouches[0].clientX;
     const deltaX = endX - startX;
-
     const SWIPE_THRESHOLD = 60;
 
     if (deltaX < -SWIPE_THRESHOLD) {
-      // gauche → semaine suivante
       currentWeekStart.setDate(currentWeekStart.getDate() + 7);
       renderWeek(container);
       updateTodayButtonVisibility(document.getElementById("view-home"));
     }
 
     if (deltaX > SWIPE_THRESHOLD) {
-      // droite → semaine précédente
-      currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+      currentWeekStart.setDate(currentWeekStart.getDate() - 7);
       renderWeek(container);
       updateTodayButtonVisibility(document.getElementById("view-home"));
     }
@@ -173,7 +189,7 @@ function initWeekSwipe(container) {
 
 function getMonday(date) {
   const d = new Date(date);
-  const day = d.getDay(); // 0 = dimanche
+  const day = d.getDay();
   const diff = day === 0 ? -6 : 1 - day;
   d.setDate(d.getDate() + diff);
   d.setHours(0, 0, 0, 0);
@@ -181,26 +197,16 @@ function getMonday(date) {
 }
 
 // =======================
-// HORAIRES (ISOLÉ)
+// HORAIRES (LOGIQUE CANONIQUE)
 // =======================
 
-async function buildHorairesHome(serviceCode, iso, allServices) {
+function buildHorairesHome(serviceCode, activePeriode, allServices) {
   if (serviceCode === "REPOS") return "";
 
   const service = allServices.find((s) => s.code === serviceCode);
   if (!service || !Array.isArray(service.periodes)) return "";
 
-  const periodeActive = await getPeriodeForDate(iso);
-
-  let periode;
-  if (service.periodes.length === 1) {
-    periode = service.periodes[0];
-  } else {
-    periode =
-      periodeActive === "Période saisonnière"
-        ? service.periodes[1]
-        : service.periodes[0];
-  }
+  const periode = service.periodes.find((p) => p.libelle === activePeriode);
 
   if (!periode?.plages?.length) return "";
 

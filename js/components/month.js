@@ -12,10 +12,10 @@ import {
   formatDayNumber,
   isMonthLocked,
   getAdjacentMonths,
+  formatServiceLabel,
+  toISODateLocal,
 } from "../utils.js";
-import { formatServiceLabel } from "../utils.js";
-import { getPeriodeForDate } from "../utils/periods.js";
-import { toISODateLocal } from "../utils.js";
+import { getActivePeriodeLibelle } from "../utils/periods.js";
 
 // =======================
 // ÉTAT LOCAL (AFFICHAGE)
@@ -57,7 +57,6 @@ export async function renderMonth() {
   const prevBtn = document.createElement("button");
   prevBtn.className = "month-btn";
   prevBtn.textContent = `← ${getMonthLabelFR(prevMonthYear, prevMonthIndex)}`;
-
   prevBtn.onclick = () => {
     displayedMonthIndex--;
     if (displayedMonthIndex < 0) {
@@ -77,7 +76,6 @@ export async function renderMonth() {
   const nextBtn = document.createElement("button");
   nextBtn.className = "month-btn";
   nextBtn.textContent = `${getMonthLabelFR(nextMonthYear, nextMonthIndex)} →`;
-
   nextBtn.onclick = () => {
     displayedMonthIndex++;
     if (displayedMonthIndex > 11) {
@@ -98,10 +96,11 @@ export async function renderMonth() {
   const monthIndex = displayedMonthIndex;
   const locked = isMonthLocked(year, monthIndex);
 
-  // État strictement local au rendu
+  // période active globale (UNE fois)
+  const activePeriode = await getActivePeriodeLibelle();
+
   const monthState = {};
 
-  // Chargement des mois utiles (courant + adjacents)
   const monthsToLoad = getAdjacentMonths(year, monthIndex);
   for (const m of monthsToLoad) {
     const entries = await getPlanningForMonth(m);
@@ -110,7 +109,6 @@ export async function renderMonth() {
     });
   }
 
-  // Services chargés UNE SEULE FOIS
   const allServices = await getAllServices();
   if (!Array.isArray(allServices)) {
     console.error("allServices invalide", allServices);
@@ -130,7 +128,6 @@ export async function renderMonth() {
   card.appendChild(grid);
   container.appendChild(card);
 
-  // En-têtes semaine
   ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].forEach((d) => {
     const h = document.createElement("div");
     h.className = "day-header";
@@ -141,7 +138,6 @@ export async function renderMonth() {
   const days = getAllDaysOfMonth(year, monthIndex);
   const firstDayIndex = (days[0].getDay() + 6) % 7;
 
-  // Cases vides avant le 1er
   for (let i = 0; i < firstDayIndex; i++) {
     const empty = document.createElement("div");
     empty.className = "day empty-day";
@@ -188,7 +184,6 @@ export async function renderMonth() {
     suggest.className = "suggest-list";
     suggest.style.display = "none";
 
-    // Focus : reset propre
     input.onfocus = () => {
       input.value = "";
       input.classList.remove("repos");
@@ -196,14 +191,12 @@ export async function renderMonth() {
       suggest.style.display = "none";
     };
 
-    // Blur : masquer suggestions
     input.onblur = () => {
       setTimeout(() => {
         suggest.style.display = "none";
       }, 150);
     };
 
-    // Bouton heures sup
     const extraBtn = document.createElement("button");
     extraBtn.className = "extra-btn";
     extraBtn.innerHTML = `⏱ €`;
@@ -251,9 +244,8 @@ export async function renderMonth() {
 
       const results = await suggestServices({
         input: q,
-        dateISO: iso,
+        activePeriode,
         getAllServices: async () => allServices,
-        getPeriodeForDate,
       });
 
       if (!Array.isArray(results) || results.length === 0) {

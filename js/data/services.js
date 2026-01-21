@@ -15,6 +15,9 @@ const SCORE_WEIGHTS = {
 
 const SUGGESTION_LIMIT = 8;
 
+// Services toujours disponibles (pas de périodes)
+const ALWAYS_AVAILABLE_CODES = ["REPOS", "DM", "DAM", "TAD"];
+
 // =======================
 // HELPERS INTERNES
 // =======================
@@ -24,14 +27,14 @@ function normalize(str) {
   return str.trim().toUpperCase();
 }
 
-function serviceHasPeriode(service, periodeLibelle) {
+function serviceHasActivePeriode(service, activePeriode) {
   if (!Array.isArray(service.periodes)) return false;
 
   return service.periodes.some(
     (p) =>
-      p.libelle === periodeLibelle &&
+      p.libelle === activePeriode &&
       Array.isArray(p.plages) &&
-      p.plages.length > 0
+      p.plages.length > 0,
   );
 }
 
@@ -52,35 +55,53 @@ function sortByScore(scoredServices) {
 }
 
 // =======================
-// DONNÉES
-// =======================
-
-export const SERVICES_CATALOG = [
-  // ⬇️ COPIE ICI TOUT LE TABLEAU TEL QUEL
-];
-
-// =======================
 // API PUBLIQUE
 // =======================
 
+/**
+ * Suggestions clavier pour le planning mensuel
+ *
+ * RÈGLES :
+ * - filtrage texte d’abord
+ * - REPOS / DM / DAM / TAD toujours autorisés
+ * - autres services filtrés par période active
+ */
 export async function suggestServices({
   input,
-  dateISO,
+  activePeriode,
   getAllServices,
-  getPeriodeForDate,
   limit = SUGGESTION_LIMIT,
 }) {
   const query = normalize(input);
   if (!query) return [];
 
   const services = await getAllServices();
-  const periodeLibelle = await getPeriodeForDate(dateISO);
 
   const eligible = services.filter((service) => {
-    if (service.code === SERVICE_TYPES.REPOS) {
-      return query === "R";
+    const code = service.code.toUpperCase();
+
+    // 1️⃣ FILTRAGE PAR TEXTE (RÈGLE CLAVIER)
+    // - lettres : startsWith UNIQUEMENT
+    // - chiffres : startsWith OU includes
+    const isNumericQuery = /^[0-9]+$/.test(query);
+
+    if (isNumericQuery) {
+      if (!code.startsWith(query) && !code.includes(query)) {
+        return false;
+      }
+    } else {
+      if (!code.startsWith(query)) {
+        return false;
+      }
     }
-    return serviceHasPeriode(service, periodeLibelle);
+
+    // 2️⃣ SERVICES TOUJOURS DISPONIBLES
+    if (ALWAYS_AVAILABLE_CODES.includes(code)) {
+      return true;
+    }
+
+    // 3️⃣ SERVICES DÉPENDANTS DE LA PÉRIODE ACTIVE
+    return serviceHasActivePeriode(service, activePeriode);
   });
 
   const scored = eligible

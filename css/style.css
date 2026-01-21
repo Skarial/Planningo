@@ -1,3 +1,11 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
 /* =========================
    VARIABLES CSS
    ========================= */
@@ -416,7 +424,7 @@ body {
 }
 
 /* =========================
-   ACTIONS
+   BANNIERE MISE A JOUR
    ========================= */
 
 .update-banner-actions {
@@ -717,22 +725,19 @@ body {
    ACCUEIL — BOUTON AUJOURD’HUI
    ========================= */
 
+/* Bouton revenir à aujourd’hui — largeur = texte */
 .today-reset-btn {
-  width: 100%;
-  height: 44px;
-  margin-bottom: 12px;
-
-  border-radius: var(--radius-md);
-  border: none;
-
-  background: var(--bg-button-secondary);
-  color: var(--color-primary);
-  font-weight: 700;
+  all: unset; /* supprime tout le style bouton */
   cursor: pointer;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f5fbf; /* bleu pro */
+  white-space: nowrap;
 }
 
 .today-reset-btn:hover {
-  background: var(--bg-button-secondary-hover);
+  text-decoration: underline; /* feedback discret */
 }
 
 /* =========================
@@ -757,4 +762,43 @@ body {
 .today-reset-btn.hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+/* Navigation semaine – bouton aujourd’hui */
+
+.today-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.today-reset-btn {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  background: #e9ecef;
+  cursor: pointer;
+}
+
+.today-arrow {
+  width: auto !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 10px;
+  font-size: 1rem;
+
+  border-radius: 6px;
+  border: none;
+  background: #e9ecef;
+}
+
+.today-reset-btn:active,
+.today-arrow:active {
+  transform: scale(0.96);
 }

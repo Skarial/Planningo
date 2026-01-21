@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -26,6 +26,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/tetribus.css" />
   </head>
 
   <body>
@@ -39,6 +40,8 @@
 
         <button data-action="day">Vue jour</button>
         <button data-action="month">Planning mensuel</button>
+        <button data-action="guided-month">Préparer mois suivant</button>
+        <button data-action="tetribus">🎮 Tetribus</button>
       </div>
 
       <div class="menu-section">
@@ -62,6 +65,9 @@
           <input type="date" id="season-end" />
 
           <button id="season-submit">Valider</button>
+          <button id="season-reset" type="button">
+            Réinitialiser la saison
+          </button>
         </div>
 
         <button disabled>Import CSV</button>
@@ -77,12 +83,48 @@
         <button disabled>Reset saisons</button>
         <button disabled class="danger">Réinitialisation complète</button>
       </div>
+      <div id="menu-footer">
+        <span id="app-version"></span>
+      </div>
     </nav>
 
     <!-- VUES -->
     <section id="view-home"></section>
     <section id="view-day" style="display: none"></section>
     <section id="view-month" style="display: none"></section>
+    <section id="view-guided-month" style="display: none"></section>
+    <section id="view-tetribus" style="display: none">
+      <div id="tetribus">
+        <div id="game-container">
+          <div id="header">
+            <h1>Tetribus</h1>
+            <div>
+              <span id="score">Score : <span id="score-value">0</span></span>
+              |
+              <span id="level">Niveau : <span id="level-value">1</span></span>
+            </div>
+          </div>
+
+          <div id="game-area">
+            <div id="canvas-wrapper">
+              <canvas id="game-canvas"></canvas>
+            </div>
+
+            <div id="game-over" class="hidden">
+              <h2>Partie terminée</h2>
+              <p>Score final : <span id="final-score">0</span></p>
+              <button id="restart-btn">Recommencer</button>
+            </div>
+          </div>
+
+          <div id="controls-area">
+            <button id="btn-left" class="control-btn btn-left"></button>
+            <button id="btn-rotate" class="control-btn btn-rotate"></button>
+            <button id="btn-right" class="control-btn btn-right"></button>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- APP -->
     <script type="module" src="./js/app.js"></script>

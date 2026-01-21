@@ -1,7 +1,7 @@
 // day.js : affiche le jour consulté + le lendemain (lecture seule)
 
 import { getAllServices, getPlanningEntry } from "../data/storage.js";
-import { getPeriodeForDate } from "../utils/periods.js";
+import { getActivePeriodeLibelle } from "../utils/periods.js";
 import { toISODateLocal, formatDateFR, getDayNameFullFR } from "../utils.js";
 
 // =======================
@@ -20,12 +20,17 @@ export async function renderDay(dateISO) {
     return;
   }
 
+  container.innerHTML = "";
+
   // Chargement des services une seule fois
   const allServices = await getAllServices();
   if (!Array.isArray(allServices)) {
     console.error("allServices invalide", allServices);
     return;
   }
+
+  // Période active globale (UNE fois)
+  const activePeriode = await getActivePeriodeLibelle();
 
   // Dates : jour consulté + lendemain
   const base = new Date(dateISO);
@@ -58,14 +63,14 @@ export async function renderDay(dateISO) {
     serviceEl.textContent = serviceCode;
     if (serviceCode === "REPOS") serviceEl.classList.add("repos");
 
-    // 4) Horaires (isolé)
-    const timeEl = await buildHorairesDay(serviceCode, iso, allServices);
+    // 4) Horaires (logique canonique)
+    const timeEl = buildHorairesDay(serviceCode, activePeriode, allServices);
 
     // Injection
     card.append(dayNameEl, dateEl, serviceEl);
     if (timeEl) card.appendChild(timeEl);
 
-    // 5) Heures supplémentaires (si service présent)
+    // 5) Heures supplémentaires
     if (serviceCode !== "REPOS" && isExtra) {
       const extra = document.createElement("div");
       extra.className = "extra-label";
@@ -78,26 +83,16 @@ export async function renderDay(dateISO) {
 }
 
 // =======================
-// HORAIRES (ISOLÉ)
+// HORAIRES (LOGIQUE CANONIQUE)
 // =======================
 
-async function buildHorairesDay(serviceCode, iso, allServices) {
+function buildHorairesDay(serviceCode, activePeriode, allServices) {
   if (serviceCode === "REPOS") return null;
 
   const service = allServices.find((s) => s.code === serviceCode);
   if (!service || !Array.isArray(service.periodes)) return null;
 
-  const periodeActive = await getPeriodeForDate(iso);
-
-  let periode;
-  if (service.periodes.length === 1) {
-    periode = service.periodes[0];
-  } else {
-    periode =
-      periodeActive === "Période saisonnière"
-        ? service.periodes[1]
-        : service.periodes[0];
-  }
+  const periode = service.periodes.find((p) => p.libelle === activePeriode);
 
   if (!periode?.plages?.length) return null;
 

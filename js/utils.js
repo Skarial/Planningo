@@ -65,7 +65,7 @@ export function getAllDaysOfMonth(year, monthIndex) {
 
 export function getWeekNumberISO(date) {
   const d = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
   );
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
@@ -107,8 +107,9 @@ export function formatServiceLabel(serviceCode) {
   if (serviceCode === "DM") return "DM";
   if (serviceCode === "DAM") return "DAM";
 
-  if (serviceCode.startsWith("TAD")) {
-    return serviceCode.replace("TAD", "TD").replace(" ", "");
+  // 🔁 Affichage TDx → TAD x
+  if (/^TD\d+$/i.test(serviceCode)) {
+    return serviceCode.replace(/^TD/i, "TAD ");
   }
 
   return serviceCode;

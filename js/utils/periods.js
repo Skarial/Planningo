@@ -1,16 +1,35 @@
-import { getConfig } from "../data/db.js";
+import { getConfig } from "../data/storage.js";
 
-export async function getPeriodeForDate(dateISO) {
-  const config = await getConfig("periodeSaisonniere");
-  const saison = config?.value;
+/**
+ * Indique si une saison est réellement configurée
+ * (présence de dates valides)
+ */
+export async function isSeasonConfigured() {
+  const entry = await getConfig("saison");
+  const s = entry?.value;
 
-  if (!saison || !saison.debut || !saison.fin) {
-    return "Période principale";
-  }
+  return Boolean(
+    s &&
+    typeof s.saisonDebut === "string" &&
+    typeof s.saisonFin === "string" &&
+    s.saisonDebut !== "" &&
+    s.saisonFin !== "",
+  );
+}
 
-  if (dateISO >= saison.debut && dateISO <= saison.fin) {
-    return "Période saisonnière";
-  }
+/**
+ * Retourne la période ACTIVE globale de l’application.
+ *
+ * RÈGLE MÉTIER (verrouillée) :
+ * - saison NON configurée → "Période principale"
+ * - saison configurée     → "Période saisonnière"
+ *
+ * ⚠️ AUCUNE logique par jour
+ * ⚠️ AUCUN null
+ * ⚠️ UNE seule période active à la fois
+ */
+export async function getActivePeriodeLibelle() {
+  const seasonConfigured = await isSeasonConfigured();
 
-  return "Période principale";
+  return seasonConfigured ? "Période saisonnière" : "Période principale";
 }
