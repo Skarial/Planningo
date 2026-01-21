@@ -154,7 +154,7 @@ export async function renderMonth() {
     if (!monthState[iso]) {
       monthState[iso] = {
         date: iso,
-        serviceCode: "REPOS",
+        serviceCode: "",
         locked: false,
         extra: false,
       };
@@ -171,7 +171,10 @@ export async function renderMonth() {
 
     const label = document.createElement("div");
     label.className = "service-label";
-    label.textContent = formatServiceLabel(entry.serviceCode);
+    label.textContent = entry.serviceCode
+      ? formatServiceLabel(entry.serviceCode)
+      : "";
+
     if (entry.serviceCode === "REPOS") label.classList.add("repos");
 
     const input = document.createElement("input");
@@ -230,7 +233,8 @@ export async function renderMonth() {
     const handleInput = debounce(async () => {
       const q = input.value.trim().toUpperCase();
 
-      entry.serviceCode = q || "REPOS";
+      entry.serviceCode = q;
+
       label.textContent = formatServiceLabel(entry.serviceCode);
       await savePlanningEntry(entry);
       updateExtra();

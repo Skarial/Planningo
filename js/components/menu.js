@@ -1,5 +1,7 @@
-import { showHome, showDay, showMonth, showGuidedMonth } from "../router.js";
+console.log("MENU.JS VERSION RESET STATE ACTIVE");
 
+import { showHome, showDay, showMonth, showGuidedMonth } from "../router.js";
+import { clearAllPlanning, clearPlanningMonth } from "../data/storage.js";
 import { setConsultedDate } from "../state/consulted-date.js";
 import { getConfig, setConfig } from "../data/storage.js";
 import { APP_VERSION } from "../app.js";
@@ -28,11 +30,53 @@ async function loadSeasonForm() {
 // =======================
 
 export function initMenu() {
+  // =======================
+  // DOM — RESET
+  // =======================
+
+  const resetBtn = document.getElementById("menu-reset");
+  const resetPanel = document.getElementById("reset-panel");
+  const resetAllBtn = document.getElementById("reset-all");
+  const resetMonthBtn = document.getElementById("reset-month");
+
+  const resetMonthPicker = document.getElementById("reset-month-picker");
+  const resetMonthLabel = document.getElementById("reset-month-label");
+  const resetPrevMonth = document.getElementById("reset-prev-month");
+  const resetNextMonth = document.getElementById("reset-next-month");
+  const resetConfirmMonth = document.getElementById("reset-confirm-month");
+
+  // =======================
+  // ÉTATS
+  // =======================
+
   let isOpen = false;
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let currentTranslateX = 0;
+  let isSwiping = false;
+
+  let resetState = "closed"; // "closed" | "choice" | "month"
+  let resetDate = new Date();
+
+  // =======================
+  // DOM — MENU
+  // =======================
 
   const menu = document.getElementById("side-menu");
   const overlay = document.getElementById("menu-overlay");
   const toggle = document.getElementById("menu-toggle");
+  // =======================
+  // NORMALISATION ÉTAT MENU (ANTI-CACHE)
+  // =======================
+
+  toggle.classList.remove("hidden");
+  overlay.classList.remove("hidden");
+  menu.classList.remove("hidden");
+
+  menu.classList.remove("open");
+  overlay.classList.remove("open");
+  menu.setAttribute("aria-hidden", "true");
 
   if (!menu || !overlay || !toggle) {
     console.error("Menu DOM manquant");
@@ -78,19 +122,13 @@ export function initMenu() {
   }
 
   seasonReset.addEventListener("click", async () => {
-    // 1) Suppression de la saison
     await setConfig("saison", {});
 
-    // 2) Reset UI du formulaire
     seasonStart.value = "";
     seasonEnd.value = "";
     seasonForm.classList.add("hidden");
 
-    // 3) Fermeture du menu
     closeMenu();
-
-    // 4) RAFRAÎCHISSEMENT LOGIQUE DE L’APP
-    // (sans reload, sans casser la PWA)
     showHome();
   });
 
@@ -126,23 +164,28 @@ export function initMenu() {
     menu.classList.add("open");
     overlay.classList.add("open");
     menu.setAttribute("aria-hidden", "false");
+
+    menu.style.transition = "transform 0.25s ease";
+    menu.style.transform = "translateX(0)";
+
     isOpen = true;
   }
 
   function closeMenu() {
-    // 1) Retirer le focus de l’élément actif (bouton du menu)
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
 
-    // 2) Fermer visuellement le menu
     menu.classList.remove("open");
     overlay.classList.remove("open");
-
-    // 3) Marquer le menu comme caché pour l’accessibilité
     menu.setAttribute("aria-hidden", "true");
 
     isOpen = false;
+    resetState = "closed";
+    renderResetPanel();
+    menu.style.transition = "";
+    menu.style.transform = "";
+    currentTranslateX = 0;
   }
 
   toggle.addEventListener("click", () => {
@@ -150,6 +193,153 @@ export function initMenu() {
   });
 
   overlay.addEventListener("click", closeMenu);
+  // =======================
+  // SWIPE GAUCHE — ANIMATION PROGRESSIVE
+  // =======================
+
+  menu.addEventListener("touchstart", (e) => {
+    if (!isOpen) return;
+
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    isSwiping = true;
+
+    menu.style.transition = "none";
+  });
+
+  menu.addEventListener("touchmove", (e) => {
+    if (!isOpen || !isSwiping) return;
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+
+    // Si le geste est vertical → on abandonne le swipe
+    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      isSwiping = false;
+      menu.style.transition = "";
+      return;
+    }
+
+    // On limite au swipe gauche
+    if (deltaX < 0) {
+      currentTranslateX = deltaX;
+      menu.style.transform = `translateX(${deltaX}px)`;
+    }
+  });
+
+  menu.addEventListener("touchend", () => {
+    if (!isOpen) return;
+
+    menu.style.transition = "transform 0.25s ease";
+
+    // seuil de fermeture (30% de la largeur du menu)
+    const closeThreshold = -menu.offsetWidth * 0.3;
+
+    if (currentTranslateX < closeThreshold) {
+      closeMenu();
+    } else {
+      // retour à la position ouverte
+      menu.style.transform = "translateX(0)";
+    }
+
+    isSwiping = false;
+    currentTranslateX = 0;
+  });
+
+  menu.addEventListener("touchend", () => {
+    isSwiping = false;
+  });
+
+  // =======================
+  // RESET — LOGIQUE
+  // =======================
+
+  function updateResetMonthLabel() {
+    resetMonthLabel.textContent = resetDate.toLocaleDateString("fr-FR", {
+      month: "long",
+      year: "numeric",
+    });
+  }
+
+  function renderResetPanel() {
+    resetPanel.classList.add("hidden");
+    resetMonthPicker.classList.add("hidden");
+    resetConfirmMonth.classList.add("hidden");
+
+    if (resetState === "choice") {
+      resetPanel.classList.remove("hidden");
+    }
+
+    if (resetState === "month") {
+      resetPanel.classList.remove("hidden");
+      resetMonthPicker.classList.remove("hidden");
+      resetConfirmMonth.classList.remove("hidden");
+    }
+  }
+
+  resetBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetState = "choice";
+    renderResetPanel();
+  });
+
+  resetAllBtn.addEventListener("click", async () => {
+    const ok = confirm(
+      "Cette action supprimera tout le planning.\nAction irréversible.\n\nConfirmer ?",
+    );
+
+    if (!ok) return;
+
+    await clearAllPlanning();
+    alert("Planning entièrement réinitialisé.");
+
+    resetState = "closed";
+    renderResetPanel();
+    closeMenu();
+  });
+
+  resetMonthBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetDate = new Date();
+    resetState = "month";
+    updateResetMonthLabel();
+    renderResetPanel();
+  });
+
+  resetPrevMonth.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetDate.setMonth(resetDate.getMonth() - 1);
+    updateResetMonthLabel();
+  });
+
+  resetNextMonth.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetDate.setMonth(resetDate.getMonth() + 1);
+    updateResetMonthLabel();
+  });
+
+  resetConfirmMonth.addEventListener("click", async (e) => {
+    e.stopPropagation();
+
+    const monthISO = `${resetDate.getFullYear()}-${String(
+      resetDate.getMonth() + 1,
+    ).padStart(2, "0")}`;
+
+    const ok = confirm(
+      `Supprimer définitivement le planning de ${resetMonthLabel.textContent} ?`,
+    );
+
+    if (!ok) return;
+
+    await clearPlanningMonth(monthISO);
+    alert("Planning du mois réinitialisé.");
+
+    resetState = "closed";
+    renderResetPanel();
+    closeMenu();
+  });
 
   // =======================
   // NAVIGATION
@@ -163,19 +353,15 @@ export function initMenu() {
       case "home":
         showHome();
         break;
-
       case "day":
         showDay();
         break;
-
       case "month":
         showMonth();
         break;
-
       case "guided-month":
         showGuidedMonth();
         break;
-
       case "tetribus":
         import("../router.js").then(({ showTetribusView }) => {
           showTetribusView();

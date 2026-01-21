@@ -69,6 +69,14 @@ body {
   color: var(--color-text);
 }
 
+/* =========================
+   UTILITAIRE
+   ========================= */
+
+.hidden {
+  display: none !important;
+}
+
 #view-home,
 #view-day,
 #view-month {
@@ -151,6 +159,7 @@ body {
    ========================= */
 
 .card-month {
+  overscroll-behavior: contain;
   overflow-x: auto;
   overflow-y: hidden;
 }
@@ -479,6 +488,250 @@ body {
   color: #111;
 }
 
+/* === MENU LATÉRAL === */
+
+#menu-toggle {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 1001;
+
+  width: 2.5rem;
+  height: 2.5rem;
+
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+}
+
+#menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+}
+
+#menu-overlay.open {
+  display: block;
+}
+
+#side-menu {
+  overscroll-behavior: contain;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 80vw;
+  max-width: 320px;
+  height: 100vh;
+
+  background: var(--bg-card);
+  z-index: 1002;
+
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+
+  visibility: hidden;
+  pointer-events: none;
+
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+#side-menu.open {
+  transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.menu-section {
+  margin-bottom: 1.5rem;
+}
+
+.menu-section h3 {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.menu-section button {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.reset-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.reset-month-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.menu-section button.danger {
+  color: red;
+}
+
+/* === ESPACE POUR LE BOUTON MENU === */
+
+#view-home,
+#view-day,
+#view-month {
+  padding-top: 3rem;
+}
+
+.menu-form {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.menu-form.hidden {
+  display: none;
+}
+
+.menu-form label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.menu-form input[type="date"] {
+  height: 44px;
+  font-size: 1rem;
+}
+
+.menu-form button {
+  height: 44px;
+}
+
+/* =========================
+   ACCUEIL — VUE SEMAINE
+   ========================= */
+
+.week-day-card.today {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+/* .week-day-card.today {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+} */
+
+.week-day-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 6px;
+}
+
+.week-day-name {
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.week-day-date {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.today-badge {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  background: var(--color-primary);
+  border-radius: 999px;
+}
+
+/* =========================
+   ACCUEIL — BOUTON AUJOURD’HUI
+   ========================= */
+
+/* Bouton revenir à aujourd’hui — largeur = texte */
+.today-reset-btn {
+  all: unset; /* supprime tout le style bouton */
+  cursor: pointer;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f5fbf; /* bleu pro */
+  white-space: nowrap;
+}
+
+.today-reset-btn:hover {
+  text-decoration: underline; /* feedback discret */
+}
+
+/* =========================
+   ACCUEIL — ZONE SCROLL PROTÉGÉE
+   ========================= */
+
+.home-scroll {
+  height: calc(100vh - 3rem - 56px);
+  overflow-y: auto;
+  overflow-x: hidden; /* AJOUT */
+  overscroll-behavior: contain;
+}
+
+#view-home {
+  overflow: hidden;
+}
+
+/* =========================
+   BOUTON RETOUR AUJOURD’HUI — ÉTAT MASQUÉ
+   ========================= */
+
+.today-reset-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Navigation semaine – bouton aujourd’hui */
+
+.today-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.today-reset-btn {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  background: #e9ecef;
+  cursor: pointer;
+}
+
+.today-arrow {
+  width: auto !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 10px;
+  font-size: 1rem;
+
+  border-radius: 6px;
+  border: none;
+  background: #e9ecef;
+}
+
+.today-reset-btn:active,
+.today-arrow:active {
+  transform: scale(0.96);
+}
+
 /* =========================
    RESPONSIVE
    ========================= */
@@ -571,234 +824,4 @@ body {
     padding: 0 10px;
     font-size: 0.8rem;
   }
-}
-
-/* === MENU LATÉRAL === */
-
-/* === MENU LATÉRAL === */
-
-#menu-toggle {
-  position: fixed;
-  top: 0.75rem;
-  left: 0.75rem;
-  z-index: 1001;
-
-  width: 2.5rem;
-  height: 2.5rem;
-
-  font-size: 1.8rem;
-  background: none;
-  border: none;
-}
-
-#menu-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  display: none;
-}
-
-#menu-overlay.open {
-  display: block;
-}
-
-#side-menu {
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 80vw;
-  max-width: 320px;
-  height: 100vh;
-
-  background: var(--bg-card);
-  z-index: 1002;
-
-  transform: translateX(-100%);
-  transition: transform 0.25s ease;
-
-  visibility: hidden;
-  pointer-events: none;
-
-  overflow-y: auto;
-  padding: 1rem;
-}
-
-#side-menu.open {
-  transform: translateX(0);
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.menu-section {
-  margin-bottom: 1.5rem;
-}
-
-.menu-section h3 {
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  opacity: 0.7;
-}
-
-.menu-section button {
-  width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  text-align: left;
-}
-
-.menu-section button.danger {
-  color: red;
-}
-
-/* === ESPACE POUR LE BOUTON MENU === */
-
-#view-home,
-#view-day,
-#view-month {
-  padding-top: 3rem;
-}
-
-.menu-form {
-  margin-top: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.menu-form.hidden {
-  display: none;
-}
-
-.menu-form label {
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.menu-form input[type="date"] {
-  height: 44px;
-  font-size: 1rem;
-}
-
-.menu-form button {
-  height: 44px;
-}
-
-/* =========================
-   ACCUEIL — VUE SEMAINE
-   ========================= */
-
-.week-day-card.today {
-  transform: scale(1.03);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-}
-
-.week-day-header {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 6px;
-}
-
-.week-day-name {
-  font-weight: 700;
-  text-transform: capitalize;
-}
-
-.week-day-date {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-}
-
-.today-badge {
-  align-self: flex-start;
-  margin-top: 4px;
-  padding: 2px 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: white;
-  background: var(--color-primary);
-  border-radius: 999px;
-}
-
-/* =========================
-   ACCUEIL — BOUTON AUJOURD’HUI
-   ========================= */
-
-/* Bouton revenir à aujourd’hui — largeur = texte */
-.today-reset-btn {
-  all: unset; /* supprime tout le style bouton */
-  cursor: pointer;
-
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #1f5fbf; /* bleu pro */
-  white-space: nowrap;
-}
-
-.today-reset-btn:hover {
-  text-decoration: underline; /* feedback discret */
-}
-
-/* =========================
-   ACCUEIL — ZONE SCROLL PROTÉGÉE
-   ========================= */
-
-.home-scroll {
-  height: calc(100vh - 3rem - 56px);
-  overflow-y: auto;
-
-  overscroll-behavior: contain;
-}
-
-#view-home {
-  overflow: hidden;
-}
-
-/* =========================
-   BOUTON RETOUR AUJOURD’HUI — ÉTAT MASQUÉ
-   ========================= */
-
-.today-reset-btn.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Navigation semaine – bouton aujourd’hui */
-
-.today-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin: 8px 0;
-}
-
-.today-reset-btn {
-  padding: 6px 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: 6px;
-  border: none;
-  background: #e9ecef;
-  cursor: pointer;
-}
-
-.today-arrow {
-  width: auto !important;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 6px 10px;
-  font-size: 1rem;
-
-  border-radius: 6px;
-  border: none;
-  background: #e9ecef;
-}
-
-.today-reset-btn:active,
-.today-arrow:active {
-  transform: scale(0.96);
 }

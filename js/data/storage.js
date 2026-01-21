@@ -134,6 +134,41 @@ export async function getPlanningEntry(dateISO) {
   });
 }
 
+export async function clearAllPlanning() {
+  const db = await openDB();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORES.PLANNING, "readwrite");
+    tx.objectStore(STORES.PLANNING).clear();
+
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+export async function clearPlanningMonth(monthISO) {
+  const db = await openDB();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORES.PLANNING, "readwrite");
+    const store = tx.objectStore(STORES.PLANNING);
+
+    store.openCursor().onsuccess = (e) => {
+      const cursor = e.target.result;
+      if (!cursor) return;
+
+      if (cursor.key.startsWith(monthISO)) {
+        cursor.delete();
+      }
+
+      cursor.continue();
+    };
+
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
 // =======================
 // CONFIG
 // =======================

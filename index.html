@@ -81,7 +81,29 @@
         <button disabled>Mode paysage</button>
         <button disabled>France</button>
         <button disabled>Reset saisons</button>
-        <button disabled class="danger">Réinitialisation complète</button>
+        <button id="menu-reset" class="danger">Réinitialisation</button>
+
+        <div id="reset-panel" class="menu-form hidden">
+          <p class="reset-title">Réinitialisation du planning</p>
+
+          <button id="reset-all" class="danger">
+            Réinitialiser tout le planning
+          </button>
+
+          <button id="reset-month">Réinitialiser un mois</button>
+
+          <div id="reset-month-picker" class="hidden">
+            <div class="reset-month-nav">
+              <button id="reset-prev-month">←</button>
+              <span id="reset-month-label"></span>
+              <button id="reset-next-month">→</button>
+            </div>
+
+            <button id="reset-confirm-month" class="danger">
+              Confirmer la réinitialisation du mois
+            </button>
+          </div>
+        </div>
       </div>
       <div id="menu-footer">
         <span id="app-version"></span>
