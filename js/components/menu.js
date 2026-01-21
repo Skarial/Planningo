@@ -56,20 +56,23 @@ export function initMenu() {
   let isSwiping = false;
 
   // =======================
-  // RESET TOTAL — APPUI LONG
+  // RESET TOTAL — APPUI LONG (FIABLE)
   // =======================
 
   let resetAllTimer = null;
-  const RESET_ALL_DURATION = 2500;
+  const RESET_ALL_DURATION = 1200;
 
-  function startResetAllPress() {
+  function startResetAllPress(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (resetAllTimer) return;
 
-    resetAllBtn.classList.add("pressing");
+    resetAllBtn.classList.add("holding");
 
     resetAllTimer = setTimeout(async () => {
       resetAllTimer = null;
-      resetAllBtn.classList.remove("pressing");
+      resetAllBtn.classList.remove("holding");
 
       await clearAllPlanning();
       showToast("Planning entièrement réinitialisé");
@@ -81,31 +84,22 @@ export function initMenu() {
   }
 
   function cancelResetAllPress() {
-    resetAllBtn.classList.remove("pressing");
-    if (resetAllTimer) {
-      clearTimeout(resetAllTimer);
-      resetAllTimer = null;
-    }
+    if (!resetAllTimer) return;
+
+    clearTimeout(resetAllTimer);
+    resetAllTimer = null;
+    resetAllBtn.classList.remove("holding");
   }
+
+  resetAllBtn.addEventListener("touchstart", startResetAllPress, {
+    passive: false,
+  });
+  resetAllBtn.addEventListener("touchend", cancelResetAllPress);
+  resetAllBtn.addEventListener("touchcancel", cancelResetAllPress);
 
   resetAllBtn.addEventListener("mousedown", startResetAllPress);
   resetAllBtn.addEventListener("mouseup", cancelResetAllPress);
   resetAllBtn.addEventListener("mouseleave", cancelResetAllPress);
-  resetAllBtn.addEventListener("touchstart", startResetAllPress);
-  resetAllBtn.addEventListener("touchend", cancelResetAllPress);
-  resetAllBtn.addEventListener("touchcancel", cancelResetAllPress);
-
-  function remonterMenuEnHaut() {
-    if (!menuScroll || !resetPanel) return;
-
-    // attendre que le DOM soit réellement mis à jour
-    setTimeout(() => {
-      resetPanel.scrollIntoView({
-        block: "start",
-        behavior: "auto",
-      });
-    }, 0);
-  }
 
   // =======================
   // MENU — DOM

@@ -787,23 +787,9 @@ body {
   overflow: hidden;
 }
 
-#reset-confirm-month::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 0, 0, 0.25);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 1.2s linear;
-  pointer-events: none;
-}
-
-#reset-confirm-month.holding::after {
-  transform: scaleX(1);
-}
-
 #reset-confirm-month.holding {
   color: #b00020;
+  font-weight: 700;
 }
 
 /* =========================
@@ -900,19 +886,6 @@ body {
 #reset-all {
   position: relative;
   overflow: hidden;
-}
-
-#reset-all::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 0, 0, 0.15);
-  transform: scaleX(0);
-  transform-origin: left;
-}
-
-#reset-all.pressing::after {
-  animation: reset-all-progress 2.5s linear forwards;
 }
 
 @keyframes reset-all-progress {
@@ -1016,4 +989,490 @@ body {
     padding: 0 10px;
     font-size: 0.8rem;
   }
+}
+
+/* =========================
+   MENU — STYLE IOS-LIKE
+   ========================= */
+
+/* Fond général du menu */
+#side-menu {
+  background: #f2f2f7;
+}
+
+/* Sections */
+.menu-section {
+  margin-bottom: 1.5rem;
+}
+
+/* Titres de section */
+.menu-section h3 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6c6c70;
+  margin: 0 0 6px 6px;
+  text-transform: uppercase;
+}
+
+/* Carte */
+.menu-section > button {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Boutons */
+.menu-section button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1c1c1e;
+
+  cursor: pointer;
+  border-bottom: 1px solid #e5e5ea;
+}
+
+/* Dernier bouton sans séparation */
+.menu-section button:last-child {
+  border-bottom: none;
+}
+
+/* Effet tap */
+.menu-section button:active {
+  background: #f2f2f7;
+}
+
+/* Flèche à droite */
+.menu-section button::after {
+  /* content: "›"; */
+  margin-left: auto;
+  font-size: 1.2rem;
+  color: #c7c7cc;
+}
+/* SUPPRIMER LA FLÈCHE SUR LES BOUTONS DE FORMULAIRE */
+.menu-section > button::after {
+  content: none !important;
+}
+
+/* Bouton danger */
+.menu-section button.danger {
+  color: #d32f2f;
+}
+
+.menu-section button.danger::after {
+  color: #d32f2f;
+}
+
+/* Supprimer la flèche "›" sur la navigation de réinitialisation du mois */
+.reset-month-nav button::after {
+  content: none;
+}
+
+/* =========================
+   TOGGLE MODE SOMBRE (VISUEL)
+   ========================= */
+
+.menu-section button#toggle-dark {
+  position: relative;
+}
+
+/* =========================
+   FOOTER VERSION
+   ========================= */
+
+#menu-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #8e8e93;
+  margin-top: 2rem;
+}
+
+/* =========================
+   MENU — ICONES UNIFIÉES (PRO)
+   ========================= */
+
+#reset-panel,
+#reset-month-picker {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* RESET PANEL — carte iOS */
+#reset-panel {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+#reset-panel button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+
+  border-bottom: 1px solid #e5e5ea;
+  cursor: pointer;
+}
+
+#reset-panel button:last-child {
+  border-bottom: none;
+}
+
+#reset-all,
+#reset-confirm-month {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.reset-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 12px 16px;
+  border-top: 1px solid #e5e5ea;
+}
+
+#reset-month-label {
+  font-weight: 600;
+  color: #1c1c1e;
+}
+
+.menu-section button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Base icône */
+.menu-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+
+  background-color: #6c6c70; /* gris iOS */
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+/* =========================
+   ICONES — NAVIGATION
+   ========================= */
+
+.icon-day {
+  mask-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+<rect x='3' y='4' width='18' height='18' rx='2' ry='2'/>\
+<line x1='16' y1='2' x2='16' y2='6'/>\
+<line x1='8' y1='2' x2='8' y2='6'/>\
+</svg>");
+}
+
+.icon-month {
+  mask-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+<rect x='3' y='4' width='18' height='18' rx='2'/>\
+<line x1='3' y1='10' x2='21' y2='10'/>\
+</svg>");
+}
+
+.icon-guided {
+  mask-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+<path d='M3 12h18'/>\
+<path d='M3 6h12'/>\
+<path d='M3 18h8'/>\
+</svg>");
+}
+
+.icon-game {
+  mask-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+<rect x='2' y='6' width='20' height='12' rx='4'/>\
+<circle cx='8' cy='12' r='1'/>\
+<circle cx='16' cy='12' r='1'/>\
+</svg>");
+}
+
+/* =========================
+   ICONES — OUTILS
+   ========================= */
+
+.icon-consult {
+  mask-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+<circle cx='11' cy='11' r='8'/>\
+<line x1='21' y1='21' x2='16.65' y2='16.65'/>\
+</svg>");
+}
+
+.icon-season {
+  mask-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+<path d='M12 2v20'/>\
+<path d='M2 12h20'/>\
+</svg>");
+}
+
+/* =========================
+   ICONES — PARAMÈTRES
+   ========================= */
+
+.icon-dark {
+  mask-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'>\
+<path d='M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z'/>\
+</svg>");
+}
+
+.icon-reset {
+  background-color: #d92d20; /* rouge danger */
+
+  mask-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+<path d='M21 12a9 9 0 1 1-3-6.7'/>\
+<polyline points='21 3 21 9 15 9'/>\
+</svg>");
+}
+
+/* RESET — PAS DE CARTE, PAS DE FOND */
+#reset-panel,
+#reset-month-picker {
+  background: transparent !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#reset-panel button,
+#reset-month-picker button {
+  background: transparent;
+}
+
+#reset-all,
+#reset-confirm-month {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+/* =========================
+   RESET TOTAL — APPUI LONG PRO
+   ========================= */
+
+#reset-all {
+  position: relative;
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+#reset-all.holding {
+  color: #b00020;
+  font-weight: 700;
+}
+
+/* =========================
+   RESET — APPUI LONG UX CLAIR
+   ========================= */
+
+.menu-long-press {
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-long-press::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  height: 6px;
+  width: 100%;
+
+  background: #d32f2f;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.menu-long-press.holding::after {
+  animation: long-press-progress 1.2s linear forwards;
+}
+
+@keyframes long-press-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Feedback visuel bouton */
+.menu-long-press.holding {
+  background: #fff5f5;
+}
+
+/* Titres non cliquables dans le panneau de réinitialisation */
+#reset-panel .reset-title,
+#reset-panel > :not(button):not(div) {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6c6c70;
+  text-transform: uppercase;
+  margin: 12px 0 6px 6px;
+}
+
+/* Titre "Réinitialisation du planning" = même style que OUTILS / PARAMÈTRES */
+#reset-panel .reset-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6c6c70;
+  text-transform: uppercase;
+
+  margin: 12px 0 6px 6px;
+}
+
+/* =========================
+   MENU — FORMULAIRES INLINE (IOS-LIKE)
+   ========================= */
+
+.menu-form {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Champs */
+.menu-form input[type="date"] {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #d1d1d6;
+  padding: 14px 16px;
+  font-size: 1rem;
+}
+
+/* Labels */
+.menu-form label {
+  padding: 8px 16px 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6c6c70;
+  text-transform: uppercase;
+}
+
+/* Boutons dans menu */
+.menu-form button {
+  all: unset;
+  display: block;
+  width: 100%;
+
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #007aff;
+
+  border-bottom: 1px solid #d1d1d6;
+}
+
+/* Bouton danger (réinitialiser saison) */
+.menu-form button#season-reset {
+  color: #d32f2f;
+}
+
+/* =========================
+   MENU — FORMULAIRES INLINE (IOS-LIKE)
+   ========================= */
+
+.menu-form {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Champs */
+.menu-form input[type="date"] {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #e5e5ea;
+  border-radius: 0;
+
+  padding: 12px 16px;
+  font-size: 1rem;
+}
+
+/* Labels */
+.menu-form label {
+  padding: 8px 16px 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6c6c70;
+  text-transform: uppercase;
+}
+
+/* Boutons dans menu */
+.menu-form button {
+  all: unset;
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #007aff;
+  cursor: pointer;
+
+  border-top: 1px solid #e5e5ea;
+}
+
+/* Bouton danger (réinitialiser saison) */
+.menu-form button#season-reset {
+  color: #d32f2f;
+}
+
+.menu-form input[type="date"] {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #d1d1d6;
+
+  padding: 14px 16px;
+  font-size: 1rem;
+}
+
+.menu-form button {
+  all: unset;
+  display: block;
+
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #007aff;
+
+  border-bottom: 1px solid #d1d1d6;
+  cursor: pointer;
+}
+
+.menu-form button:active {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+#season-reset {
+  color: #d32f2f;
 }
