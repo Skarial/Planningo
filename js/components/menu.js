@@ -1,4 +1,4 @@
-console.log("MENU.JS VERSION RESET STATE ACTIVE");
+console.log("MENU.JS — CLEAN RESET LOGIC");
 
 import { showHome, showDay, showMonth, showGuidedMonth } from "../router.js";
 import { clearAllPlanning, clearPlanningMonth } from "../data/storage.js";
@@ -13,12 +13,10 @@ import { APP_VERSION } from "../app.js";
 async function loadSeasonForm() {
   const entry = await getConfig("saison");
   const saison = entry?.value;
-
   if (!saison) return;
 
   const start = document.getElementById("season-start");
   const end = document.getElementById("season-end");
-
   if (!start || !end) return;
 
   start.value = saison.saisonDebut || "";
@@ -37,53 +35,6 @@ export function initMenu() {
   const resetBtn = document.getElementById("menu-reset");
   const resetPanel = document.getElementById("reset-panel");
   const resetAllBtn = document.getElementById("reset-all");
-  // =======================
-  // RESET TOTAL — APPUI LONG (CONFIRMATION)
-  // =======================
-
-  let resetAllTimer = null;
-  let resetAllConfirmed = false;
-  const RESET_ALL_DURATION = 2500; // 2,5 secondes (PLUS LONG que le mois)
-
-  function startResetAllPress() {
-    if (resetAllTimer) return;
-
-    resetAllBtn.classList.add("pressing");
-
-    resetAllTimer = setTimeout(async () => {
-      resetAllConfirmed = true;
-
-      await clearAllPlanning();
-
-      showToast("Planning entièrement réinitialisé");
-
-      resetState = "closed";
-      renderResetPanel();
-      closeMenu();
-    }, RESET_ALL_DURATION);
-  }
-
-  function cancelResetAllPress() {
-    resetAllBtn.classList.remove("pressing");
-
-    if (resetAllTimer) {
-      clearTimeout(resetAllTimer);
-      resetAllTimer = null;
-    }
-
-    resetAllConfirmed = false;
-  }
-
-  // SOURIS
-  resetAllBtn.addEventListener("mousedown", startResetAllPress);
-  resetAllBtn.addEventListener("mouseup", cancelResetAllPress);
-  resetAllBtn.addEventListener("mouseleave", cancelResetAllPress);
-
-  // TACTILE
-  resetAllBtn.addEventListener("touchstart", startResetAllPress);
-  resetAllBtn.addEventListener("touchend", cancelResetAllPress);
-  resetAllBtn.addEventListener("touchcancel", cancelResetAllPress);
-
   const resetMonthBtn = document.getElementById("reset-month");
 
   const resetMonthPicker = document.getElementById("reset-month-picker");
@@ -97,31 +48,58 @@ export function initMenu() {
   // =======================
 
   let isOpen = false;
-
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let currentTranslateX = 0;
-  let isSwiping = false;
-
-  let resetState = "closed"; // "closed" | "choice" | "month"
+  let resetState = "closed"; // closed | choice | month
   let resetDate = new Date();
 
   // =======================
-  // DOM — MENU
+  // RESET TOTAL — APPUI LONG
+  // =======================
+
+  let resetAllTimer = null;
+  const RESET_ALL_DURATION = 2500;
+
+  function startResetAllPress() {
+    if (resetAllTimer) return;
+
+    resetAllBtn.classList.add("pressing");
+
+    resetAllTimer = setTimeout(async () => {
+      resetAllTimer = null;
+      resetAllBtn.classList.remove("pressing");
+
+      await clearAllPlanning();
+      showToast("Planning entièrement réinitialisé");
+
+      resetState = "closed";
+      renderResetPanel();
+      closeMenu();
+    }, RESET_ALL_DURATION);
+  }
+
+  function cancelResetAllPress() {
+    resetAllBtn.classList.remove("pressing");
+    if (resetAllTimer) {
+      clearTimeout(resetAllTimer);
+      resetAllTimer = null;
+    }
+  }
+
+  resetAllBtn.addEventListener("mousedown", startResetAllPress);
+  resetAllBtn.addEventListener("mouseup", cancelResetAllPress);
+  resetAllBtn.addEventListener("mouseleave", cancelResetAllPress);
+  resetAllBtn.addEventListener("touchstart", startResetAllPress);
+  resetAllBtn.addEventListener("touchend", cancelResetAllPress);
+  resetAllBtn.addEventListener("touchcancel", cancelResetAllPress);
+
+  // =======================
+  // MENU — DOM
   // =======================
 
   const menu = document.getElementById("side-menu");
   const overlay = document.getElementById("menu-overlay");
   const toggle = document.getElementById("menu-toggle");
 
-  if (!menu || !overlay || !toggle) {
-    console.error("Menu DOM manquant");
-    return;
-  }
-
-  // =======================
-  // NORMALISATION ÉTAT MENU
-  // =======================
+  if (!menu || !overlay || !toggle) return;
 
   toggle.classList.remove("hidden");
   overlay.classList.remove("hidden");
@@ -152,14 +130,10 @@ export function initMenu() {
     const start = seasonStart.value.trim();
     const end = seasonEnd.value.trim();
 
-    if (!start || !end) {
-      await setConfig("saison", {});
-    } else {
-      await setConfig("saison", {
-        saisonDebut: start,
-        saisonFin: end,
-      });
-    }
+    await setConfig(
+      "saison",
+      start && end ? { saisonDebut: start, saisonFin: end } : {},
+    );
 
     seasonForm.classList.add("hidden");
     closeMenu();
@@ -203,27 +177,17 @@ export function initMenu() {
     menu.classList.add("open");
     overlay.classList.add("open");
     menu.setAttribute("aria-hidden", "false");
-    menu.style.transition = "transform 0.25s ease";
-    menu.style.transform = "translateX(0)";
     isOpen = true;
   }
 
   function closeMenu() {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-
     menu.classList.remove("open");
     overlay.classList.remove("open");
     menu.setAttribute("aria-hidden", "true");
 
-    isOpen = false;
     resetState = "closed";
     renderResetPanel();
-
-    menu.style.transition = "";
-    menu.style.transform = "";
-    currentTranslateX = 0;
+    isOpen = false;
   }
 
   toggle.addEventListener("click", () => {
@@ -233,53 +197,7 @@ export function initMenu() {
   overlay.addEventListener("click", closeMenu);
 
   // =======================
-  // SWIPE GAUCHE — MENU
-  // =======================
-
-  menu.addEventListener("touchstart", (e) => {
-    if (!isOpen) return;
-    const t = e.touches[0];
-    touchStartX = t.clientX;
-    touchStartY = t.clientY;
-    isSwiping = true;
-    menu.style.transition = "none";
-  });
-
-  menu.addEventListener("touchmove", (e) => {
-    if (!isOpen || !isSwiping) return;
-    const t = e.touches[0];
-    const dx = t.clientX - touchStartX;
-    const dy = t.clientY - touchStartY;
-
-    if (Math.abs(dy) > Math.abs(dx)) {
-      isSwiping = false;
-      menu.style.transition = "";
-      return;
-    }
-
-    if (dx < 0) {
-      currentTranslateX = dx;
-      menu.style.transform = `translateX(${dx}px)`;
-    }
-  });
-
-  menu.addEventListener("touchend", () => {
-    if (!isOpen) return;
-    menu.style.transition = "transform 0.25s ease";
-
-    const threshold = -menu.offsetWidth * 0.3;
-    if (currentTranslateX < threshold) {
-      closeMenu();
-    } else {
-      menu.style.transform = "translateX(0)";
-    }
-
-    isSwiping = false;
-    currentTranslateX = 0;
-  });
-
-  // =======================
-  // RESET — LOGIQUE
+  // RESET — MOIS
   // =======================
 
   function updateResetMonthLabel() {
@@ -294,10 +212,7 @@ export function initMenu() {
     resetMonthPicker.classList.add("hidden");
     resetConfirmMonth.classList.add("hidden");
 
-    if (resetState === "choice") {
-      resetPanel.classList.remove("hidden");
-    }
-
+    if (resetState === "choice") resetPanel.classList.remove("hidden");
     if (resetState === "month") {
       resetPanel.classList.remove("hidden");
       resetMonthPicker.classList.remove("hidden");
@@ -305,52 +220,23 @@ export function initMenu() {
     }
   }
 
-  resetBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
+  resetBtn.addEventListener("click", () => {
     resetState = "choice";
     renderResetPanel();
   });
 
-  resetAllBtn.addEventListener("click", async () => {
-    const ok = await showConfirm({
-      title: "Réinitialisation complète",
-      message: "Cette action supprimera tout le planning. Action irréversible.",
-      confirmText: "Tout supprimer",
-    });
-
-    if (!ok) return;
-
-    await clearAllPlanning();
-    showToast("Planning entièrement réinitialisé");
-    closeMenu();
-  });
-
-  resetMonthBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
+  resetMonthBtn.addEventListener("click", () => {
     resetDate = new Date();
     resetState = "month";
     updateResetMonthLabel();
     renderResetPanel();
   });
 
-  resetPrevMonth.addEventListener("click", (e) => {
-    e.stopPropagation();
-    resetDate.setMonth(resetDate.getMonth() - 1);
-    updateResetMonthLabel();
-  });
-
-  resetNextMonth.addEventListener("click", (e) => {
-    e.stopPropagation();
-    resetDate.setMonth(resetDate.getMonth() + 1);
-    updateResetMonthLabel();
-  });
-
   let holdTimer = null;
-  let holdDuration = 1200; // ms
+  const HOLD_DURATION = 1200;
 
   resetConfirmMonth.addEventListener("mousedown", startHold);
   resetConfirmMonth.addEventListener("touchstart", startHold);
-
   resetConfirmMonth.addEventListener("mouseup", cancelHold);
   resetConfirmMonth.addEventListener("mouseleave", cancelHold);
   resetConfirmMonth.addEventListener("touchend", cancelHold);
@@ -371,18 +257,16 @@ export function initMenu() {
       ).padStart(2, "0")}`;
 
       await clearPlanningMonth(monthISO);
-
       showToast("Planning du mois réinitialisé");
 
       resetState = "closed";
       renderResetPanel();
       closeMenu();
-    }, holdDuration);
+    }, HOLD_DURATION);
   }
 
   function cancelHold() {
     if (!holdTimer) return;
-
     clearTimeout(holdTimer);
     holdTimer = null;
     resetConfirmMonth.classList.remove("holding");
@@ -393,11 +277,7 @@ export function initMenu() {
   // =======================
 
   menu.addEventListener("click", (e) => {
-    // 🔒 Tant qu'un reset est en cours, on bloque la navigation
-    if (resetState !== "closed") {
-      e.stopPropagation();
-      return;
-    }
+    if (resetState !== "closed") return;
 
     const action = e.target.dataset.action;
     if (!action) return;
@@ -414,11 +294,6 @@ export function initMenu() {
         break;
       case "guided-month":
         showGuidedMonth();
-        break;
-      case "tetribus":
-        import("../router.js").then(({ showTetribusView }) => {
-          showTetribusView();
-        });
         break;
     }
 
@@ -445,47 +320,10 @@ function showToast(message) {
   toast.textContent = message;
 
   document.body.appendChild(toast);
-
-  requestAnimationFrame(() => {
-    toast.classList.add("visible");
-  });
+  requestAnimationFrame(() => toast.classList.add("visible"));
 
   setTimeout(() => {
     toast.classList.remove("visible");
     setTimeout(() => toast.remove(), 300);
   }, 2200);
-}
-
-// =======================
-// CONFIRM MODALE
-// =======================
-
-function showConfirm({ title, message, confirmText = "Confirmer" }) {
-  return new Promise((resolve) => {
-    const overlay = document.createElement("div");
-    overlay.className = "confirm-overlay";
-
-    const modal = document.createElement("div");
-    modal.className = "confirm-modal";
-
-    modal.innerHTML = `
-      <h3>${title}</h3>
-      <p>${message}</p>
-      <div class="confirm-actions">
-        <button class="confirm-cancel">Annuler</button>
-        <button class="confirm-ok danger">${confirmText}</button>
-      </div>
-    `;
-
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-
-    const cleanup = (result) => {
-      overlay.remove();
-      resolve(result);
-    };
-
-    overlay.querySelector(".confirm-cancel").onclick = () => cleanup(false);
-    overlay.querySelector(".confirm-ok").onclick = () => cleanup(true);
-  });
 }
