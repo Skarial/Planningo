@@ -273,6 +273,24 @@ export function initMenu() {
   }
 
   // =======================
+  // RESET — NAVIGATION MOIS
+  // =======================
+
+  resetPrevMonth.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    resetDate.setMonth(resetDate.getMonth() - 1);
+    updateResetMonthLabel();
+  });
+
+  resetNextMonth.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    resetDate.setMonth(resetDate.getMonth() + 1);
+    updateResetMonthLabel();
+  });
+
+  // =======================
   // NAVIGATION
   // =======================
 
