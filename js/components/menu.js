@@ -281,6 +281,14 @@ export function initMenu() {
   resetBtn.addEventListener("click", () => {
     resetState = "choice";
     renderResetPanel();
+
+    // ⬇️ Amener visuellement le panneau de réinitialisation
+    requestAnimationFrame(() => {
+      resetPanel.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
   });
 
   resetMonthBtn.addEventListener("click", () => {

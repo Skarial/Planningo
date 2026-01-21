@@ -1,7 +1,7 @@
 /*
   Application Planning PWA
 */
-export const APP_VERSION = "1.0.36";
+export const APP_VERSION = "1.0.38";
 
 import { registerServiceWorker } from "./sw/sw-register.js";
 import { initServicesIfNeeded } from "./data/services-init.js";
@@ -64,14 +64,18 @@ function showUpdateBanner() {
   banner.className = "update-banner visible";
 
   banner.innerHTML = `
-    <div class="update-banner-text">
-      Une nouvelle version est disponible.
-    </div>
-    <div class="update-banner-actions">
-      <button id="update-now">Mettre à jour</button>
-      <button id="update-later">Plus tard</button>
-    </div>
-  `;
+  <div class="update-banner-text">
+    Une nouvelle version est disponible.
+  </div>
+  <div class="update-banner-actions">
+    <button id="update-now" class="update-btn update-btn-primary">
+      Mettre à jour
+    </button>
+    <button id="update-later" class="update-btn update-btn-secondary">
+      Plus tard
+    </button>
+  </div>
+`;
 
   document.body.appendChild(banner);
 
@@ -85,11 +89,5 @@ function showUpdateBanner() {
     banner.remove();
   };
 }
-
-
-
-
-
-
 
 

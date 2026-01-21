@@ -398,43 +398,41 @@ body {
    BANNER UPDATE (PRO)
    ========================= */
 
-.update-banner {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%, -100%);
-  z-index: 10000;
-
-  width: calc(100% - 24px);
-  max-width: 720px;
-
-  background: #ffffff;
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-
-  padding: 14px 16px;
+.update-banner-actions {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-
-  opacity: 0;
-  transition:
-    transform 0.3s ease,
-    opacity 0.3s ease;
+  gap: 10px;
 }
 
-.update-banner.visible {
-  transform: translate(-50%, 12px);
-  opacity: 1;
-}
-
-.update-banner-text {
+/* Base bouton */
+.update-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
   font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-text);
-  line-height: 1.4;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+
+/* Bouton principal */
+.update-btn-primary {
+  background: linear-gradient(135deg, #0066ff, #0053cc);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 102, 255, 0.35);
+}
+
+.update-btn-primary:hover {
+  background: linear-gradient(135deg, #0053cc, #0047b3);
+}
+
+/* Bouton secondaire */
+.update-btn-secondary {
+  background: #ffffff;
+  color: #444;
+  border: 1px solid #d0d4d9;
+}
+
+.update-btn-secondary:hover {
+  background: #f1f3f5;
 }
 
 /* =========================
