@@ -56,7 +56,7 @@ export async function renderMonth() {
 
   const prevBtn = document.createElement("button");
   prevBtn.className = "month-btn";
-  prevBtn.textContent = `← ${getMonthLabelFR(prevMonthYear, prevMonthIndex)}`;
+  prevBtn.textContent = ` ${getMonthLabelFR(prevMonthYear, prevMonthIndex)}`;
   prevBtn.onclick = () => {
     displayedMonthIndex--;
     if (displayedMonthIndex < 0) {
@@ -75,7 +75,7 @@ export async function renderMonth() {
 
   const nextBtn = document.createElement("button");
   nextBtn.className = "month-btn";
-  nextBtn.textContent = `${getMonthLabelFR(nextMonthYear, nextMonthIndex)} →`;
+  nextBtn.textContent = `${getMonthLabelFR(nextMonthYear, nextMonthIndex)} `;
   nextBtn.onclick = () => {
     displayedMonthIndex++;
     if (displayedMonthIndex > 11) {

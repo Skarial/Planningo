@@ -74,22 +74,3 @@ self.addEventListener("message", (event) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

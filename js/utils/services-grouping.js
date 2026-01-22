@@ -43,10 +43,6 @@ export async function groupServices(SERVICES_CATALOG) {
     if (!hasActivePeriode) return;
 
     // =======================
-    // SERVICES NUMÉRIQUES (LIGNES)
-    // =======================
-
-    // =======================
     // SERVICES NUMÉRIQUES (lignes)
     // =======================
 
