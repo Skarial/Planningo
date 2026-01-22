@@ -14,15 +14,12 @@
   --bg-body: #f5f6f8;
   --bg-card: #ffffff;
   --bg-day: #f9fafb;
-  --bg-input-disabled: #e9ecef;
   --bg-button-secondary: #e9ecef;
   --bg-button-secondary-hover: #dfe3e7;
-  --bg-extra-button: #f5f6f8;
   --bg-extra-button-hover: #eceff3;
   --bg-suggest-hover: #f0f4ff;
   --border-color: #ccc;
   --border-color-light: #dee2e6;
-  --border-color-extra: #d0d4d9;
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
   --spacing-sm: 6px;
   --spacing-md: 12px;
@@ -32,7 +29,6 @@
   --radius-md: 8px;
   --radius-lg: 10px;
   --input-height: 44px;
-  --extra-button-height: 34px;
   --max-width-container: 1100px;
   --max-width-card-desktop: 640px;
 }
@@ -84,17 +80,6 @@ body {
   margin-bottom: 8px;
 }
 
-.primary-btn {
-  height: var(--input-height);
-  padding: 0 16px;
-  border-radius: var(--radius-md);
-  border: none;
-  background: var(--color-primary);
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-}
-
 .toast-notification {
   position: fixed;
   top: 16px;
@@ -139,6 +124,44 @@ body {
   color: var(--color-text-muted);
 }
 
+.week-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg-body);
+  padding-bottom: 8px;
+}
+
+/* Zone scrollable des cartes semaine */
+.week-scroll {
+  position: relative;
+  height: calc(100dvh - 140px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Indices visuels swipe */
+.week-scroll::before,
+.week-scroll::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 22px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.week-scroll::before {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-body), rgba(245, 246, 248, 0));
+}
+
+.week-scroll::after {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-body), rgba(245, 246, 248, 0));
+}
+
 .today-badge {
   align-self: flex-start;
   margin-top: 4px;
@@ -174,26 +197,123 @@ body {
   margin: 8px 0;
 }
 .today-reset-btn {
-  padding: 6px 12px;
-  font-size: 0.9rem;
+  height: 36px;
+  padding: 0 10px;
+
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+
+  font-size: 0.85rem;
   font-weight: 600;
-  border-radius: 6px;
-  border: none;
-  background: #e9ecef;
+  color: var(--color-primary);
+
   cursor: pointer;
+
+  transition:
+    color 0.15s ease,
+    transform 0.1s ease,
+    background 0.15s ease;
 }
+
+/* Hover discret (desktop) */
+.today-reset-btn:hover {
+  background: rgba(0, 102, 255, 0.08);
+}
+
+/* Pression */
+.today-reset-btn:active {
+  transform: scale(0.95);
+  background: rgba(0, 102, 255, 0.14);
+}
+
 .today-arrow {
-  padding: 6px 10px;
-  font-size: 1rem;
-  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  background: transparent;
   border: none;
-  background: #e9ecef;
+  border-radius: 50%;
+
   cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
+}
+
+.today-arrow:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.today-arrow:active {
+  transform: scale(0.9);
+}
+
+.today-arrow::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background-color: var(--color-primary);
+
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+.today-arrow:hover::before {
+  background-color: var(--color-primary-hover);
+}
+
+.arrow-left::before {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+}
+
+.arrow-right::before {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }
 
 /* ==========================================================================
    4. PLANNING MENSUEL & SUGGESTIONS
    ========================================================================== */
+.suggest-list.above {
+  bottom: 100%;
+  top: auto;
+  margin-bottom: 6px;
+}
+
+.suggest-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+
+  bottom: 100%; /* au-dessus de l’input */
+  margin-bottom: 6px;
+
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+
+  max-height: 160px;
+  overflow-y: auto;
+
+  z-index: 20;
+}
+
+.suggest-item {
+  padding: var(--spacing-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
 
 .month-nav {
   display: flex;
@@ -226,12 +346,67 @@ body {
   gap: 6px;
   min-width: 504px;
 }
+
+.day-header {
+  text-align: center;
+  font-weight: 700;
+}
+
+.day-number {
+  font-weight: 600;
+}
+
+.extra-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px auto 0;
+  height: 24px;
+  padding: 0 6px;
+
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+
+  font-size: 0.9rem;
+  line-height: 1;
+  color: var(--color-text-muted);
+
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    transform 0.1s ease;
+}
+
+/* Hover discret (desktop) */
+.extra-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* État actif */
+.extra-btn.active {
+  color: var(--color-primary);
+  background: rgba(0, 102, 255, 0.12);
+}
+
+/* Feedback pression */
+.extra-btn:active {
+  transform: scale(0.92);
+}
+
 .day {
+  position: relative;
   background: var(--bg-day);
   border-radius: var(--radius-md);
   padding: 10px;
   text-align: center;
   aspect-ratio: 1 / 1;
+}
+
+.day.empty-day {
+  background: transparent;
+  box-shadow: none;
 }
 
 .service-input {
@@ -252,22 +427,6 @@ body {
 }
 .service-label.repos {
   color: var(--color-repos);
-}
-
-.suggest-list {
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  max-height: 160px;
-  overflow-y: auto;
-}
-.suggest-item {
-  padding: var(--spacing-sm);
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-.suggest-item:hover {
-  background: var(--bg-suggest-hover);
 }
 
 /* ==========================================================================
@@ -326,6 +485,21 @@ body {
 #reset-month-picker button::after {
   content: none;
 }
+.reset-month-nav {
+  display: flex;
+  align-items: center; /* alignement vertical */
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 12px 16px;
+  border-top: 1px solid #e5e5ea;
+}
+#reset-month-label {
+  flex: 1;
+  text-align: center;
+  font-weight: 600;
+  white-space: nowrap;
+}
 
 #menu-toggle {
   position: fixed;
@@ -372,6 +546,17 @@ body {
   padding: 1rem;
   -webkit-overflow-scrolling: touch;
 }
+#menu-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0;
+}
+
+#app-version {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
 
 .menu-section {
   margin-bottom: 1.5rem;
@@ -384,15 +569,13 @@ body {
   text-transform: uppercase;
 }
 
-.menu-section > button {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 0;
-  overflow: hidden;
-  width: 100%;
-}
 .menu-section button {
   all: unset;
+
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+
   display: flex;
   align-items: center;
   gap: 12px;
@@ -405,6 +588,7 @@ body {
   box-sizing: border-box;
   width: 100%;
 }
+
 .menu-section button:active {
   background: #f2f2f7;
 }
@@ -430,35 +614,21 @@ body {
 
 .menu-long-press {
   position: relative;
-  overflow: hidden;
-}
-.menu-long-press::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 8px;
-  opacity: 0.9;
+  display: flex;
+  align-items: center;
   width: 100%;
-  background: #d32f2f;
-  transform: scaleX(0);
-  transform-origin: left;
+  padding: 14px 16px;
+  box-sizing: border-box;
+
+  cursor: pointer;
+  touch-action: none;
+  background: transparent;
 }
 
+/* état appui long */
 .menu-long-press.holding {
-  background: rgba(211, 47, 47, 0.08);
-}
-
-.menu-long-press.holding::after {
-  animation: long-press-progress 1.2s linear forwards;
-}
-@keyframes long-press-progress {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
+  color: #d32f2f;
+  font-weight: 600;
 }
 
 /* Formulaires menu */
@@ -553,5 +723,32 @@ body {
   .month-btn {
     padding: 8px 10px;
     font-size: 0.75rem;
+  }
+}
+
+/* === BARRE APPUI LONG — ROBUSTE === */
+
+.long-press-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  height: 7px;
+  width: 0%;
+
+  background: #d32f2f;
+  pointer-events: none;
+}
+
+.menu-long-press.holding .long-press-bar {
+  animation: longPressFill 1.2s linear forwards;
+}
+
+@keyframes longPressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
   }
 }

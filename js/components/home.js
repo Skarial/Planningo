@@ -16,7 +16,8 @@ function renderTodayButton(container) {
 
   const btnPrev = document.createElement("button");
   btnPrev.className = "today-arrow";
-  btnPrev.textContent = "←";
+  btnPrev.textContent = "";
+  btnPrev.classList.add("arrow-left");
 
   const btn = document.createElement("button");
   btn.className = "today-reset-btn";
@@ -24,7 +25,8 @@ function renderTodayButton(container) {
 
   const btnNext = document.createElement("button");
   btnNext.className = "today-arrow";
-  btnNext.textContent = "→";
+  btnNext.textContent = "";
+  btnNext.classList.add("arrow-right");
 
   btnPrev.addEventListener("click", () => {
     currentWeekStart.setDate(currentWeekStart.getDate() - 7);
@@ -53,8 +55,16 @@ function updateTodayButtonVisibility(container) {
 
   const todayMonday = getMonday(new Date()).getTime();
   const currentMonday = currentWeekStart.getTime();
+  const isCurrentWeek = todayMonday === currentMonday;
 
-  wrapper.style.display = todayMonday === currentMonday ? "none" : "flex";
+  // Le wrapper reste toujours visible (hauteur constante)
+  wrapper.classList.remove("hidden-today-nav");
+
+  // On masque uniquement le bouton central
+  const resetBtn = wrapper.querySelector(".today-reset-btn");
+  if (resetBtn) {
+    resetBtn.style.visibility = isCurrentWeek ? "hidden" : "visible";
+  }
 }
 
 export async function renderHome() {
@@ -66,10 +76,15 @@ export async function renderHome() {
 
   container.innerHTML = "";
 
-  renderTodayButton(container);
+  // 1) HEADER FIXE (flèches + bouton aujourd’hui)
+  const header = document.createElement("div");
+  header.className = "week-header";
+  container.appendChild(header);
+  renderTodayButton(header);
 
+  // 2) ZONE SCROLLABLE (cartes semaine)
   const scrollContainer = document.createElement("div");
-  scrollContainer.className = "home-scroll";
+  scrollContainer.className = "week-scroll";
   container.appendChild(scrollContainer);
 
   const weekContainer = document.createElement("div");

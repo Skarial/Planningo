@@ -26,6 +26,15 @@ async function loadSeasonForm() {
 // =======================
 // MENU
 // =======================
+function afficherResetEnHaut() {
+  const resetPanel = document.getElementById("reset-panel");
+  if (!resetPanel) return;
+
+  resetPanel.scrollIntoView({
+    block: "start",
+    behavior: "auto",
+  });
+}
 
 export function initMenu() {
   // =======================
@@ -42,6 +51,21 @@ export function initMenu() {
   const resetPrevMonth = document.getElementById("reset-prev-month");
   const resetNextMonth = document.getElementById("reset-next-month");
   const resetConfirmMonth = document.getElementById("reset-confirm-month");
+
+  // =======================
+  // BARRE VISUELLE — APPUI LONG (OBLIGATOIRE)
+  // =======================
+
+  [resetAllBtn, resetConfirmMonth].forEach((btn) => {
+    if (!btn) return;
+
+    // éviter doublon
+    if (btn.querySelector(".long-press-bar")) return;
+
+    const bar = document.createElement("div");
+    bar.className = "long-press-bar";
+    btn.appendChild(bar);
+  });
 
   // =======================
   // ÉTATS
@@ -91,15 +115,9 @@ export function initMenu() {
     resetAllBtn.classList.remove("holding");
   }
 
-  resetAllBtn.addEventListener("touchstart", startResetAllPress, {
-    passive: false,
-  });
-  resetAllBtn.addEventListener("touchend", cancelResetAllPress);
-  resetAllBtn.addEventListener("touchcancel", cancelResetAllPress);
-
-  resetAllBtn.addEventListener("mousedown", startResetAllPress);
-  resetAllBtn.addEventListener("mouseup", cancelResetAllPress);
-  resetAllBtn.addEventListener("mouseleave", cancelResetAllPress);
+  resetAllBtn.addEventListener("pointerdown", startResetAllPress);
+  resetAllBtn.addEventListener("pointerup", cancelResetAllPress);
+  resetAllBtn.addEventListener("pointercancel", cancelResetAllPress);
 
   // =======================
   // MENU — DOM
@@ -120,7 +138,7 @@ export function initMenu() {
 
   menu.classList.remove("open");
   overlay.classList.remove("open");
-  menu.setAttribute("aria-hidden", "true");
+  menu.inert = true;
 
   // =======================
   // SAISON
@@ -189,7 +207,7 @@ export function initMenu() {
   function openMenu() {
     menu.classList.add("open");
     overlay.classList.add("open");
-    menu.setAttribute("aria-hidden", "false");
+    menu.inert = false;
     isOpen = true;
     document.body.style.overflow = "hidden";
   }
@@ -197,7 +215,7 @@ export function initMenu() {
   function closeMenu() {
     menu.classList.remove("open");
     overlay.classList.remove("open");
-    menu.setAttribute("aria-hidden", "true");
+    menu.inert = true;
 
     resetState = "closed";
     renderResetPanel();
@@ -292,7 +310,7 @@ export function initMenu() {
   resetBtn.addEventListener("click", () => {
     resetState = "choice";
     renderResetPanel();
-    remonterMenuEnHaut();
+    afficherResetEnHaut();
   });
 
   resetMonthBtn.addEventListener("click", () => {
@@ -300,21 +318,23 @@ export function initMenu() {
     resetState = "month";
     updateResetMonthLabel();
     renderResetPanel();
-    remonterMenuEnHaut();
+    afficherResetEnHaut();
   });
 
   let holdTimer = null;
   const HOLD_DURATION = 1200;
 
-  resetConfirmMonth.addEventListener("mousedown", startHold);
-  resetConfirmMonth.addEventListener("touchstart", startHold);
-  resetConfirmMonth.addEventListener("mouseup", cancelHold);
-  resetConfirmMonth.addEventListener("mouseleave", cancelHold);
-  resetConfirmMonth.addEventListener("touchend", cancelHold);
-  resetConfirmMonth.addEventListener("touchcancel", cancelHold);
+  resetConfirmMonth.addEventListener("pointerdown", startHold);
+  resetConfirmMonth.addEventListener("pointerup", cancelHold);
+  resetConfirmMonth.addEventListener("pointercancel", cancelHold);
 
   function startHold(e) {
     e.preventDefault();
+    e.stopPropagation();
+
+    // 🔒 Capture explicite du pointeur
+    resetConfirmMonth.setPointerCapture(e.pointerId);
+
     if (holdTimer) return;
 
     resetConfirmMonth.classList.add("holding");
@@ -336,8 +356,13 @@ export function initMenu() {
     }, HOLD_DURATION);
   }
 
-  function cancelHold() {
+  function cancelHold(e) {
+    if (e?.pointerId !== undefined) {
+      resetConfirmMonth.releasePointerCapture(e.pointerId);
+    }
+
     if (!holdTimer) return;
+
     clearTimeout(holdTimer);
     holdTimer = null;
     resetConfirmMonth.classList.remove("holding");
@@ -418,7 +443,6 @@ function showToast(message) {
   toast.textContent = message;
 
   document.body.appendChild(toast);
-  requestAnimationFrame(() => toast.classList.add("visible"));
 
   setTimeout(() => {
     toast.classList.remove("visible");
