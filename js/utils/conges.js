@@ -1,5 +1,8 @@
 // utils/conges.js
 // Gestion centrale des congés (logique métier pure, sans UI)
+// ⚠️ Hypothèse métier verrouillée :
+// - Une seule période de congés à la fois
+// - Pas de congés multiples ou fractionnés
 
 import { getConfig } from "../data/storage.js";
 import { toISODateLocal } from "../utils.js";
@@ -89,6 +92,11 @@ export async function isDateInConges(date) {
  * - congés début mois → lendemain de fin congés
  * - congés milieu mois → jour 1
  */
+// ⚠️ IMPORTANT
+// Les congés en milieu de mois sont gérés dynamiquement
+// par renderDay() via isDateInConges()
+// Cette fonction ne gère QUE le point de départ initial
+
 export async function getGuidedStartDay(year, monthIndex) {
   const period = await getCongesPeriod();
   if (!period) return 1;
@@ -130,7 +138,7 @@ export async function getCongesDaysISOForMonth(year, monthIndex) {
   if (!period) return [];
 
   const days = [];
-  const d = new Date(period.start);
+  const d = new Date(period.start.getTime());
 
   while (d <= period.end) {
     if (d.getFullYear() === year && d.getMonth() === monthIndex) {
