@@ -548,7 +548,7 @@ body {
 }
 
 /* ==========================================================================
-   6. MENU LATÉRAL (iOS)
+   6. MENU LATÉRAL 
    ========================================================================== */
 
 #reset-panel button::after,
@@ -558,6 +558,11 @@ body {
 /* === SUPPRESSION FEEDBACK TAP MOBILE (MENU) === */
 .menu-section button,
 .menu-section button * {
+  -webkit-tap-highlight-color: transparent;
+}
+/* === SUPPRESSION TAP HIGHLIGHT MENU (ANDROID / iOS) === */
+#side-menu,
+#side-menu * {
   -webkit-tap-highlight-color: transparent;
 }
 
