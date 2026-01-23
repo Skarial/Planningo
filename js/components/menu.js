@@ -209,21 +209,21 @@ export function initMenu() {
     overlay.classList.add("open");
 
     menu.removeAttribute("inert");
+    menu.setAttribute("aria-hidden", "false");
 
     isOpen = true;
     document.body.style.overflow = "hidden";
   }
 
   function closeMenu() {
-    // retirer le focus AVANT tout
     if (document.activeElement) {
       document.activeElement.blur();
     }
 
     menu.classList.remove("open");
     overlay.classList.remove("open");
-
-    menu.setAttribute("inert", "");
+    menu.inert = true;
+    menu.setAttribute("aria-hidden", "true");
 
     resetState = "closed";
     renderResetPanel();
