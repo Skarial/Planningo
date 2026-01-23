@@ -7,6 +7,7 @@ import {
 import { groupServices } from "../utils/services-grouping.js";
 import { toISODateLocal } from "../utils.js";
 import { showHome } from "../router.js";
+import { getGuidedStartDay, isDateInConges } from "../utils/conges.js";
 
 // =======================
 // ÉTAT MOIS GUIDÉ
@@ -154,13 +155,42 @@ export async function showGuidedMonth(forcedDate = null) {
   }
 
   await resumeCurrentDayFromDB();
-  renderDay();
+  // =======================
+  // CONGÉS — AJUSTEMENT DÉMARRAGE
+  // =======================
+
+  const guidedStartDay = await getGuidedStartDay(year, monthIndex);
+
+  // mois entièrement en congés
+  if (guidedStartDay === null) {
+    currentDay = daysInMonth + 1;
+  } else {
+    // si aucun jour encore saisi, forcer le départ
+    if (currentDay === 1 && guidedStartDay > 1) {
+      currentDay = guidedStartDay;
+    }
+  }
+
+  await renderDay();
 
   // =======================
   // RENDER JOUR
   // =======================
 
-  function renderDay() {
+  async function renderDay() {
+    // =======================
+    // CONGÉS — SAUT AUTOMATIQUE
+    // =======================
+
+    while (currentDay <= daysInMonth) {
+      const testDate = new Date(year, monthIndex, currentDay);
+      const inConges = await isDateInConges(testDate);
+
+      if (!inConges) break;
+
+      currentDay++;
+    }
+
     if (currentDay > daysInMonth) {
       renderCompletedView();
       return;
@@ -218,7 +248,7 @@ export async function showGuidedMonth(forcedDate = null) {
 
         // Retour UI
         currentDay--;
-        renderDay();
+        await renderDay();
       };
 
       servicesContainer.appendChild(cancelBtn);
@@ -276,7 +306,7 @@ export async function showGuidedMonth(forcedDate = null) {
       });
 
       currentDay++;
-      renderDay();
+      await renderDay();
     };
 
     servicesContainer.appendChild(btn);

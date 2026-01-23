@@ -1,63 +1,143 @@
+// utils/conges.js
+// Gestion centrale des congés (logique métier pure, sans UI)
+
 import { getConfig } from "../data/storage.js";
+import { toISODateLocal } from "../utils.js";
 
-/**
- * Retourne la période de congés configurée ou null
- * Structure attendue :
- * { start: "yyyy-mm-dd", end: "yyyy-mm-dd" }
- */
-export async function getConges() {
-  const entry = await getConfig("conges");
-  const c = entry?.value;
+// =======================
+// PARSING DATE jj/mm/aaaa
+// =======================
 
+export function parseFRDate(input) {
+  if (typeof input !== "string") return null;
+
+  const match = input.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!match) return null;
+
+  const [, dd, mm, yyyy] = match;
+  const day = Number(dd);
+  const month = Number(mm) - 1;
+  const year = Number(yyyy);
+
+  const date = new Date(year, month, day);
+
+  // validation réelle de la date
   if (
-    !c ||
-    typeof c.start !== "string" ||
-    typeof c.end !== "string" ||
-    c.start === "" ||
-    c.end === ""
+    date.getFullYear() !== year ||
+    date.getMonth() !== month ||
+    date.getDate() !== day
   ) {
     return null;
   }
 
-  return {
-    start: c.start,
-    end: c.end,
-  };
+  return date;
 }
 
-/**
- * Indique si une date ISO (yyyy-mm-dd) est dans les congés
- * Bornes INCLUSES
- */
-export async function isDateInConges(isoDate) {
-  const conges = await getConges();
-  if (!conges) return false;
+// =======================
+// LECTURE CONGÉS CONFIG
+// =======================
 
-  return isoDate >= conges.start && isoDate <= conges.end;
-}
+export async function getCongesPeriod() {
+  const entry = await getConfig("conges");
+  const value = entry?.value;
 
-/**
- * Retourne le prochain jour saisissable dans un mois donné,
- * en sautant les jours en congé.
- *
- * @param {number} year
- * @param {number} monthIndex (0-11)
- * @param {number} fromDay (1-31)
- * @returns {number|null}
- */
-export async function getNextEditableDay({ year, monthIndex, fromDay }) {
-  const conges = await getConges();
+  if (!value) return null;
 
-  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+  const start = parseFRDate(value.start);
+  const end = parseFRDate(value.end);
 
-  for (let d = fromDay; d <= daysInMonth; d++) {
-    const date = new Date(year, monthIndex, d);
-    const iso = date.toISOString().slice(0, 10);
+  if (!start || !end) return null;
 
-    if (!conges || iso < conges.start || iso > conges.end) {
-      return d;
-    }
+  // normalisation ordre
+  if (start > end) {
+    return { start: end, end: start };
   }
 
-  return null;
+  return { start, end };
+}
+
+// =======================
+// TEST DATE EN CONGÉS
+// =======================
+
+export async function isDateInConges(date) {
+  const period = await getCongesPeriod();
+  if (!period) return false;
+
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+
+  const start = new Date(period.start);
+  const end = new Date(period.end);
+  start.setHours(0, 0, 0, 0);
+  end.setHours(0, 0, 0, 0);
+
+  return d >= start && d <= end;
+}
+
+// =======================
+// LOGIQUE SAISIE GUIDÉE
+// =======================
+
+/**
+ * Calcule le premier jour saisissable du mois
+ * selon la période de congés.
+ *
+ * CAS GÉRÉS (CERTAIN) :
+ * - pas de congés → jour 1
+ * - congés hors mois → jour 1
+ * - congés début mois → lendemain de fin congés
+ * - congés milieu mois → jour 1
+ */
+export async function getGuidedStartDay(year, monthIndex) {
+  const period = await getCongesPeriod();
+  if (!period) return 1;
+
+  const monthStart = new Date(year, monthIndex, 1);
+  const monthEnd = new Date(year, monthIndex + 1, 0);
+
+  const cStart = period.start;
+  const cEnd = period.end;
+
+  // congés hors mois
+  if (cEnd < monthStart || cStart > monthEnd) {
+    return 1;
+  }
+
+  // congés qui commencent avant ou au début du mois
+  if (cStart <= monthStart && cEnd >= monthStart) {
+    const nextDay = new Date(cEnd);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    if (nextDay > monthEnd) {
+      // mois entièrement en congés
+      return null;
+    }
+
+    return nextDay.getDate();
+  }
+
+  // congés au milieu → on commence normalement
+  return 1;
+}
+
+// =======================
+// UTILITAIRE : LISTE JOURS BLOQUÉS
+// =======================
+
+export async function getCongesDaysISOForMonth(year, monthIndex) {
+  const period = await getCongesPeriod();
+  if (!period) return [];
+
+  const days = [];
+  const d = new Date(period.start);
+
+  while (d <= period.end) {
+    if (d.getFullYear() === year && d.getMonth() === monthIndex) {
+      days.push(toISODateLocal(d));
+    }
+    d.setDate(d.getDate() + 1);
+  }
+
+  return days;
 }

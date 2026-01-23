@@ -16,6 +16,7 @@ import {
   toISODateLocal,
 } from "../utils.js";
 import { getActivePeriodeLibelle } from "../utils/periods.js";
+import { getCongesDaysISOForMonth } from "../utils/conges.js";
 
 // =======================
 // ÉTAT LOCAL (AFFICHAGE)
@@ -98,6 +99,16 @@ export async function renderMonth() {
 
   // période active globale (UNE fois)
   const activePeriode = await getActivePeriodeLibelle();
+  // =======================
+  // CONGÉS — JOURS DU MOIS
+  // =======================
+
+  const congesDays = await getCongesDaysISOForMonth(
+    displayedYear,
+    displayedMonthIndex,
+  );
+
+  const congesSet = new Set(congesDays);
 
   const monthState = {};
 
@@ -155,6 +166,7 @@ export async function renderMonth() {
 
   for (const date of days) {
     const iso = toISODateLocal(date);
+    const isConges = congesSet.has(iso);
 
     if (!monthState[iso]) {
       monthState[iso] = {
@@ -169,24 +181,40 @@ export async function renderMonth() {
 
     const day = document.createElement("div");
     day.className = "day";
+    if (isConges) {
+      day.classList.add("day-conges");
+    }
 
     const num = document.createElement("div");
     num.className = "day-number";
     num.textContent = formatDayNumber(date);
-
     const label = document.createElement("div");
     label.className = "service-label";
-    label.textContent = entry.serviceCode
-      ? formatServiceLabel(entry.serviceCode)
-      : "";
 
-    if (entry.serviceCode === "REPOS") label.classList.add("repos");
+    if (isConges) {
+      label.textContent = "REPOS";
+      label.classList.add("repos");
+    } else {
+      label.textContent = entry.serviceCode
+        ? formatServiceLabel(entry.serviceCode)
+        : "";
+
+      if (entry.serviceCode === "REPOS") {
+        label.classList.add("repos");
+      }
+    }
 
     const input = document.createElement("input");
     input.type = "text";
     input.className = "service-input";
-    input.value = entry.serviceCode;
-    if (locked) input.disabled = true;
+
+    if (isConges) {
+      input.value = "REPOS";
+      input.disabled = true;
+    } else {
+      input.value = entry.serviceCode;
+      if (locked) input.disabled = true;
+    }
 
     const suggest = document.createElement("div");
     suggest.className = "suggest-list";
@@ -210,6 +238,12 @@ export async function renderMonth() {
     extraBtn.innerHTML = `⏱ €`;
 
     function updateExtra() {
+      if (isConges) {
+        extraBtn.style.display = "none";
+        entry.extra = false;
+        return;
+      }
+
       if (entry.serviceCode === "REPOS") {
         extraBtn.style.display = "none";
         entry.extra = false;
