@@ -1,11 +1,28 @@
 console.log("MENU.JS — CLEAN RESET LOGIC");
+import {
+  refreshCurrentView,
+  showHome,
+  showDay,
+  showMonth,
+  showGuidedMonth,
+} from "../router.js";
 
-import { showHome, showDay, showMonth, showGuidedMonth } from "../router.js";
 import { clearAllPlanning, clearPlanningMonth } from "../data/storage.js";
 import { setConsultedDate } from "../state/consulted-date.js";
 import { getConfig, setConfig } from "../data/storage.js";
 import { APP_VERSION } from "../app.js";
 import { parseFRDate } from "../utils/conges.js";
+function isoToFR(iso) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+}
+
+function frToISO(fr) {
+  if (!fr) return "";
+  const [d, m, y] = fr.split("/");
+  return `${y}-${m}-${d}`;
+}
 
 // =======================
 // SAISON — RESTAURATION
@@ -154,8 +171,8 @@ export function initMenu() {
     const value = entry?.value;
     if (!value) return;
 
-    congesStart.value = value.start || "";
-    congesEnd.value = value.end || "";
+    congesStart.value = frToISO(value.start);
+    congesEnd.value = frToISO(value.end);
   }
 
   loadCongesForm();
@@ -165,23 +182,21 @@ export function initMenu() {
   });
 
   congesSubmit?.addEventListener("click", async () => {
-    const startRaw = congesStart.value.trim();
-    const endRaw = congesEnd.value.trim();
-
-    const startDate = parseFRDate(startRaw);
-    const endDate = parseFRDate(endRaw);
-
-    if (!startDate || !endDate) {
-      showToast("Format invalide (jj/mm/aaaa)");
+    if (!congesStart.value || !congesEnd.value) {
+      showToast("Dates invalides");
       return;
     }
 
+    const startFR = isoToFR(congesStart.value);
+    const endFR = isoToFR(congesEnd.value);
+
     await setConfig("conges", {
-      start: startRaw,
-      end: endRaw,
+      start: startFR,
+      end: endFR,
     });
 
     congesForm.classList.add("hidden");
+    refreshCurrentView();
     closeMenu();
   });
 
@@ -190,6 +205,8 @@ export function initMenu() {
     congesStart.value = "";
     congesEnd.value = "";
     congesForm.classList.add("hidden");
+    refreshCurrentView();
+
     closeMenu();
   });
 

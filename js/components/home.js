@@ -1,5 +1,5 @@
 // home.js : vue Accueil — semaine glissante (swipe horizontal)
-
+import { isDateInConges } from "../utils/conges.js";
 import { getPlanningEntry, getAllServices } from "../data/storage.js";
 import { toISODateLocal } from "../utils.js";
 import { getActivePeriodeLibelle } from "../utils/periods.js";
@@ -118,14 +118,31 @@ async function renderWeek(container) {
     const iso = toISODateLocal(d);
     const entry = await getPlanningEntry(iso);
 
-    const serviceCode = entry?.serviceCode || "REPOS";
+    const isConges = await isDateInConges(d);
+
+    let serviceLabel = "";
+    let serviceClass = "";
+    let horaireHTML = "";
     const isExtra = entry?.extra === true;
 
-    const horaireHTML = buildHorairesHome(
-      serviceCode,
-      activePeriode,
-      allServices,
-    );
+    if (isConges) {
+      serviceLabel = "CONGÉ";
+      serviceClass = "conges";
+      // on réutilise le style visuel existant
+    } else {
+      const serviceCode = entry?.serviceCode || "REPOS";
+      serviceLabel = serviceCode;
+
+      if (serviceCode === "REPOS") {
+        serviceClass = "repos";
+      } else {
+        horaireHTML = buildHorairesHome(
+          serviceCode,
+          activePeriode,
+          allServices,
+        );
+      }
+    }
 
     const card = document.createElement("div");
     card.className = "card week-day-card";
@@ -135,30 +152,28 @@ async function renderWeek(container) {
     }
 
     card.innerHTML = `
-      <div class="week-day-header">
-        <span class="week-day-name">
-          ${d.toLocaleDateString("fr-FR", { weekday: "long" })}
-        </span>
-        <span class="week-day-date">
-          ${d.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
-        </span>
-        ${
-          iso === todayISO ? `<span class="today-badge">Aujourd’hui</span>` : ""
-        }
-      </div>
+  <div class="week-day-header">
+    <span class="week-day-name">
+      ${d.toLocaleDateString("fr-FR", { weekday: "long" })}
+    </span>
+    <span class="week-day-date">
+      ${d.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+    </span>
+    ${iso === todayISO ? `<span class="today-badge">Aujourd’hui</span>` : ""}
+  </div>
 
-      <div class="card-service ${
-        serviceCode === "REPOS" ? "repos" : ""
-      }">${serviceCode}</div>
+  <div class="card-service ${serviceClass}">
+    ${serviceLabel}
+  </div>
 
-      ${horaireHTML}
+  ${horaireHTML}
 
-      ${
-        serviceCode !== "REPOS" && isExtra
-          ? `<div class="extra-label">Heure supplémentaire</div>`
-          : ""
-      }
-    `;
+  ${
+    !isConges && serviceLabel !== "REPOS" && isExtra
+      ? `<div class="extra-label">Heure supplémentaire</div>`
+      : ""
+  }
+`;
 
     container.appendChild(card);
   }

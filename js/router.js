@@ -1,4 +1,5 @@
 // router.js : une seule vue visible à la fois, affichage par masquage DOM
+let currentView = null;
 
 import { renderHome } from "./components/home.js";
 import { getConsultedDate } from "./state/consulted-date.js";
@@ -81,6 +82,8 @@ function activateView(name) {
     return null;
   }
 
+  currentView = name; // ← AJOUT ICI
+
   hideAllViews();
   view.style.display = "block";
   view.innerHTML = "";
@@ -92,4 +95,26 @@ export function showTetribusView() {
   if (!view) return;
 
   showTetribus();
+}
+export function refreshCurrentView() {
+  switch (currentView) {
+    case "home":
+      showHome();
+      break;
+
+    case "day":
+      showDay();
+      break;
+
+    case "month":
+      showMonth();
+      break;
+
+    case "guided-month":
+      showGuidedMonth();
+      break;
+
+    default:
+      break;
+  }
 }

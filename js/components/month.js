@@ -191,17 +191,20 @@ export async function renderMonth() {
     const label = document.createElement("div");
     label.className = "service-label";
 
+    // reset état visuel
+    label.classList.remove("repos", "conges");
+
     if (isConges) {
-      label.textContent = "REPOS";
-      label.classList.add("repos");
-    } else {
-      label.textContent = entry.serviceCode
-        ? formatServiceLabel(entry.serviceCode)
-        : "";
+      label.textContent = "CONGÉ";
+      label.classList.add("conges"); // classe dédiée congés
+    } else if (entry.serviceCode) {
+      label.textContent = formatServiceLabel(entry.serviceCode);
 
       if (entry.serviceCode === "REPOS") {
         label.classList.add("repos");
       }
+    } else {
+      label.textContent = "";
     }
 
     const input = document.createElement("input");
@@ -209,8 +212,9 @@ export async function renderMonth() {
     input.className = "service-input";
 
     if (isConges) {
-      input.value = "REPOS";
+      input.value = "";
       input.disabled = true;
+      input.classList.add("hidden"); // 👈 MASQUÉ
     } else {
       input.value = entry.serviceCode;
       if (locked) input.disabled = true;
