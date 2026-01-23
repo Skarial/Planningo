@@ -122,10 +122,14 @@ export async function renderMonth() {
   const card = document.createElement("div");
   card.className = "card card-month";
 
+  const scrollX = document.createElement("div");
+  scrollX.className = "month-scroll-x";
+
   const grid = document.createElement("div");
   grid.className = "month-grid";
 
-  card.appendChild(grid);
+  scrollX.appendChild(grid);
+  card.appendChild(scrollX);
   container.appendChild(card);
 
   ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].forEach((d) => {
@@ -147,6 +151,7 @@ export async function renderMonth() {
   // =======================
   // JOURS DU MOIS
   // =======================
+  let dayGridIndex = 7 + firstDayIndex;
 
   for (const date of days) {
     const iso = toISODateLocal(date);
@@ -262,14 +267,19 @@ export async function renderMonth() {
         item.className = "suggest-item";
         item.textContent = service.code;
 
-        item.onclick = async () => {
+        item.addEventListener("pointerdown", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
           input.value = service.code;
           entry.serviceCode = service.code;
           label.textContent = formatServiceLabel(service.code);
+
           await savePlanningEntry(entry);
           updateExtra();
+
           suggest.style.display = "none";
-        };
+        });
 
         suggest.appendChild(item);
       });
@@ -282,6 +292,13 @@ export async function renderMonth() {
     const frag = document.createDocumentFragment();
     frag.append(num, label, input, suggest, extraBtn);
     day.appendChild(frag);
+    const rowIndex = Math.floor(dayGridIndex / 7);
+
+    // lignes 0 et 1 → bas
+    // ligne 2 et + → haut
+    suggest.classList.toggle("above", rowIndex >= 2);
+
+    dayGridIndex++;
 
     grid.appendChild(day);
   }

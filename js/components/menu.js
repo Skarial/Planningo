@@ -207,22 +207,32 @@ export function initMenu() {
   function openMenu() {
     menu.classList.add("open");
     overlay.classList.add("open");
-    menu.inert = false;
+
+    menu.removeAttribute("inert");
+
     isOpen = true;
     document.body.style.overflow = "hidden";
   }
 
   function closeMenu() {
+    // retirer le focus AVANT tout
+    if (document.activeElement) {
+      document.activeElement.blur();
+    }
+
     menu.classList.remove("open");
     overlay.classList.remove("open");
-    menu.inert = true;
+
+    menu.setAttribute("inert", "");
 
     resetState = "closed";
     renderResetPanel();
+
     isOpen = false;
     menu.style.transform = "";
     menu.style.transition = "";
     currentTranslateX = 0;
+
     document.body.style.overflow = "";
   }
 

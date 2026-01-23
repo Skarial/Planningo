@@ -281,23 +281,33 @@ body {
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
   -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }
+.extra-label {
+  color: var(--color-warning);
+  font-weight: 600;
+}
 
 /* ==========================================================================
    4. PLANNING MENSUEL & SUGGESTIONS
    ========================================================================== */
-.suggest-list.above {
-  bottom: 100%;
-  top: auto;
-  margin-bottom: 6px;
+.month-scroll-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  -webkit-overflow-scrolling: touch;
+
+  width: 100%;
+}
+.card-month {
+  margin-bottom: 0;
+  overflow: hidden; /* verrouille la carte */
 }
 
 .suggest-list {
   position: absolute;
+  top: 100%;
   left: 0;
   right: 0;
-
-  bottom: 100%; /* au-dessus de l’input */
-  margin-bottom: 6px;
+  margin-top: 6px;
 
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -305,8 +315,14 @@ body {
 
   max-height: 160px;
   overflow-y: auto;
-
   z-index: 20;
+}
+
+.suggest-list.above {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: 6px;
 }
 
 .suggest-item {
@@ -427,6 +443,10 @@ body {
 }
 .service-label.repos {
   color: var(--color-repos);
+}
+#view-month {
+  height: calc(100dvh - 3rem);
+  overflow: hidden;
 }
 
 /* ==========================================================================
