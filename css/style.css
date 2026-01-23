@@ -1,11 +1,3 @@
-/* === ÉCRAN BLANC IMMÉDIAT POST-SPLASH === */
-#app-boot-screen {
-  position: fixed;
-  inset: 0;
-  background: #ffffff;
-  z-index: 20000;
-}
-
 /* ==========================================================================
    1. VARIABLES & BASE
    ========================================================================== */

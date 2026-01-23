@@ -1,7 +1,7 @@
 /*
   Application Planning PWA
 */
-export const APP_VERSION = "1.0.66";
+export const APP_VERSION = "1.0.68";
 
 import { registerServiceWorker } from "./sw/sw-register.js";
 import { initServicesIfNeeded } from "./data/services-init.js";
@@ -80,10 +80,5 @@ function hideUpdateBanner() {
 
   banner.classList.add("hidden");
 }
-// === SUPPRESSION DE L'ÉCRAN BLANC POST-SPLASH ===
-window.addEventListener("load", () => {
-  const boot = document.getElementById("app-boot-screen");
-  if (boot) boot.remove();
-});
 
 
