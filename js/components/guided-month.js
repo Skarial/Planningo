@@ -10,14 +10,32 @@ import { showHome } from "../router.js";
 import { getGuidedStartDay, isDateInConges } from "../utils/conges.js";
 
 // =======================
-// ÉTAT MOIS GUIDÉ
-// =======================
-
-let guidedMonthDate = null;
-
-// =======================
 // VUE : PRÉPARER MOIS SUIVANT
 // =======================
+async function findFirstIncompleteMonth(startDate) {
+  const base = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+
+  for (let i = 0; i < 12; i++) {
+    const testDate = new Date(base.getFullYear(), base.getMonth() + i, 1);
+    const year = testDate.getFullYear();
+    const monthIndex = testDate.getMonth();
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(year, monthIndex, d);
+      const iso = toISODateLocal(date);
+      const entry = await getPlanningEntry(iso);
+
+      if (!entry || entry.serviceCode === "") {
+        return testDate;
+      }
+    }
+  }
+
+  return base; // fallback de sécurité
+}
+
+let guidedMonthDate = null;
 
 export async function showGuidedMonth(forcedDate = null) {
   const view = document.getElementById("view-guided-month");
@@ -40,7 +58,7 @@ export async function showGuidedMonth(forcedDate = null) {
     guidedMonthDate = new Date(forcedDate);
   } else if (!guidedMonthDate) {
     const today = new Date();
-    guidedMonthDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+    guidedMonthDate = await findFirstIncompleteMonth(today);
   }
 
   const targetDate = new Date(guidedMonthDate);
