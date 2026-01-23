@@ -195,5 +195,15 @@
         </div>
       </div>
     </div>
+    <script>
+      document.addEventListener("contextmenu", function (e) {
+        if (
+          e.target.closest(".menu-long-press") ||
+          e.target.closest("#view-tetribus")
+        ) {
+          e.preventDefault();
+        }
+      });
+    </script>
   </body>
 </html>
