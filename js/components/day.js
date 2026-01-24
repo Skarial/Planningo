@@ -61,7 +61,12 @@ export async function renderDay(dateISO) {
     const serviceEl = document.createElement("div");
     serviceEl.className = "card-service";
     serviceEl.textContent = serviceCode;
-    if (serviceCode === "REPOS") serviceEl.classList.add("repos");
+
+    if (serviceCode === "REPOS") {
+      serviceEl.classList.add("repos");
+    } else if (serviceCode === "ANNEXE") {
+      serviceEl.classList.add("conges");
+    }
 
     // 4) Horaires (logique canonique)
     const timeEl = buildHorairesDay(serviceCode, activePeriode, allServices);

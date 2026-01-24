@@ -307,6 +307,7 @@ body {
 /* ==========================================================================
    4. PLANNING MENSUEL & SUGGESTIONS
    ========================================================================== */
+
 .card-service.conges {
   background: transparent;
   color: #6c6c70;
@@ -484,7 +485,16 @@ body {
   border-radius: 6px;
   border: 1px solid var(--border-color);
   margin-bottom: 4px;
+  color: var(--color-service);
 }
+
+.service-input.conges {
+  background: transparent;
+  color: #6c6c70;
+  font-weight: 850;
+  letter-spacing: 0.5px;
+}
+
 .service-label {
   font-size: 0.85rem;
   font-weight: 700;

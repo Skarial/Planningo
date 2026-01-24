@@ -128,13 +128,14 @@ async function renderWeek(container) {
     if (isConges) {
       serviceLabel = "CONGÉ";
       serviceClass = "conges";
-      // on réutilise le style visuel existant
     } else {
       const serviceCode = entry?.serviceCode || "REPOS";
       serviceLabel = serviceCode;
 
       if (serviceCode === "REPOS") {
         serviceClass = "repos";
+      } else if (serviceCode === "ANNEXE") {
+        serviceClass = "conges";
       } else {
         horaireHTML = buildHorairesHome(
           serviceCode,

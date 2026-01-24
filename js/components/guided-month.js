@@ -216,6 +216,8 @@ export async function showGuidedMonth(forcedDate = null) {
     addServiceButton("REPOS");
     addServiceButton("DM");
     addServiceButton("DAM");
+    addServiceButton("ANNEXE");
+
     // Bouton TAD (ouvre la liste des services TAD)
     const tadServices = allServices.filter(
       (s) => typeof s.code === "string" && s.code.startsWith("TAD"),

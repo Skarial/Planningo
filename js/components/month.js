@@ -192,16 +192,19 @@ export async function renderMonth() {
     label.className = "service-label";
 
     // reset état visuel
+    // reset état visuel
     label.classList.remove("repos", "conges");
 
     if (isConges) {
       label.textContent = "CONGÉ";
-      label.classList.add("conges"); // classe dédiée congés
+      label.classList.add("conges");
     } else if (entry.serviceCode) {
       label.textContent = formatServiceLabel(entry.serviceCode);
 
       if (entry.serviceCode === "REPOS") {
         label.classList.add("repos");
+      } else if (entry.serviceCode === "ANNEXE") {
+        label.classList.add("conges");
       }
     } else {
       label.textContent = "";
@@ -226,7 +229,7 @@ export async function renderMonth() {
 
     input.onfocus = () => {
       input.value = "";
-      input.classList.remove("repos");
+      input.classList.remove("repos", "conges");
       suggest.innerHTML = "";
       suggest.style.display = "none";
     };
@@ -279,6 +282,19 @@ export async function renderMonth() {
       entry.serviceCode = q;
 
       label.textContent = formatServiceLabel(entry.serviceCode);
+
+      // 🔁 synchronisation visuelle immédiate
+      label.classList.remove("repos", "conges");
+      input.classList.remove("repos", "conges");
+
+      if (q === "REPOS") {
+        label.classList.add("repos");
+        input.classList.add("repos");
+      } else if (q === "ANNEXE") {
+        label.classList.add("conges");
+        input.classList.add("conges");
+      }
+
       await savePlanningEntry(entry);
       updateExtra();
 
