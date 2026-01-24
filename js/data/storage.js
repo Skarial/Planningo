@@ -68,9 +68,30 @@ export async function addService(service) {
 // =======================
 // PLANNING
 // =======================
+export async function deletePlanningEntry(dateISO) {
+  const db = await openDB();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORES.PLANNING, "readwrite");
+    tx.objectStore(STORES.PLANNING).delete(dateISO);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
 
 export async function savePlanningEntry(entry) {
   const db = await openDB();
+
+  // RÈGLE MÉTIER : service vide → suppression
+  if (!entry.serviceCode) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORES.PLANNING, "readwrite");
+      tx.objectStore(STORES.PLANNING).delete(entry.date);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.PLANNING, "readwrite");
     tx.objectStore(STORES.PLANNING).put({

@@ -227,13 +227,6 @@ export async function renderMonth() {
     suggest.className = "suggest-list";
     suggest.style.display = "none";
 
-    input.onfocus = () => {
-      input.value = "";
-      input.classList.remove("repos", "conges");
-      suggest.innerHTML = "";
-      suggest.style.display = "none";
-    };
-
     input.onblur = () => {
       setTimeout(() => {
         suggest.style.display = "none";
@@ -245,7 +238,7 @@ export async function renderMonth() {
     extraBtn.innerHTML = `⏱ €`;
 
     function updateExtra() {
-      if (isConges) {
+      if (isConges || !entry.serviceCode) {
         extraBtn.style.display = "none";
         entry.extra = false;
         return;
@@ -254,7 +247,6 @@ export async function renderMonth() {
       if (entry.serviceCode === "REPOS") {
         extraBtn.style.display = "none";
         entry.extra = false;
-        savePlanningEntry(entry);
         return;
       }
 
@@ -279,11 +271,27 @@ export async function renderMonth() {
     const handleInput = debounce(async () => {
       const q = input.value.trim().toUpperCase();
 
+      // RESET TOTAL
+      if (!q) {
+        entry.serviceCode = "";
+        entry.extra = false;
+
+        await savePlanningEntry(entry); // 👈 suppression réelle
+
+        label.textContent = "";
+        label.classList.remove("repos", "conges");
+        input.classList.remove("repos", "conges");
+
+        suggest.style.display = "none";
+
+        updateExtra();
+        return;
+      }
+
+      // SAISIE NORMALE
       entry.serviceCode = q;
+      label.textContent = formatServiceLabel(q);
 
-      label.textContent = formatServiceLabel(entry.serviceCode);
-
-      // 🔁 synchronisation visuelle immédiate
       label.classList.remove("repos", "conges");
       input.classList.remove("repos", "conges");
 
@@ -300,18 +308,13 @@ export async function renderMonth() {
 
       suggest.innerHTML = "";
 
-      if (!q) {
-        suggest.style.display = "none";
-        return;
-      }
-
       const results = await suggestServices({
         input: q,
         activePeriode,
         getAllServices: async () => allServices,
       });
 
-      if (!Array.isArray(results) || results.length === 0) {
+      if (!results?.length) {
         suggest.style.display = "none";
         return;
       }
@@ -321,18 +324,15 @@ export async function renderMonth() {
         item.className = "suggest-item";
         item.textContent = service.code;
 
-        item.addEventListener("click", async (e) => {
-          e.stopPropagation();
-
+        item.onclick = async () => {
           input.value = service.code;
           entry.serviceCode = service.code;
           label.textContent = formatServiceLabel(service.code);
 
           await savePlanningEntry(entry);
           updateExtra();
-
           suggest.style.display = "none";
-        });
+        };
 
         suggest.appendChild(item);
       });
