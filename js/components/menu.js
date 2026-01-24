@@ -118,6 +118,8 @@ export function initMenu() {
       await clearAllPlanning();
       showToast("Planning entièrement réinitialisé");
 
+      refreshCurrentView();
+
       resetState = "closed";
       renderResetPanel();
       closeMenu();
@@ -411,7 +413,6 @@ export function initMenu() {
     e.preventDefault();
     e.stopPropagation();
 
-    // 🔒 Capture explicite du pointeur
     resetConfirmMonth.setPointerCapture(e.pointerId);
 
     if (holdTimer) return;
@@ -428,6 +429,8 @@ export function initMenu() {
 
       await clearPlanningMonth(monthISO);
       showToast("Planning du mois réinitialisé");
+
+      refreshCurrentView();
 
       resetState = "closed";
       renderResetPanel();
