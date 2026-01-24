@@ -6,6 +6,7 @@ import {
   showMonth,
   showGuidedMonth,
 } from "../router.js";
+import { clearConsultedDate } from "../state/consulted-date.js";
 
 import { clearAllPlanning, clearPlanningMonth } from "../data/storage.js";
 import { setConsultedDate } from "../state/consulted-date.js";
@@ -474,7 +475,6 @@ export function initMenu() {
     const action = e.target.dataset.action;
     if (!action) return;
 
-    // ⛔ Bloquer UNIQUEMENT la navigation
     if (resetState !== "closed") {
       e.stopPropagation();
       return;
@@ -484,15 +484,19 @@ export function initMenu() {
       case "home":
         showHome();
         break;
+
       case "day":
         showDay();
         break;
+
       case "month":
         showMonth();
         break;
+
       case "guided-month":
         showGuidedMonth();
         break;
+
       case "tetribus":
         import("../router.js").then(({ showTetribusView }) => {
           showTetribusView();

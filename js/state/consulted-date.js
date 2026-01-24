@@ -7,3 +7,7 @@ export function setConsultedDate(dateISO) {
 export function getConsultedDate() {
   return consultedDate;
 }
+
+export function clearConsultedDate() {
+  consultedDate = null;
+}

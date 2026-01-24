@@ -1,12 +1,14 @@
-// router.js : une seule vue visible à la fois, affichage par masquage DOM
 let currentView = null;
 
 import { renderHome } from "./components/home.js";
-import { getConsultedDate } from "./state/consulted-date.js";
+import {
+  getConsultedDate,
+  clearConsultedDate,
+} from "./state/consulted-date.js";
+
 import { renderDay } from "./components/day.js";
 import { renderMonth } from "./components/month.js";
 import { showGuidedMonth as renderGuidedMonth } from "./components/guided-month.js";
-
 import { showTetribus, stopTetribus } from "./components/tetribus.js";
 
 function getView(name) {
@@ -19,7 +21,6 @@ function hideAllViews() {
     if (el) el.style.display = "none";
   });
 
-  // arrêt propre du jeu si on quitte la vue
   stopTetribus();
 }
 
@@ -28,8 +29,11 @@ function hideAllViews() {
 // =======================
 
 export function showHome() {
+  clearConsultedDate();
+
   const view = activateView("home");
   if (!view) return;
+
   renderHome();
 }
 
@@ -38,14 +42,14 @@ export function showHome() {
 // =======================
 
 export function showDay() {
-  const view = activateView("day");
-  if (!view) return;
-
   const date = getConsultedDate();
   if (!date) {
     showHome();
     return;
   }
+
+  const view = activateView("day");
+  if (!view) return;
 
   renderDay(date);
 }
@@ -57,11 +61,12 @@ export function showDay() {
 export function showMonth() {
   const view = activateView("month");
   if (!view) return;
+
   renderMonth();
 }
 
 // =======================
-// PRÉPARER MOIS SUIVANT
+// GUIDED
 // =======================
 
 export function showGuidedMonth() {
@@ -72,21 +77,19 @@ export function showGuidedMonth() {
 }
 
 // =======================
-// OUTIL INTERNE
+// ROUTER INTERNE
 // =======================
 
 function activateView(name) {
   const view = getView(name);
-  if (!view) {
-    console.warn(`Vue inexistante : ${name}`);
-    return null;
-  }
+  if (!view) return null;
 
-  currentView = name; // ← AJOUT ICI
+  currentView = name;
 
   hideAllViews();
   view.style.display = "block";
   view.innerHTML = "";
+
   return view;
 }
 
@@ -96,25 +99,20 @@ export function showTetribusView() {
 
   showTetribus();
 }
+
 export function refreshCurrentView() {
   switch (currentView) {
     case "home":
       showHome();
       break;
-
     case "day":
       showDay();
       break;
-
     case "month":
       showMonth();
       break;
-
     case "guided-month":
       showGuidedMonth();
-      break;
-
-    default:
       break;
   }
 }
