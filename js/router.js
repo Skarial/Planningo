@@ -1,6 +1,7 @@
 let currentView = null;
 
-import { renderHome } from "./components/home.js";
+import { renderHome, setHomeWeekFromDate } from "./components/home.js";
+
 import {
   getConsultedDate,
   clearConsultedDate,
@@ -33,20 +34,29 @@ export function showHome() {
   if (!view) return;
   renderHome();
 }
+export function showHomeAtDate(dateISO) {
+  const view = activateView("home");
+  if (!view) return;
+
+  setHomeWeekFromDate(dateISO);
+  renderHome();
+}
 
 // =======================
 // JOUR
 // =======================
 
 export function showDay() {
-  const view = activateView("day");
-  if (!view) return;
-
   const date = getConsultedDate();
+
+  // 🔒 Vue day non exposée — fallback sécurité
   if (!date) {
     showHome();
     return;
   }
+
+  const view = activateView("day");
+  if (!view) return;
 
   renderDay(date);
 }

@@ -1,4 +1,7 @@
 // day.js : affiche le jour consulté + le lendemain (lecture seule)
+// ⚠️ VUE DORMANTE
+// Cette vue n’est plus accessible via l’UI principale.
+// Conservée volontairement pour usage futur (détail jour, lien direct, debug).
 
 import { getAllServices, getPlanningEntry } from "../data/storage.js";
 import { getActivePeriodeLibelle } from "../utils/periods.js";

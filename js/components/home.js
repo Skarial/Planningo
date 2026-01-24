@@ -247,3 +247,10 @@ function buildHorairesHome(serviceCode, activePeriode, allServices) {
     </div>
   `;
 }
+
+export function setHomeWeekFromDate(dateISO) {
+  if (!dateISO) return;
+
+  const date = new Date(dateISO);
+  currentWeekStart = getMonday(date);
+}

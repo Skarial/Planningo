@@ -1,7 +1,7 @@
 import {
   refreshCurrentView,
   showHome,
-  showDay,
+  showHomeAtDate,
   showMonth,
   showGuidedMonth,
 } from "../router.js";
@@ -265,9 +265,9 @@ export function initMenu() {
 
   consultSubmit?.addEventListener("click", () => {
     if (!consultInput.value) return;
-    setConsultedDate(consultInput.value);
+
     consultForm.classList.add("hidden");
-    showDay();
+    showHomeAtDate(consultInput.value);
     closeMenu();
   });
 
