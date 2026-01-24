@@ -203,6 +203,7 @@ function timeToMinutes(hhmm) {
   const [h, m] = hhmm.split(":").map(Number);
   return h * 60 + m;
 }
+const SERVICE_BONUS_MINUTES = 5;
 
 function calculateWorkedMinutes(serviceCode, activePeriode, allServices) {
   if (!serviceCode || serviceCode === "REPOS" || serviceCode === "ANNEXE") {
@@ -225,7 +226,7 @@ function calculateWorkedMinutes(serviceCode, activePeriode, allServices) {
     }
   }
 
-  return totalMinutes;
+  return totalMinutes > 0 ? totalMinutes + SERVICE_BONUS_MINUTES : 0;
 }
 
 function formatMinutesToHours(minutes) {
