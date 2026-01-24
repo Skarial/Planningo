@@ -49,6 +49,29 @@ Voir : SERVICE_WORKER.md
 
 ---
 
+## Installation sur smartphone (PWA)
+
+L’application peut être installée sur l’écran d’accueil comme une application native.
+
+### Android (Chrome)
+
+1. Ouvrir l’application dans Chrome.
+2. Appuyer sur les trois points en haut à droite.
+3. Choisir **Ajouter à l’écran d’accueil**.
+4. Choisir **Téléchargement**.
+
+L’icône apparaît sur le téléphone comme une application.
+
+### iPhone / iPad (Safari)
+
+1. Ouvrir l’application dans Safari.
+2. Appuyer sur le bouton **Partager**.
+3. Choisir **Sur l’écran d’accueil**.
+
+L’icône apparaît comme une application native.
+
+---
+
 ## Aperçu de l’application
 
 ### Accueil
