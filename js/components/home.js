@@ -124,6 +124,7 @@ async function renderWeek(container) {
     let serviceClass = "";
     let horaireHTML = "";
     const isExtra = entry?.extra === true;
+    let workedMinutes = 0;
 
     if (isConges) {
       serviceLabel = "CONGÉ";
@@ -131,6 +132,11 @@ async function renderWeek(container) {
     } else {
       const serviceCode = entry?.serviceCode || "REPOS";
       serviceLabel = serviceCode;
+      workedMinutes = calculateWorkedMinutes(
+        serviceCode,
+        activePeriode,
+        allServices,
+      );
 
       if (serviceCode === "REPOS") {
         serviceClass = "repos";
@@ -163,9 +169,18 @@ async function renderWeek(container) {
     ${iso === todayISO ? `<span class="today-badge">Aujourd’hui</span>` : ""}
   </div>
 
+  <div class="card-service-row">
   <div class="card-service ${serviceClass}">
     ${serviceLabel}
   </div>
+
+  ${
+    workedMinutes > 0
+      ? `<div class="card-worked-time">${formatMinutesToHours(workedMinutes)}</div>`
+      : ""
+  }
+</div>
+
 
   ${horaireHTML}
 
@@ -178,6 +193,44 @@ async function renderWeek(container) {
 
     container.appendChild(card);
   }
+}
+// =======================
+// CALCUL HEURES JOUR
+// =======================
+
+function timeToMinutes(hhmm) {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h * 60 + m;
+}
+
+function calculateWorkedMinutes(serviceCode, activePeriode, allServices) {
+  if (!serviceCode || serviceCode === "REPOS" || serviceCode === "ANNEXE") {
+    return 0;
+  }
+
+  const service = allServices.find((s) => s.code === serviceCode);
+  if (!service || !Array.isArray(service.periodes)) return 0;
+
+  const periode = service.periodes.find((p) => p.libelle === activePeriode);
+  if (!periode || !Array.isArray(periode.plages)) return 0;
+
+  let totalMinutes = 0;
+
+  for (const plage of periode.plages) {
+    const start = timeToMinutes(plage.debut);
+    const end = timeToMinutes(plage.fin);
+    if (end > start) {
+      totalMinutes += end - start;
+    }
+  }
+
+  return totalMinutes;
+}
+
+function formatMinutesToHours(minutes) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${h}h${String(m).padStart(2, "0")}`;
 }
 
 // =======================

@@ -122,6 +122,18 @@ body {
 /* ==========================================================================
    3. VUES (HOME & JOUR)
    ========================================================================== */
+.card-service-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-worked-time {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
 
 .week-day-card.today {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
