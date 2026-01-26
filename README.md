@@ -1,32 +1,49 @@
-<!-- refresh github -->
+# Planning PWA — Gestion de planning chauffeur
 
-# Planning PWA
+Application Web Progressive (PWA) de gestion de planning, conçue pour un usage **terrain**, **hors ligne**, sur smartphone.
 
-Application web progressive de gestion de planning.  
-Projet personnel développé en JavaScript vanilla.
+Projet développé en **JavaScript vanilla**, sans backend, sans dépendance externe, avec un contrôle total des données et des mises à jour.
 
-© 2026 – Tous droits réservés.
-
----
-
-## Prototype métier offline-first
-
-Application PWA conçue par un chauffeur pour résoudre un problème réel de consultation et de saisie de planning quotidien, en conditions de terrain (smartphone, réseau instable, rapidité).
-
-Fonctionne 100% offline, sans serveur, sans authentification, avec stockage local des données.
+© 2026 — Tous droits réservés.
 
 ---
 
-## Objectif métier
+## Positionnement du logiciel
 
-Permettre à un chauffeur de bus de :
+Planning PWA est un **logiciel métier offline-first**, pensé pour les chauffeurs (bus, transport, services roulants) confrontés à :
 
-- Consulter son planning instantanément
-- Naviguer jour / mois rapidement
-- Saisir son planning facilement
-- Disposer d’un outil personnel, fiable, toujours disponible
+- un accès réseau instable ou inexistant,
+- un besoin de consultation rapide,
+- une saisie simple et fiable,
+- une utilisation quotidienne sur smartphone.
 
-Voir : CONTEXTE_METIER.md
+L’application fonctionne **sans serveur**, **sans compte utilisateur**, et reste entièrement opérationnelle hors connexion.
+
+---
+
+## Fonctionnalités principales
+
+- Consultation instantanée du planning (jour / mois)
+- Saisie guidée du planning
+- Gestion des congés et périodes saisonnières
+- Fonctionnement 100 % hors ligne
+- Activation locale par code (sans backend)
+- Sauvegarde et restauration complètes des données
+- Installation PWA (Android / iOS)
+- Mini-jeu intégré (Tetribus)
+
+---
+
+## Principes techniques clés
+
+- **Offline-first strict**
+- **Stockage local uniquement**
+  - IndexedDB
+  - LocalStorage
+- **Aucun serveur**
+- **Aucune authentification distante**
+- **Aucune dépendance externe**
+- **Contrôle explicite des mises à jour**
 
 ---
 
@@ -34,58 +51,98 @@ Voir : CONTEXTE_METIER.md
 
 - HTML / CSS / JavaScript vanilla
 - Router maison par masquage DOM
-- IndexedDB + LocalStorage
+- Architecture modulaire (data / domain / components / state)
 - Service Worker avec cache versionné
 - Hébergement GitHub Pages
-- Aucune dépendance externe
 
-Voir : ARCHITECTURE.md
+📄 Voir : [`ARCHITECTURE.md`](ARCHITECTURE.md)
 
 ---
 
-## Gestion du offline et des mises à jour
+## Activation et sécurité
 
-Voir : SERVICE_WORKER.md
+L’accès à l’application est contrôlé par une **activation locale par code**, liée à l’appareil.
+
+- Pas de compte
+- Pas de serveur
+- Pas de transmission de données
+- Activation demandée une seule fois par appareil
+- L’activation est restaurée automatiquement après import des données
+
+📄 Voir : [`docs/ACTIVATION.md`](docs/ACTIVATION.md)
+
+---
+
+## Sauvegarde et restauration des données
+
+Le logiciel permet :
+
+- l’export complet des données utilisateur,
+- la restauration intégrale sur un nouvel appareil,
+- le changement de téléphone **sans perte de données ni réactivation**.
+
+Les données restent **strictement locales**.
+
+📄 Voir : [`docs/SAUVEGARDE_RESTAURATION.md`](docs/SAUVEGARDE_RESTAURATION.md)
+
+---
+
+## Service Worker et mises à jour
+
+Le Service Worker est conçu pour garantir :
+
+- disponibilité permanente,
+- cache maîtrisé,
+- mises à jour prévisibles et contrôlées,
+- absence de blocage sur ancienne version.
+
+La notification de mise à jour n’apparaît **uniquement** lorsqu’une nouvelle version est réellement prête.
+
+📄 Voir : [`docs/SERVICE_WORKER.md`](docs/SERVICE_WORKER.md)
 
 ---
 
 ## Installation sur smartphone (PWA)
 
-L’application peut être installée sur l’écran d’accueil comme une application native.
-
 ### Android (Chrome)
 
 1. Ouvrir l’application dans Chrome.
-2. Appuyer sur les trois points en haut à droite.
-3. Choisir **Ajouter à l’écran d’accueil**.
-4. Choisir **Téléchargement**.
+2. Menu ⋮ → **Ajouter à l’écran d’accueil**.
+3. Confirmer.
 
-L’icône apparaît sur le téléphone comme une application.
-
-### iPhone / iPad (Safari)
+### iOS (Safari)
 
 1. Ouvrir l’application dans Safari.
-2. Appuyer sur le bouton **Partager**.
-3. Choisir **Sur l’écran d’accueil**.
+2. Bouton **Partager**.
+3. **Sur l’écran d’accueil**.
 
-L’icône apparaît comme une application native.
+L’application se comporte alors comme une application native.
 
 ---
 
-## Aperçu de l’application
+## Aperçu visuel
 
 ### Accueil
 
-![Home](docs/home.jpg)
+![Accueil](docs/home.jpg)
 
 ### Vue jour
 
-![Day](docs/day.jpg)
+![Jour](docs/day.jpg)
 
 ### Vue mois
 
-![Month](docs/month.jpg)
+![Mois](docs/month.jpg)
 
 ### Saisie guidée
 
-![Guided Month](docs/guided-month.jpg)
+![Saisie guidée](docs/guided-month.jpg)
+
+---
+
+## Licence
+
+Projet propriétaire.  
+Toute utilisation, reproduction ou diffusion sans autorisation est interdite.
+
+Voir le fichier [`LICENSE`](LICENSE).

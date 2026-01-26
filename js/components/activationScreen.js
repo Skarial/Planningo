@@ -1,4 +1,5 @@
 // js/components/activationScreen.js
+import { APP_VERSION } from "../app.js";
 
 import { getOrCreateDeviceId } from "../data/device.js";
 import { setConfig } from "../data/db.js";
@@ -98,8 +99,11 @@ function bindEvents(root, deviceId) {
     }
 
     await setConfig("activation_ok", "true");
-    success.hidden = false;
 
+    // ✅ version courante considérée comme déjà vue
+    localStorage.setItem("lastSeenAppVersion", APP_VERSION);
+
+    success.hidden = false;
     setTimeout(() => location.reload(), 800);
   }
 
