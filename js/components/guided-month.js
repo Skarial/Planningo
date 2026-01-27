@@ -4,7 +4,7 @@ import {
   getPlanningEntry,
 } from "../data/storage.js";
 import { showMonth } from "../router.js";
-
+import { getConfig } from "../data/db.js";
 import { groupServices } from "../domain/services-grouping.js";
 import { toISODateLocal } from "../utils.js";
 import { showHome } from "../router.js";
@@ -88,7 +88,11 @@ export async function showGuidedMonth(forcedDate = null) {
   // =======================
 
   const allServices = await getAllServices();
-  const grouped = await groupServices(allServices);
+
+  const saisonEntry = await getConfig("saison");
+  const saisonConfig = saisonEntry?.value ?? null;
+
+  const grouped = groupServices(allServices, saisonConfig);
 
   // =======================
   // UI
@@ -198,7 +202,11 @@ export async function showGuidedMonth(forcedDate = null) {
 
     while (currentDay <= daysInMonth) {
       const testDate = new Date(year, monthIndex, currentDay);
-      const inConges = await isDateInConges(testDate);
+
+      const congesEntry = await getConfig("conges");
+      const congesConfig = congesEntry?.value ?? null;
+
+      const inConges = isDateInConges(testDate, congesConfig);
 
       if (!inConges) break;
 

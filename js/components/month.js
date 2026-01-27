@@ -15,7 +15,9 @@ import {
   formatServiceLabel,
   toISODateLocal,
 } from "../utils.js";
+import { getConfig } from "../data/db.js";
 import { getActivePeriodeLibelle } from "../domain/periods.js";
+
 import { getCongesDaysISOForMonth } from "../domain/conges.js";
 
 // =======================
@@ -98,7 +100,11 @@ export async function renderMonth() {
   const locked = isMonthLocked(year, monthIndex);
 
   // période active globale (UNE fois)
-  const activePeriode = await getActivePeriodeLibelle();
+  const saisonEntry = await getConfig("saison");
+  const saisonConfig = saisonEntry?.value ?? null;
+
+  const activePeriode = getActivePeriodeLibelle(saisonConfig);
+
   // =======================
   // CONGÉS — JOURS DU MOIS
   // =======================

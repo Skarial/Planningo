@@ -10,7 +10,6 @@ import {
 } from "../router.js";
 
 import { clearAllPlanning, clearPlanningMonth } from "../data/storage.js";
-import { setConsultedDate } from "../state/consulted-date.js";
 import { getConfig, setConfig } from "../data/storage.js";
 import { APP_VERSION } from "../app.js";
 

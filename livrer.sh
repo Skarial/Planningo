@@ -1,3 +1,7 @@
+# Script utilitaire développeur
+# Automatisation des commandes git (commit / push)
+# Non utilisé par l’application
+
 #!/bin/bash
 set -e
 

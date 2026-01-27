@@ -1,12 +1,9 @@
-import { getConfig } from "../data/storage.js";
-
 /**
  * Indique si une saison est réellement configurée
  * (présence de dates valides)
  */
-export async function isSeasonConfigured() {
-  const entry = await getConfig("saison");
-  const s = entry?.value;
+export function isSeasonConfigured(saisonConfig) {
+  const s = saisonConfig;
 
   return Boolean(
     s &&
@@ -28,8 +25,8 @@ export async function isSeasonConfigured() {
  * ⚠️ AUCUN null
  * ⚠️ UNE seule période active à la fois
  */
-export async function getActivePeriodeLibelle() {
-  const seasonConfigured = await isSeasonConfigured();
+export function getActivePeriodeLibelle(saisonConfig) {
+  const seasonConfigured = isSeasonConfigured(saisonConfig);
 
   return seasonConfigured ? "Période saisonnière" : "Période principale";
 }

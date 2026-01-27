@@ -6,8 +6,8 @@ const ALWAYS_AVAILABLE_CODES = ["REPOS", "DM", "DAM", "TAD"];
 /**
  * Groupe les services pour l’UI (guided-month)
  */
-export async function groupServices(SERVICES_CATALOG) {
-  const activePeriode = await getActivePeriodeLibelle();
+export function groupServices(SERVICES_CATALOG, saisonConfig) {
+  const activePeriode = getActivePeriodeLibelle(saisonConfig);
 
   const result = {
     REPOS: [],

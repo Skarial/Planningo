@@ -4,7 +4,6 @@
 // - Une seule période de congés à la fois
 // - Pas de congés multiples ou fractionnés
 
-import { getConfig } from "../data/storage.js";
 import { toISODateLocal } from "../utils.js";
 
 // =======================
@@ -40,9 +39,8 @@ export function parseFRDate(input) {
 // LECTURE CONGÉS CONFIG
 // =======================
 
-export async function getCongesPeriod() {
-  const entry = await getConfig("conges");
-  const value = entry?.value;
+export function getCongesPeriod(congesConfig) {
+  const value = congesConfig;
 
   if (!value) return null;
 
@@ -51,7 +49,6 @@ export async function getCongesPeriod() {
 
   if (!start || !end) return null;
 
-  // normalisation ordre
   if (start > end) {
     return { start: end, end: start };
   }
@@ -63,8 +60,9 @@ export async function getCongesPeriod() {
 // TEST DATE EN CONGÉS
 // =======================
 
-export async function isDateInConges(date) {
-  const period = await getCongesPeriod();
+export function isDateInConges(date, congesConfig) {
+  const period = getCongesPeriod(congesConfig);
+
   if (!period) return false;
 
   const d = new Date(date);
@@ -97,8 +95,9 @@ export async function isDateInConges(date) {
 // par renderDay() via isDateInConges()
 // Cette fonction ne gère QUE le point de départ initial
 
-export async function getGuidedStartDay(year, monthIndex) {
-  const period = await getCongesPeriod();
+export function getGuidedStartDay(year, monthIndex, congesConfig) {
+  const period = getCongesPeriod(congesConfig);
+
   if (!period) return 1;
 
   const monthStart = new Date(year, monthIndex, 1);
@@ -133,8 +132,9 @@ export async function getGuidedStartDay(year, monthIndex) {
 // UTILITAIRE : LISTE JOURS BLOQUÉS
 // =======================
 
-export async function getCongesDaysISOForMonth(year, monthIndex) {
-  const period = await getCongesPeriod();
+export function getCongesDaysISOForMonth(year, monthIndex, congesConfig) {
+  const period = getCongesPeriod(congesConfig);
+
   if (!period) return [];
 
   const days = [];

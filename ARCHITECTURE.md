@@ -123,6 +123,16 @@ Caractéristiques :
 
 Détails fonctionnels : `docs/ACTIVATION.md`
 
+### Règle d’activation
+
+Le code d’activation est calculé selon la règle suivante :
+
+SHA-256("PLANNING_PWA_SECRET_V1:DEVICE_ID").slice(0, 12)
+
+- Le calcul cryptographique est réalisé côté adaptateur web.
+- Le domain valide uniquement des valeurs.
+- Les utilisateurs déjà activés ne sont jamais réévalués.
+
 ---
 
 ## 5. Navigation et vues
@@ -156,6 +166,21 @@ IndexedDB :
 
 Objectif : stockage structuré, durable et hors ligne.
 
+### Architecture de stockage
+
+Le stockage est une couche d’adaptation plateforme.
+
+- IndexedDB est l’implémentation **web actuelle**
+- Le stockage fichier est une implémentation **future (logiciel desktop)**
+
+Organisation :
+
+- `js/data/db.js` : implémentation IndexedDB (web)
+- `js/data/storage.interface.js` : contrat abstrait
+- `js/data/storage.file.js` : implémentation fichier (mock, prête logiciel)
+
+Le cœur métier (`domain/`) ne connaît **jamais** le mécanisme de stockage.
+
 ---
 
 ## 7. Logique métier
@@ -167,6 +192,30 @@ Séparation stricte :
 - `state/` : état global minimal partagé
 
 Aucune logique métier n’est implémentée dans l’interface.
+
+## 7bis. Frontières non négociables
+
+Ces règles sont définitives et conditionnent toute évolution du projet.
+
+### Domain (`js/domain/`)
+
+- Ne dépend jamais :
+  - du navigateur
+  - du DOM
+  - du Service Worker
+  - du stockage (IndexedDB, LocalStorage, fichier, etc.)
+- Ne lit aucune donnée persistée.
+- Reçoit toutes les données nécessaires **par injection de paramètres**.
+- Contient exclusivement :
+  - les règles métier
+  - la logique décisionnelle
+  - des fonctions pures ou déterministes.
+
+❌ Interdictions absolues :
+
+- `getConfig` ou équivalent
+- accès direct aux API navigateur
+- logique implicite ou magique
 
 ---
 
@@ -185,6 +234,16 @@ Règle unique :
 Aucune décision de mise à jour n’est basée sur `APP_VERSION` côté interface.
 
 Détails : `docs/SERVICE_WORKER.md`
+
+Interdictions absolues :
+
+- aucune logique de décision fonctionnelle
+- aucune comparaison de versions côté UI
+- aucun stockage d’état utilisateur
+- aucune règle métier déguisée
+
+Toute évolution fonctionnelle doit être implémentée exclusivement
+dans `js/domain/`, jamais dans le Service Worker.
 
 ---
 

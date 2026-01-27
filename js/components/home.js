@@ -3,6 +3,7 @@ import { isDateInConges } from "../domain/conges.js";
 import { getPlanningEntry, getAllServices } from "../data/storage.js";
 import { toISODateLocal } from "../utils.js";
 import { getActivePeriodeLibelle } from "../domain/periods.js";
+import { getConfig } from "../data/db.js";
 
 let currentWeekStart = getMonday(new Date());
 
@@ -108,7 +109,11 @@ async function renderWeek(container) {
     return;
   }
 
-  const activePeriode = await getActivePeriodeLibelle();
+  const saisonEntry = await getConfig("saison");
+  const saisonConfig = saisonEntry?.value ?? null;
+
+  const activePeriode = getActivePeriodeLibelle(saisonConfig);
+
   const todayISO = toISODateLocal(new Date());
 
   for (let i = 0; i < 7; i++) {
@@ -118,7 +123,10 @@ async function renderWeek(container) {
     const iso = toISODateLocal(d);
     const entry = await getPlanningEntry(iso);
 
-    const isConges = await isDateInConges(d);
+    const congesEntry = await getConfig("conges");
+    const congesConfig = congesEntry?.value ?? null;
+
+    const isConges = isDateInConges(d, congesConfig);
 
     let serviceLabel = "";
     let serviceClass = "";

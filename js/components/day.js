@@ -4,7 +4,9 @@
 // Conservée volontairement pour usage futur (détail jour, lien direct, debug).
 
 import { getAllServices, getPlanningEntry } from "../data/storage.js";
+import { getConfig } from "../data/db.js";
 import { getActivePeriodeLibelle } from "../domain/periods.js";
+
 import { toISODateLocal, formatDateFR, getDayNameFullFR } from "../utils.js";
 
 // =======================
@@ -33,7 +35,10 @@ export async function renderDay(dateISO) {
   }
 
   // Période active globale (UNE fois)
-  const activePeriode = await getActivePeriodeLibelle();
+  const saisonEntry = await getConfig("saison");
+  const saisonConfig = saisonEntry?.value ?? null;
+
+  const activePeriode = getActivePeriodeLibelle(saisonConfig);
 
   // Dates : jour consulté + lendemain
   const base = new Date(dateISO);

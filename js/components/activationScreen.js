@@ -3,7 +3,7 @@ import { APP_VERSION } from "../app.js";
 
 import { getOrCreateDeviceId } from "../data/device.js";
 import { setConfig } from "../data/db.js";
-import { verifierCode } from "../domain/activation.js";
+import { checkActivation } from "../adapters/activation.web.js";
 
 // =======================
 // API PUBLIQUE
@@ -91,7 +91,7 @@ function bindEvents(root, deviceId) {
       return;
     }
 
-    const ok = await verifierCode(code, deviceId);
+    const ok = await checkActivation(code, deviceId);
 
     if (!ok) {
       error.hidden = false;
