@@ -14,7 +14,7 @@ tools/generator-activation/
 ### Caractéristiques
 
 - Usage développeur uniquement
-- Aucune dépendance avec l’application principale
+- Aucune dépendance fonctionnelle avec l’application principale
 - PWA installable indépendamment
 - Fonctionne hors ligne
 - Service Worker isolé (scope propre)
@@ -24,11 +24,15 @@ tools/generator-activation/
 ### Règles
 
 - Ne doit jamais être lié depuis l’interface utilisateur
-- Ne partage aucun code avec l’application principale
+- Ne dépend pas de l’application principale
+- Partage uniquement un **module pur commun** servant de **source unique de vérité algorithmique**
+- Aucun couplage UI, stockage ou runtime avec l’application
 - Ne doit contenir aucune logique métier Planning
 - Peut évoluer indépendamment
 
 ### Accès (GitHub Pages)
+
+---
 
 ## 1. Vue d’ensemble
 
@@ -159,9 +163,18 @@ Le code d’activation est calculé selon la règle suivante :
 
 SHA-256("PLANNING_PWA_SECRET_V1:DEVICE_ID").slice(0, 12)
 
-- Le calcul cryptographique est réalisé côté adaptateur web.
-- Le domain valide uniquement des valeurs.
-- Les utilisateurs déjà activés ne sont jamais réévalués.
+- La règle d’activation est définie dans un **module pur partagé** :
+  `tools/activation-algo.js`
+- Ce module constitue la **source unique de vérité**
+- L’adaptateur web consomme cette règle
+- Le domain peut la consommer si nécessaire, sans jamais la redéfinir
+- Les utilisateurs déjà activés ne sont jamais réévalués
+
+**Principe clé**
+
+- Toute évolution de la règle d’activation doit être effectuée **exclusivement** dans  
+  `tools/activation-algo.js`
+- Aucune autre implémentation ne doit exister
 
 ---
 
