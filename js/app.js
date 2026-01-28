@@ -1,7 +1,7 @@
 /*
   Application Planning PWA
 */
-export const APP_VERSION = "1.0.110";
+export const APP_VERSION = "1.0.112";
 
 import { getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -98,6 +98,8 @@ async function watchServiceWorkerUpdates() {
     });
   });
 }
+
+
 
 
 
