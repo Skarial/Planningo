@@ -1,15 +1,31 @@
-# Checklist avant commit — Planning PWA
+# Checklist avant commit
 
-Cette checklist doit être validée avant chaque commit.
+Ce document définit les vérifications **obligatoires** à effectuer avant tout commit.
 
-## 1. Architecture
+Il a une valeur **contractuelle**.
+Aucun commit ne doit être effectué si un point est en échec.
 
-- [ ] Aucun fichier dans `js/domain/` n’importe :
-  - `data/`
-  - `components/`
-  - le navigateur (`window`, `document`, `crypto`, etc.)
-- [ ] Aucune logique métier dans `js/components/`
-- [ ] Les règles métier sont explicites et localisées dans `js/domain/`
+## Architecture et séparation des responsabilités
+
+### Domain
+
+- [ ] Aucun accès au DOM
+- [ ] Aucun accès au navigateur
+- [ ] Aucun accès au stockage
+- [ ] Aucune dépendance IndexedDB / LocalStorage
+- [ ] Fonctions pures ou déterministes uniquement
+
+### Components
+
+- [ ] Aucune logique métier
+- [ ] Aucun calcul de règle fonctionnelle
+- [ ] Interface uniquement
+
+### Data
+
+- [ ] Accès aux données uniquement
+- [ ] Aucune règle métier
+- [ ] Aucune logique UI
 
 ## 2. Données et stockage
 
@@ -19,18 +35,62 @@ Cette checklist doit être validée avant chaque commit.
 
 ## 3. Service Worker
 
-- [ ] Aucune règle fonctionnelle dans le Service Worker
-- [ ] Aucune comparaison de version côté UI
-- [ ] La mise à jour repose uniquement sur `registration.waiting`
+- [ ] Aucune logique métier
+- [ ] Aucune décision fonctionnelle
+- [ ] Aucune comparaison de version applicative côté UI
+- [ ] Aucun stockage d’état utilisateur
+- [ ] Gestion des mises à jour basée uniquement sur `registration.waiting`
 
 ## 4. Activation
 
-- [ ] La règle d’activation n’a pas changé
-- [ ] Aucun utilisateur existant n’est réévalué
-- [ ] Aucun calcul crypto dans le domain
+- [ ] L’écran d’activation s’affiche uniquement si `config.activation_ok !== "true"`
+- [ ] Le Device ID est généré via `getOrCreateDeviceId()` uniquement
+- [ ] Le Device ID n’est jamais recalculé après création
+- [ ] Aucune logique d’activation n’est dupliquée
+- [ ] L’algorithme d’activation provient exclusivement de `tools/activation-algo.js`
+- [ ] Aucun utilisateur déjà activé n’est réévalué
 
 ## 5. Sécurité et régression
 
 - [ ] Aucune donnée utilisateur n’est perdue
 - [ ] Aucun comportement existant n’est modifié
 - [ ] Toute modification est justifiée et traçable
+
+## Sauvegarde et restauration
+
+- [ ] Le fichier d’export contient :
+  - [ ] une signature explicite
+  - [ ] une version de format
+  - [ ] les métadonnées
+  - [ ] tous les stores connus
+- [ ] L’import valide le format avant toute modification locale
+- [ ] L’import efface intégralement les données existantes
+- [ ] L’import restaure l’état d’activation
+- [ ] Aucun contrôle d’activation n’est déclenché après import
+- [ ] Un import valide entraîne un redémarrage automatique
+
+## Vérifications générales
+
+- [ ] L’application démarre sans erreur en mode hors ligne
+- [ ] Aucun warning bloquant dans la console
+- [ ] Aucun code mort ou temporaire laissé en place
+- [ ] Les noms de variables et fonctions sont explicites
+- [ ] Aucun `console.log` résiduel
+
+## Tests
+
+- [ ] Les tests domain passent
+- [ ] Aucun test cassé ou désactivé
+- [ ] Toute règle métier modifiée est couverte
+
+## Documentation
+
+- [ ] La documentation reflète exactement le comportement du code
+- [ ] Aucun comportement implicite non documenté
+- [ ] Les documents contractuels sont à jour :
+  - [ ] ARCHITECTURE.md
+  - [ ] ACTIVATION.md
+  - [ ] SAUVEGARDE_RESTAURATION.md
+
+Un commit effectué sans validation complète de cette checklist
+est considéré comme invalide.

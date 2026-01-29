@@ -2,7 +2,11 @@
 
 Ce document décrit le fonctionnement du système d’activation de l’application.
 
-Il s’agit d’un mécanisme **local**, **hors ligne**, sans compte utilisateur et sans serveur.
+Il s’agit d’un mécanisme **local**, **hors ligne**, sans compte utilisateur et sans serveur,
+pouvant être **court-circuité définitivement par restauration de données**.
+
+Il s’agit d’un mécanisme **local**, **hors ligne**, sans compte utilisateur et sans serveur,
+pouvant être **court-circuité définitivement par restauration de données**.
 
 ---
 
@@ -51,6 +55,17 @@ Une fois l’activation validée :
 - l’application démarre normalement,
 - l’activation est conservée localement.
 
+### Cas particulier — Restauration par import
+
+Si l’utilisateur importe un fichier de sauvegarde valide :
+
+- l’état d’activation est restauré,
+- aucun code d’activation n’est requis,
+- l’écran d’activation disparaît immédiatement,
+- l’application démarre en mode normal.
+
+L’import de données a priorité absolue sur toute procédure d’activation manuelle.
+
 ---
 
 ## Vérification du code
@@ -63,6 +78,14 @@ Une fois l’activation validée :
 
 Aucune liste de codes n’est embarquée.
 
+La vérification du code n’est effectuée **qu’une seule fois** par appareil.
+
+Une fois l’activation validée :
+
+- aucune revalidation n’est effectuée,
+- aucun recalcul n’est déclenché,
+- aucune dépendance à la version applicative n’existe.
+
 ---
 
 ## Persistance de l’activation
@@ -73,6 +96,7 @@ L’état d’activation :
 - est indépendant de la version de l’application,
 - n’est pas lié au Service Worker,
 - n’est pas réinitialisé lors d’une mise à jour.
+- est restaurée intégralement lors d’un import de données.
 
 ---
 
@@ -85,6 +109,19 @@ Si le code saisi est invalide :
 - aucune donnée n’est modifiée.
 
 ---
+
+## Priorité de l’import sur l’activation
+
+La restauration de données constitue une reprise complète de l’état applicatif.
+
+À ce titre :
+
+- elle neutralise définitivement l’écran d’activation,
+- elle rend le Device ID non pertinent,
+- elle interdit toute demande ultérieure de code d’activation,
+- elle prévaut sur toute règle d’activation existante ou future.
+
+Ce comportement est contractuel.
 
 ## Portée et limites
 
@@ -102,7 +139,9 @@ Il s’agit d’un **contrôle d’usage**, pas d’un mécanisme de sécurité 
 
 Ce document décrit un comportement **contractuel**.
 
-Toute modification du système d’activation doit être :
+Toute modification du système d’activation ou de restauration doit être :
 
 - implémentée dans le code,
-- reflétée dans ce document.
+- reflétée strictement dans ce document,
+- compatible avec les données existantes,
+- non régressive pour les utilisateurs déjà activés.

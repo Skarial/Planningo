@@ -11,7 +11,8 @@ Toutes les opérations sont effectuées **localement**, sans serveur et sans con
 L’application permet :
 
 - l’export complet des données locales dans un fichier,
-- l’import de ce fichier sur le même appareil ou un autre appareil.
+- l’import de ce fichier sur le même appareil ou un autre appareil,
+  avec restauration complète et immédiate de l’état applicatif.
 
 Ces mécanismes permettent de conserver l’état de l’application en cas de :
 
@@ -29,6 +30,10 @@ La sauvegarde contient l’intégralité des données stockées localement, nota
 - les services,
 - les paramètres,
 - l’état d’activation.
+- le Device ID,
+
+Le fichier de sauvegarde représente un **instantané complet** de l’état local
+de l’application à un instant donné.
 
 Toutes les données proviennent de la base IndexedDB de l’application.
 
@@ -68,16 +73,27 @@ Lors d’un import :
 
 La restauration est **totale**.
 
+La restauration a priorité absolue sur tout autre mécanisme applicatif,
+y compris l’activation.
+
 ---
 
 ## Effet sur l’activation
 
-Si la sauvegarde contenait une activation valide :
+L’activation fait partie intégrante des données sauvegardées.
 
-- l’activation est restaurée,
-- aucun nouveau code d’activation n’est requis.
+Lors d’un import valide :
 
-L’activation est traitée comme une donnée locale persistante.
+- l’état d’activation est restauré tel quel,
+- aucun code d’activation n’est requis,
+- aucun recalcul ou recontrôle n’est effectué,
+- l’écran d’activation est définitivement ignoré.
+
+Ce comportement est indépendant :
+
+- de la version de l’application,
+- du Device ID courant,
+- du Service Worker.
 
 ---
 
@@ -87,15 +103,39 @@ L’activation est traitée comme une donnée locale persistante.
 - Une sauvegarde incompatible est refusée.
 - Aucune tentative de migration automatique n’est effectuée.
 
+La validité d’un fichier repose notamment sur :
+
+- une signature explicite du format,
+- une version de format supportée,
+- une structure cohérente des données.
+
 ---
 
 ## Sécurité et confidentialité
 
 - Les données ne quittent jamais l’appareil sans action explicite.
 - Aucun chiffrement n’est appliqué au fichier de sauvegarde.
-- La confidentialité repose sur le contrôle du fichier par l’utilisateur.
+- La confidentialité repose sur le contrôle du fichier par  
+  l’utilisateur.
+
+La restauration permet volontairement de rétablir un état d’activation,
+y compris sur un autre appareil.
+
+Ce choix est assumé et fait partie du modèle d’usage.
 
 ---
+
+## Relation entre sauvegarde et activation
+
+La sauvegarde est le mécanisme de persistance ultime de l’application.
+
+À ce titre :
+
+- elle prévaut sur toute règle d’activation,
+- elle permet une continuité d’usage sans friction,
+- elle garantit l’absence de perte fonctionnelle lors d’un changement d’appareil.
+
+Toute évolution future devra préserver cette priorité.
 
 ## Limites
 
@@ -108,7 +148,9 @@ L’activation est traitée comme une donnée locale persistante.
 
 Ce document décrit un comportement **contractuel**.
 
-Toute modification du format ou du périmètre de sauvegarde doit être :
+Toute modification du mécanisme de sauvegarde ou de restauration doit être :
 
 - implémentée dans le code,
-- reflétée dans ce document.
+- reflétée strictement dans ce document,
+- compatible avec les sauvegardes existantes,
+- non régressive pour les utilisateurs actifs.

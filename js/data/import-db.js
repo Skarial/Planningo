@@ -1,6 +1,6 @@
 // js/data/import-db.js
 
-import { openDB } from "./db.js";
+import { openDB, setConfig } from "./db.js";
 
 // =======================
 // STORES CONNUS
@@ -28,6 +28,8 @@ export async function importDatabase(exportData) {
     await restoreStore(db, storeName, records);
   }
 
+  await restoreStore(db, "config", [{ key: "imported_ok", value: "true" }]);
+
   db.close();
 
   // 3. Redémarrage obligatoire
@@ -52,6 +54,13 @@ function validateExportFormat(data) {
 
   if (!data.stores || typeof data.stores !== "object") {
     throw new Error("Export invalide : stores manquants");
+  }
+  if (!Array.isArray(data.stores.services)) {
+    throw new Error("Export invalide : services manquants");
+  }
+
+  if (!Array.isArray(data.stores.planning)) {
+    throw new Error("Export invalide : planning manquant");
   }
 }
 
@@ -98,6 +107,11 @@ export async function importAllData() {
     input.accept = "application/json";
 
     input.onchange = async () => {
+      const confirmed = confirm(
+        "L’import remplacera toutes les données existantes. Continuer ?",
+      );
+      if (!confirmed) return;
+
       const file = input.files[0];
       if (!file) return;
 

@@ -76,12 +76,12 @@ function bindEvents(root, deviceId) {
   const importBtn = root.querySelector("#activation-import");
 
   importBtn?.addEventListener("click", async () => {
+    root.innerHTML = "<p>Restauration des données…</p>";
     try {
       await importAllData();
-      // ⚠️ importAllData déclenche déjà location.reload()
     } catch (e) {
-      // message simple, pas de logique métier
       alert("Import des données impossible");
+      location.reload();
     }
   });
 

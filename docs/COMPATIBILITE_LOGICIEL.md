@@ -15,11 +15,10 @@ Un script local permet de générer un code d’activation sans navigateur.
 
 ## Objectif
 
-Ce document atteste que l’application Planning PWA est structurellement
-compatible avec une transformation future en logiciel (desktop ou natif),
-sans refactor majeur du code métier.
+Ce document définit les environnements logiciels **supportés**, **tolérés** et **non supportés**
+pour l’application Planning PWA Chauffeurs.
 
----
+Il a une valeur **contractuelle**.
 
 ## Garanties techniques acquises
 
@@ -38,6 +37,18 @@ Fichiers concernés :
 - `domain/activation.js`
 
 ---
+
+## Stockage local
+
+L’application repose sur :
+
+- IndexedDB pour les données persistantes
+- LocalStorage pour les états légers
+
+Limitations connues :
+
+- La suppression des données navigateur supprime les données de l’application
+- Le mode navigation privée peut bloquer IndexedDB
 
 ### 2. Stockage abstrait par contrat
 
@@ -82,6 +93,64 @@ Tous les adaptateurs respectent le contrat par les tests.
 
 ---
 
+## Environnements non supportés
+
+Les environnements suivants ne sont **pas supportés** :
+
+- Navigateurs obsolètes sans Service Worker
+- Navigateurs sans IndexedDB
+- Mode navigation privée bloquant le stockage
+- Navigateurs embarqués non standards
+
+## Spécificités Android
+
+- Support stable d’IndexedDB
+- Service Worker fiable
+- PWA fortement recommandée
+
+## Plateformes supportées
+
+L’application est officiellement supportée sur :
+
+- Android (Chrome, WebView)
+- iOS (Safari, PWA installée)
+- Desktop (Chrome, Edge, Firefox récents)
+
+Conditions :
+
+- JavaScript activé
+- IndexedDB disponible
+- Service Worker supporté
+- LocalStorage disponible
+
+## Mode d’installation
+
+L’application peut être utilisée :
+
+- en navigation web
+- en PWA installée
+
+Le mode PWA est **recommandé** pour :
+
+- la persistance hors ligne
+- la stabilité
+- la gestion correcte du cache
+
+## Fonctionnement hors ligne
+
+- L’application fonctionne intégralement hors ligne
+- Aucune connexion réseau n’est requise après le premier chargement
+- Aucune fonctionnalité ne dépend d’un serveur distant
+
+## Évolutions futures
+
+Une version logicielle desktop pourra être envisagée.
+
+Dans ce cas :
+
+- le stockage fichier remplacera IndexedDB
+- le cœur métier restera inchangé
+
 ## Conclusion
 
 Le projet peut évoluer vers :
@@ -93,3 +162,6 @@ Le projet peut évoluer vers :
 sans modification du domain ni des règles métier.
 
 Toute évolution future devra respecter ces garanties.
+
+Toute configuration hors de ce périmètre
+n’est pas garantie comme fonctionnelle.

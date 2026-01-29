@@ -123,11 +123,13 @@ docs/
 
 Ordre strict :
 
-1. Vérification de l’activation locale (`config.activation_ok`)
-2. Si non activée :
+1. Lecture de l’état applicatif depuis les données locales :
+   - `config.activation_ok`
+   - `config.imported_ok`
+2. Si l’application n’est ni activée **ni restaurée par import** :
    - affichage exclusif de l’écran d’activation
    - aucune autre initialisation
-3. Si activée :
+3. Si l’application est activée **ou** restaurée par import :
    - initialisation du menu
    - affichage de la vue d’accueil
 4. Tâches non bloquantes :
@@ -135,7 +137,7 @@ Ordre strict :
    - enregistrement du Service Worker
    - surveillance des mises à jour
 
-Aucune vue métier n’est accessible avant activation.
+Aucune vue métier n’est accessible tant que l’état applicatif n’est pas valide.
 
 ---
 
@@ -150,12 +152,24 @@ L’activation est **locale, hors ligne et sans serveur**.
 
 Caractéristiques :
 
-- Une activation par appareil
+- Une activation initiale par appareil, restaurable par import de données
 - Aucun compte utilisateur
 - Aucun échange réseau
 - Activation restaurable via import des données
 
 Détails fonctionnels : `docs/ACTIVATION.md`
+
+### Règle post-import
+
+Lorsqu’une restauration de données est effectuée :
+
+- l’état applicatif est considéré comme valide,
+- l’écran d’activation ne doit plus jamais apparaître,
+- aucun code d’activation n’est redemandé,
+- le Device ID n’intervient plus dans le flux utilisateur,
+- l’application démarre immédiatement en mode normal.
+
+L’import de données est prioritaire sur toute règle d’activation.
 
 ### Règle d’activation
 
@@ -299,6 +313,22 @@ state : état global minimal
 sw : cycle de vie PWA  
 games : module isolé  
 css : présentation visuelle
+
+## Priorité de l’import sur l’activation
+
+L’import de données constitue une restauration complète de l’état applicatif.
+
+À ce titre :
+
+- il remplace toute activation manuelle,
+- il neutralise définitivement l’écran d’activation,
+- il est indépendant :
+  - de l’appareil,
+  - du navigateur,
+  - du domaine,
+  - de l’installation PWA.
+
+Ce comportement est contractuel et ne doit jamais être contourné par l’interface ou le Service Worker.
 
 ---
 
