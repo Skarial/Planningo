@@ -48,12 +48,6 @@ button,
   user-select: none;
   -webkit-touch-callout: none;
 }
-input,
-textarea {
-  -webkit-user-select: text;
-  user-select: text;
-  -webkit-touch-callout: default;
-}
 
 html,
 body {
@@ -61,6 +55,18 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
+
+  /* 🔒 Verrou global navigateur */
+  overflow: hidden;
+  overscroll-behavior: none;
+
+  /* ⛔️ Gestes système implicites */
+  touch-action: none;
+
+  /* ⛔️ Sélection & callout par défaut */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 body {
@@ -70,6 +76,61 @@ body {
   color: var(--color-text);
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
+}
+/* ======================================================================
+   INTERACTIONS — RÉOUVERTURE CONTRÔLÉE (POST ROOT LOCK)
+   ====================================================================== */
+
+/* =========================
+   SCROLL VERTICAL AUTORISÉ
+   ========================= */
+
+#view-home,
+#view-day,
+#view-month,
+#view-guided-month,
+#side-menu-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+/* =========================
+   SCROLL HORIZONTAL LÉGITIME
+   ========================= */
+
+.month-scroll-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  touch-action: pan-x;
+  overscroll-behavior: contain;
+}
+
+/* =========================
+   INPUTS — RÉAUTORISATION
+   ========================= */
+
+input,
+textarea {
+  touch-action: manipulation;
+  user-select: text;
+  -webkit-user-select: text;
+  -webkit-touch-callout: default;
+}
+
+/* =========================
+   ÉLÉMENTS INTERACTIFS
+   ========================= */
+
+button,
+.control-btn,
+.day,
+.extra-btn,
+.menu-section button {
+  touch-action: manipulation;
 }
 
 .hidden {
@@ -345,9 +406,7 @@ body {
 .month-scroll-x {
   overflow-x: auto;
   overflow-y: hidden;
-
   -webkit-overflow-scrolling: touch;
-
   width: 100%;
 }
 .card-month {

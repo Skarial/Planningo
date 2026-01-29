@@ -1,4 +1,5 @@
 // home.js : vue Accueil — semaine glissante (swipe horizontal)
+
 import { isDateInConges } from "../domain/conges.js";
 import { getPlanningEntry, getAllServices } from "../data/storage.js";
 import { toISODateLocal } from "../utils.js";

@@ -1,4 +1,5 @@
 // js/components/activationScreen.js
+
 import { APP_VERSION } from "../app.js";
 
 import { getOrCreateDeviceId } from "../data/device.js";
