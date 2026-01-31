@@ -1,17 +1,18 @@
+// js/app.js
 /*
   Application Planning PWA
 */
-export const APP_VERSION = "1.0.127";
+export const APP_VERSION = "1.0.128";
 
 import { getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
 
-import {
-  registerServiceWorker,
-  getServiceWorkerRegistration,
-} from "./sw/sw-register.js";
+import { registerServiceWorker } from "./sw/sw-register.js";
 
 import { initServicesIfNeeded } from "./data/services-init.js";
+import { getActiveDateISO, setActiveDateISO } from "./state/active-date.js";
+import { toISODateLocal } from "./utils.js";
+
 import { showHome } from "./router.js";
 import { initMenu } from "./components/menu.js";
 
@@ -22,84 +23,63 @@ import { initMenu } from "./components/menu.js";
 window.addEventListener("DOMContentLoaded", initApp);
 
 async function initApp() {
-  // 0️⃣ Vérification activation (BLOQUANTE)
+  // 0️⃣ Activation (bloquante)
   const activation = await getConfig("activation_ok");
-
-  const isActivated = activation?.value === "true";
-
-  if (!isActivated) {
+  if (activation?.value !== "true") {
     await showActivationScreen();
     return;
   }
 
-  // 1️⃣ Affichage normal
+  // 1️⃣ Date active (source unique)
+  if (!getActiveDateISO()) {
+    setActiveDateISO(toISODateLocal(new Date()));
+  }
+
+  // 2️⃣ UI principale
   initMenu();
   showHome();
 
-  // 2️⃣ Tâches non bloquantes
-  initServicesIfNeeded(); // sans await
-  await registerServiceWorker();
-  watchServiceWorkerUpdates();
+  // 3️⃣ Services non bloquants
+  initServicesIfNeeded();
+
+  // 4️⃣ Service Worker + bannière
+  await registerServiceWorker(showUpdateBanner);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  document
-    .getElementById("update-reload")
-    ?.addEventListener("click", async () => {
-      const reg = getServiceWorkerRegistration();
+// =======================
+// BANNIÈRE DE MISE À JOUR
+// =======================
 
-      if (reg?.waiting) {
-        // 1️⃣ forcer l’activation du nouveau SW
-        reg.waiting.postMessage("SKIP_WAITING");
+function showUpdateBanner(registration) {
+  if (!registration?.waiting) return;
 
-        // 2️⃣ attendre qu’il prenne le contrôle
-        navigator.serviceWorker.addEventListener("controllerchange", () => {
-          location.reload();
-        });
+  // Sécurité : ne jamais dupliquer
+  if (document.getElementById("update-banner")) return;
 
-        return;
-      }
+  const banner = document.createElement("div");
+  banner.id = "update-banner";
+  banner.className = "update-banner";
 
-      // fallback sécurité
+  banner.innerHTML = `
+    <div class="update-content">
+      <div class="update-text">
+        <strong>Mise à jour disponible</strong>
+        <span>Une nouvelle version de l’application est prête.</span>
+      </div>
+      <div class="update-actions">
+        <button class="btn-primary" id="update-reload">Mettre à jour</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(banner);
+
+  document.getElementById("update-reload").addEventListener("click", () => {
+    registration.waiting.postMessage("SKIP_WAITING");
+
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
       location.reload();
-    });
-});
-
-// =======================
-// BANNIÈRE
-// =======================
-
-function showUpdateBanner() {
-  const banner = document.getElementById("update-banner");
-  if (!banner) return;
-
-  banner.classList.remove("hidden");
-}
-
-async function watchServiceWorkerUpdates() {
-  const reg = await getServiceWorkerRegistration();
-  if (!reg) return;
-
-  // SW déjà prêt
-  if (reg.waiting) {
-    showUpdateBanner();
-  }
-
-  // Nouveau SW détecté plus tard
-  reg.addEventListener("updatefound", () => {
-    const newWorker = reg.installing;
-    if (!newWorker) return;
-
-    newWorker.addEventListener("statechange", () => {
-      if (
-        newWorker.state === "installed" &&
-        navigator.serviceWorker.controller
-      ) {
-        showUpdateBanner();
-      }
     });
   });
 }
-
-
 

@@ -1,11 +1,11 @@
-// day.js : affiche le jour consulté + le lendemain (lecture seule)
-// ⚠️ VUE DORMANTE
-// Cette vue n’est plus accessible via l’UI principale.
-// Conservée volontairement pour usage futur (détail jour, lien direct, debug).
+// ⚠️ VUE DORMANTE — NON ROUTÉE
+// Ne doit jamais être appelée par le router ni le menu.
+// Conservée pour usage futur éventuel.
 
 import { getAllServices, getPlanningEntry } from "../data/storage.js";
 import { getConfig } from "../data/db.js";
-import { getActivePeriodeLibelle } from "../domain/periods.js";
+import { getPeriodState } from "../domain/periods.js";
+import { getPeriodLabel } from "../utils/period-label.js";
 
 import { toISODateLocal, formatDateFR, getDayNameFullFR } from "../utils.js";
 
@@ -38,7 +38,8 @@ export async function renderDay(dateISO) {
   const saisonEntry = await getConfig("saison");
   const saisonConfig = saisonEntry?.value ?? null;
 
-  const activePeriode = getActivePeriodeLibelle(saisonConfig);
+  const periodState = getPeriodState(saisonConfig);
+  const activePeriode = getPeriodLabel(periodState);
 
   // Dates : jour consulté + lendemain
   const base = new Date(dateISO);

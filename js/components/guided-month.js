@@ -1,13 +1,16 @@
-// guided-month.js
+// js/components/guided-month.js
+
+import { getServiceSuggestions } from "../domain/service-suggestions.js";
+import { getUiMode } from "../state/ui-mode.js";
 
 import {
   getAllServices,
   savePlanningEntry,
   getPlanningEntry,
 } from "../data/storage.js";
-import { showMonth } from "../router.js";
+
 import { getConfig } from "../data/db.js";
-import { groupServices } from "../domain/services-grouping.js";
+// import { groupServices } from "../domain/services-grouping.js";
 import { toISODateLocal } from "../utils.js";
 import { showHome } from "../router.js";
 import { getGuidedStartDay, isDateInConges } from "../domain/conges.js";
@@ -94,8 +97,6 @@ export async function showGuidedMonth(forcedDate = null) {
   const saisonEntry = await getConfig("saison");
   const saisonConfig = saisonEntry?.value ?? null;
 
-  const grouped = groupServices(allServices, saisonConfig);
-
   // =======================
   // UI
   // =======================
@@ -161,7 +162,7 @@ export async function showGuidedMonth(forcedDate = null) {
     btnMonth.textContent = "📅 Voir le planning du mois";
     btnMonth.onclick = () => {
       guidedMonthDate = null;
-      showMonth();
+      showHome();
     };
 
     const btnHome = document.createElement("button");
@@ -222,6 +223,14 @@ export async function showGuidedMonth(forcedDate = null) {
 
     dayNumber.textContent = currentDay;
     servicesContainer.innerHTML = "";
+    const currentDate = new Date(year, monthIndex, currentDay);
+
+    const grouped = await getServiceSuggestions({
+      servicesCatalog: allServices,
+      saisonConfig,
+      date: currentDate,
+      mode: getUiMode(),
+    });
 
     addServiceButton("REPOS");
     addServiceButton("DM");

@@ -5,48 +5,28 @@
 :root {
   --color-primary: #0066ff;
   --color-primary-hover: #0053cc;
-  --color-warning: #92400e;
   --color-service: #2c5f2d;
   --color-repos: #4a5568;
   --color-text: #111;
   --color-text-muted: #6c757d;
-  --color-text-disabled: #888;
+
   --bg-body: #f5f6f8;
-  --bg-card: #ffffff;
-  --bg-day: #f9fafb;
-  --bg-button-secondary: #e9ecef;
-  --bg-button-secondary-hover: #dfe3e7;
-  --bg-extra-button-hover: #eceff3;
-  --bg-suggest-hover: #f0f4ff;
+
   --border-color: #ccc;
-  --border-color-light: #dee2e6;
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --spacing-sm: 6px;
+
   --spacing-md: 12px;
   --spacing-lg: 16px;
   --spacing-xl: 20px;
-  --radius-sm: 6px;
+
   --radius-md: 8px;
-  --radius-lg: 10px;
-  --input-height: 44px;
+
   --max-width-container: 1100px;
-  --max-width-card-desktop: 640px;
+  --max-width-content: 640px;
 }
 
 * {
   box-sizing: border-box;
   font-family: system-ui, sans-serif;
-}
-/* === ANTI LONG-PRESS SYSTÈME (GLOBAL CIBLÉ) === */
-
-body,
-button,
-.menu-long-press,
-#side-menu,
-#side-menu * {
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
 }
 
 html,
@@ -56,229 +36,61 @@ body {
   width: 100%;
   height: 100%;
 
-  /* 🔒 Verrou global navigateur */
   overflow: hidden;
   overscroll-behavior: none;
-
-  /* ⛔️ Gestes système implicites */
   touch-action: none;
-
-  /* ⛔️ Sélection & callout par défaut */
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
 }
 
 body {
-  margin: 0;
   padding: var(--spacing-xl);
   background: var(--bg-body);
   color: var(--color-text);
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
 }
-/* ======================================================================
-   INTERACTIONS — RÉOUVERTURE CONTRÔLÉE (POST ROOT LOCK)
-   ====================================================================== */
 
-/* =========================
-   SCROLL VERTICAL AUTORISÉ
-   ========================= */
+/* ==========================================================================
+   2. SCROLL AUTORISÉ
+   ========================================================================== */
 
-#view-home,
-#view-day,
-#view-month,
-#view-guided-month,
-#side-menu-scroll {
+#view-home {
   overflow-y: auto;
-  overflow-x: hidden;
-
   touch-action: pan-y;
   overscroll-behavior: contain;
-}
 
-/* =========================
-   SCROLL HORIZONTAL LÉGITIME
-   ========================= */
-
-.month-scroll-x {
-  overflow-x: auto;
-  overflow-y: hidden;
-
-  touch-action: pan-x;
-  overscroll-behavior: contain;
-}
-
-/* =========================
-   INPUTS — RÉAUTORISATION
-   ========================= */
-
-input,
-textarea {
-  touch-action: manipulation;
-  user-select: text;
-  -webkit-user-select: text;
-  -webkit-touch-callout: default;
-}
-
-/* =========================
-   ÉLÉMENTS INTERACTIFS
-   ========================= */
-
-button,
-.control-btn,
-.day,
-.extra-btn,
-.menu-section button {
-  touch-action: manipulation;
-}
-
-.hidden {
-  display: none !important;
-}
-
-#view-home,
-#view-day,
-#view-month,
-#view-guided-month {
   max-width: var(--max-width-container);
   margin: 0 auto;
   padding-top: 3rem;
 }
 
 /* ==========================================================================
-   2. COMPOSANTS GÉNÉRIQUES (CARTES, BOUTONS, TOASTS)
+   3. HEADER FIXE (MENU + ÉDITER)
    ========================================================================== */
 
-.card {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  box-shadow: var(--shadow-card);
-  margin-bottom: 8px;
-}
-
-.toast-notification {
-  position: fixed;
-  top: 16px;
-  left: 50%;
-  transform: translate(-50%, -20px);
-  background: #ffffff;
-  padding: 12px 18px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  opacity: 0;
-  transition:
-    transform 0.25s ease,
-    opacity 0.25s ease;
-  z-index: 10001;
-}
-.toast-notification.visible {
-  transform: translate(-50%, 0);
-  opacity: 1;
-}
-
-/* ==========================================================================
-   3. VUES (HOME & JOUR)
-   ========================================================================== */
-.card-service-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.card-worked-time {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-}
-
-.week-day-card.today {
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-}
-
-.week-day-header {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 6px;
-}
-.week-day-name {
-  font-weight: 700;
-  text-transform: capitalize;
-}
-.week-day-date {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-  font-weight: 900;
-}
-
-.week-header {
+.home-header {
   position: sticky;
   top: 0;
   z-index: 5;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
   background: var(--bg-body);
   padding-bottom: 8px;
 }
 
-/* Zone scrollable des cartes semaine */
-.week-scroll {
-  position: relative;
-  height: calc(100dvh - 140px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-/* Indices visuels swipe */
-.week-scroll::before,
-.week-scroll::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 22px;
-  height: 100%;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.week-scroll::before {
-  left: 0;
-  background: linear-gradient(to right, var(--bg-body), rgba(245, 246, 248, 0));
-}
-
-.week-scroll::after {
-  right: 0;
-  background: linear-gradient(to left, var(--bg-body), rgba(245, 246, 248, 0));
-}
-
-.today-badge {
-  align-self: flex-start;
-  margin-top: 4px;
-  padding: 2px 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: white;
-  background: var(--color-primary);
-  border-radius: 999px;
-}
-
-.card-service {
-  font-size: 1.4rem;
-  font-weight: 800;
-  margin-bottom: 6px;
-  color: var(--color-service);
-}
-.card-service.repos,
-.day-service.repos {
-  color: var(--color-repos);
-}
-.card-time {
-  font-size: 1rem;
+/* Bouton Éditer */
+#edit-btn {
+  font-size: 0.9rem;
   font-weight: 600;
-  margin-top: 6px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
 }
+
+/* ==========================================================================
+   4. NAVIGATION MOIS (FLÈCHES)
+   ========================================================================== */
 
 .today-nav {
   display: flex;
@@ -287,42 +99,8 @@ button,
   gap: 8px;
   margin: 8px 0;
 }
-.today-reset-btn {
-  height: 36px;
-  padding: 0 10px;
-
-  background: transparent;
-  border: none;
-  border-radius: 999px;
-
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-primary);
-
-  cursor: pointer;
-
-  transition:
-    color 0.15s ease,
-    transform 0.1s ease,
-    background 0.15s ease;
-}
-
-/* Hover discret (desktop) */
-.today-reset-btn:hover {
-  background: rgba(0, 102, 255, 0.08);
-}
-
-/* Pression */
-.today-reset-btn:active {
-  transform: scale(0.95);
-  background: rgba(0, 102, 255, 0.14);
-}
 
 .today-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   width: 36px;
   height: 36px;
 
@@ -331,619 +109,248 @@ button,
   border-radius: 50%;
 
   cursor: pointer;
-
-  transition:
-    background 0.15s ease,
-    transform 0.1s ease;
-}
-
-.today-arrow:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.today-arrow:active {
-  transform: scale(0.9);
 }
 
 .today-arrow::before {
   content: "";
   width: 18px;
   height: 18px;
+  display: block;
+
   background-color: var(--color-primary);
 
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
-
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: contain;
-}
-.today-arrow:hover::before {
-  background-color: var(--color-primary-hover);
 }
 
 .arrow-left::before {
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }
 
 .arrow-right::before {
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-}
-.extra-label {
-  color: var(--color-warning);
-  font-weight: 600;
 }
 
 /* ==========================================================================
-   4. PLANNING MENSUEL & SUGGESTIONS
+   5. HEADER JOUR ACTIF — MAQUETTE
    ========================================================================== */
 
-.card-service.conges {
-  background: transparent;
-  color: #6c6c70;
+.day-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
 
-  letter-spacing: 0.5px;
+  align-items: start;
+
+  margin: 16px auto 24px;
+  max-width: var(--max-width-content);
 }
 
-.service-label.conges {
-  background: transparent;
-  color: #6c6c70;
-  font-weight: 850;
-  letter-spacing: 0.5px;
-}
-.service-input.input-hidden {
-  opacity: 0;
-  pointer-events: none;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  display: none !important;
-}
-
-.month-scroll-x {
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  width: 100%;
-}
-.card-month {
-  margin-bottom: 0;
-  overflow: hidden; /* verrouille la carte */
-}
-
-.suggest-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin-top: 6px;
-
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-
-  max-height: 160px;
-  overflow-y: auto;
-
-  /* ⬇️ CORRECTION SCROLL TACTILE */
-  touch-action: pan-y;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-
-  z-index: 20;
-}
-
-.suggest-list.above {
-  top: auto;
-  bottom: 100%;
-  margin-top: 0;
-  margin-bottom: 6px;
-}
-
-.suggest-item {
-  padding: var(--spacing-sm);
-  font-size: 0.85rem;
-
-  /* ⬇️ CLÉ POUR LE SCROLL */
-  touch-action: manipulation;
-
-  cursor: pointer;
-}
-
-.month-nav {
+/* Colonne gauche */
+.day-header-left {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--bg-card);
-  padding: var(--spacing-lg);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  margin-bottom: var(--spacing-xl);
+  flex-direction: column;
+  gap: 4px;
 }
-.month-btn {
-  background: var(--bg-button-secondary);
-  border: none;
-  padding: 12px 18px;
-  border-radius: var(--radius-md);
-  color: var(--color-primary);
-  font-weight: 500;
-  cursor: pointer;
+
+.day-header-day {
+  font-size: 6.5rem;
+  font-weight: 900;
+  line-height: 1;
+  color: #2c2c2c;
 }
-.month-current {
-  font-size: 1.25rem;
+
+.day-header-month {
+  font-size: 1.2rem;
   font-weight: 700;
-  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+}
+
+.day-header-year {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+}
+
+/* Colonne droite */
+.day-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.day-header-service {
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-service);
+}
+
+.day-header-service.repos {
+  color: var(--color-repos);
+  font-weight: 700;
+}
+
+.day-header-time {
+  font-size: 1rem;
+  color: #4f6fbf;
+  opacity: 0.85;
+}
+
+.day-header-duration {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-service);
+  opacity: 0.9;
+}
+
+.day-header-weekday {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ff8c00;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   6. CALENDRIER MENSUEL (SECONDAIRE)
+   ========================================================================== */
+
+#home-calendar-anchor {
+  opacity: 0.85;
+  touch-action: manipulation;
 }
 
 .month-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(72px, 1fr));
   gap: 6px;
-  min-width: 504px;
 }
 
-.day-header {
-  text-align: center;
-  font-weight: 700;
-}
+.month-day {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  background: #ffffff;
 
-.day-number {
-  font-weight: 600;
-}
-
-.extra-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 4px auto 0;
-  height: 24px;
-  padding: 0 6px;
 
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-
-  font-size: 0.9rem;
-  line-height: 1;
-  color: var(--color-text-muted);
-
-  cursor: pointer;
-  transition:
-    color 0.15s ease,
-    background 0.15s ease,
-    transform 0.1s ease;
-}
-
-/* Hover discret (desktop) */
-.extra-btn:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-/* État actif */
-.extra-btn.active {
-  color: var(--color-primary);
-  background: rgba(0, 102, 255, 0.12);
-}
-
-/* Feedback pression */
-.extra-btn:active {
-  transform: scale(0.92);
-}
-
-.day {
-  position: relative;
-  background: var(--bg-day);
-  border-radius: var(--radius-md);
-  padding: 10px;
-  text-align: center;
-  aspect-ratio: 1 / 1;
-}
-
-.day.empty-day {
-  background: transparent;
-  box-shadow: none;
-}
-
-.service-input {
-  width: 100%;
-  height: 26px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-align: center;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  margin-bottom: 4px;
-  color: var(--color-service);
-}
-
-.service-input.conges {
-  background: transparent;
-  color: #6c6c70;
-  font-weight: 850;
-  letter-spacing: 0.5px;
-}
-
-.service-label {
-  font-size: 0.85rem;
   font-weight: 700;
-  margin-bottom: 4px;
-  color: var(--color-service);
-}
-.service-label.repos {
-  color: var(--color-repos);
-}
-#view-month {
-  height: calc(100dvh - 3rem);
-  overflow: hidden;
-}
-
-/* ==========================================================================
-   5. PRÉPARER MOIS SUIVANT (DÉDIÉ)
-   ========================================================================== */
-
-.guided-month-services,
-.guided-month-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.guided-month-buttons {
-  justify-content: center;
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.guided-month-buttons button {
-  padding: 8px 14px;
-  min-width: 72px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-card);
-  color: var(--color-text);
-  font-size: 0.85rem;
-  font-weight: 600;
   cursor: pointer;
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.1s ease;
+
+  opacity: 0.55;
 }
 
-.guided-month-buttons button:hover {
-  background: var(--bg-extra-button-hover);
-  border-color: var(--color-primary);
+.month-day.active {
+  opacity: 1;
+  outline: 3px solid #ff8c00;
+  outline-offset: -3px;
+  background: #fff7e6;
 }
 
-.guided-month-buttons button:active {
-  transform: scale(0.97);
+.month-day.out {
+  visibility: hidden;
+}
+/* =========================
+   HOME — CALENDRIER CIRCULAIRE
+   ========================= */
+
+.home-month {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.guided-month-buttons .guided-cancel-btn {
-  background: #fff5f5;
-  border-color: #f1bcbc;
-  color: #a40000;
+.week-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.week-row.faded {
+  opacity: 0.35;
+}
+
+.day-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1rem;
+  font-weight: 700;
+
+  background: #3a3f44;
+  color: #ffffff;
+
+  cursor: pointer;
+}
+
+.day-circle.active {
+  background: #e68a2e;
+}
+
+.day-circle.out {
+  visibility: hidden;
 }
 
 /* ==========================================================================
-   6. MENU LATÉRAL 
+   MENU LATÉRAL — ISOLATION STRICTE (CORRECTION)
    ========================================================================== */
 
-#reset-panel button::after,
-#reset-month-picker button::after {
-  content: none;
-}
-/* === SUPPRESSION FEEDBACK TAP MOBILE (MENU) === */
-.menu-section button,
-.menu-section button * {
-  -webkit-tap-highlight-color: transparent;
-}
-/* === SUPPRESSION TAP HIGHLIGHT MENU (ANDROID / iOS) === */
-#side-menu,
-#side-menu * {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.reset-month-nav {
-  display: flex;
-  align-items: center; /* alignement vertical */
-  justify-content: space-between;
-  gap: 12px;
-
-  padding: 12px 16px;
-  border-top: 1px solid #e5e5ea;
-}
-#reset-month-label {
-  flex: 1;
-  text-align: center;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-#menu-toggle {
-  position: fixed;
-  top: 0.75rem;
-  left: 0.75rem;
-  z-index: 1001;
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 1.8rem;
-  background: none;
-  border: none;
-}
+/* Overlay */
 #menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.45);
   z-index: 1000;
   display: none;
 }
+
 #menu-overlay.open {
   display: block;
 }
 
+/* Menu */
 #side-menu {
   position: fixed;
   top: 0;
   left: 0;
+
   width: 80vw;
   max-width: 320px;
   height: 100dvh;
+
   background: #f2f2f7;
-  z-index: 1002;
+
+  z-index: 1001;
+
   transform: translateX(-100%);
   transition: transform 0.25s ease;
+
   overflow: hidden;
 }
+
 #side-menu.open {
   transform: translateX(0);
-  visibility: visible;
 }
+
+/* Scroll interne menu */
 #side-menu-scroll {
   height: 100%;
   overflow-y: auto;
   padding: 1rem;
-  -webkit-overflow-scrolling: touch;
-}
-#menu-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px 0;
-}
-
-#app-version {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-}
-
-.menu-section {
-  margin-bottom: 1.5rem;
-}
-.menu-section h3 {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #6c6c70;
-  margin: 0 0 6px 6px;
-  text-transform: uppercase;
-}
-
-.menu-section button {
-  all: unset;
-
-  background: #ffffff;
-  border-radius: 6px;
-  border: 1px solid #e5e5ea;
-
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #1c1c1e;
-
-  cursor: pointer;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.menu-section button:active {
-  background: transparent;
-  transform: none;
-}
-
-.menu-section button.danger {
-  color: #d32f2f;
-}
-
-/* Correction Panneau Reset (Transparent) */
-#reset-panel,
-#reset-month-picker {
-  background: transparent !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-#reset-panel .reset-title {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #6c6c70;
-  text-transform: uppercase;
-  margin: 12px 0 6px 6px;
-}
-
-.menu-long-press {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 14px 16px;
-  box-sizing: border-box;
-
-  cursor: pointer;
-  touch-action: none;
-  background: transparent;
-}
-
-/* état appui long */
-.menu-long-press.holding {
-  color: #d32f2f;
-  font-weight: 600;
-}
-
-/* Formulaires menu */
-.menu-form {
-  margin-top: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  background: transparent;
-}
-.menu-form label {
-  padding: 8px 16px 0;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #6c6c70;
-  text-transform: uppercase;
-}
-.menu-form input[type="date"] {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #e5e5ea;
-  padding: 12px 16px;
-  font-size: 1rem;
-  height: 44px;
-}
-.menu-form button {
-  background: transparent;
-  padding: 14px 16px;
-  text-align: left;
-  font-weight: 600;
-  color: #007aff;
-  border-bottom: 1px solid #e5e5ea;
-}
-
-.menu-form button:active {
-  background: #e5e5ea;
-}
-
-/* ==========================================================================
-   7. ICONES & RESPONSIVE
-   ========================================================================== */
-
-.menu-icon {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  background-color: #6c6c70;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: contain;
-}
-
-.icon-day {
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='4' width='18' height='18' rx='2' ry='2'/><line x1='16' y1='2' x2='16' y2='6'/><line x1='8' y1='2' x2='8' y2='6'/></svg>");
-}
-.icon-month {
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='4' width='18' height='18' rx='2'/><line x1='3' y1='10' x2='21' y2='10'/></svg>");
-}
-.icon-guided {
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12h18'/><path d='M3 6h12'/><path d='M3 18h8'/></svg>");
-}
-.icon-game {
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='6' width='20' height='12' rx='4'/><circle cx='8' cy='12' r='1'/><circle cx='16' cy='12' r='1'/></svg>");
-}
-.icon-consult {
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
-}
-.icon-conges {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
-}
-
-.icon-season {
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2v20'/><path d='M2 12h20'/></svg>");
-}
-/* .icon-phone {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E");
-  background-color: #6c6c70;
-  transform: scale(0.95);
-} */
-.icon-phone {
-  background-color: #6c6c70;
-
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='6' y='2' width='12' height='20' rx='2' ry='2'/%3E%3Cline x1='12' y1='18' x2='12' y2='18'/%3E%3C/svg%3E");
-
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
-
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: contain;
-}
-
-.icon-reset {
-  background-color: #d92d20;
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 12a9 9 0 1 1-3-6.7'/><polyline points='21 3 21 9 15 9'/></svg>");
-}
-
-@media (min-width: 769px) {
-  .month-nav,
-  .card {
-    max-width: var(--max-width-card-desktop);
-    margin: 0 auto 8px;
-  }
-}
-@media (max-width: 430px) {
-  .month-nav {
-    gap: 8px;
-    padding: 10px;
-  }
-  .month-btn {
-    padding: 8px 10px;
-    font-size: 0.75rem;
-  }
-}
-
-/* === BARRE APPUI LONG — ROBUSTE === */
-
-.long-press-bar {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-
-  height: 7px;
-  width: 0%;
-
-  background: #d32f2f;
-  pointer-events: none;
-}
-
-.menu-long-press.holding .long-press-bar {
-  animation: longPressFill 1.2s linear forwards;
-}
-
-@keyframes longPressFill {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 100%;
-  }
 }
 
 /* ==========================================================
-   NOTIFICATION MISE À JOUR (TOP)
+   NOTIFICATION MISE À JOUR (TOP FLOATING)
    ========================================================== */
 
 .update-banner {
@@ -960,6 +367,7 @@ button,
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
 
   z-index: 10050;
+
   animation: slideDown 0.25s ease;
 }
 
@@ -987,18 +395,27 @@ button,
   justify-content: flex-end;
 }
 
-.btn-primary {
+.update-actions button {
   height: 40px;
   padding: 0 16px;
   border-radius: 10px;
   border: none;
-  background: var(--color-primary);
-  color: #fff;
+
   font-weight: 600;
   cursor: pointer;
 }
 
-.btn-primary:active {
+.update-actions .btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.update-actions .btn-secondary {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.update-actions button:active {
   transform: scale(0.96);
 }
 
@@ -1011,163 +428,4 @@ button,
     opacity: 1;
     transform: translate(-50%, 0);
   }
-}
-
-/* ======================================================================
-   ÉCRAN D’ACTIVATION — COHÉRENT APP
-   ====================================================================== */
-
-#activation-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: var(--bg-body);
-  padding: var(--spacing-xl);
-}
-
-/* Carte centrale */
-.activation-container {
-  width: 100%;
-  max-width: 420px;
-
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-
-  padding: var(--spacing-xl);
-
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
-}
-
-/* Titre */
-.activation-container h1 {
-  margin: 0;
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--color-text);
-}
-
-/* Texte descriptif */
-.activation-container > p {
-  font-size: 0.95rem;
-  color: var(--color-text-muted);
-  line-height: 1.4;
-}
-#activation-import {
-  height: var(--input-height);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: transparent;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* =======================
-   DEVICE ID
-   ======================= */
-
-.device-id {
-  background: var(--bg-day);
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--radius-md);
-
-  padding: var(--spacing-md);
-
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.device-id label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
-.device-id code {
-  font-size: 0.8rem;
-  word-break: break-all;
-  color: var(--color-text);
-}
-
-/* Bouton copier */
-#copy-device-id {
-  align-self: flex-start;
-
-  background: var(--bg-button-secondary);
-  border: none;
-  border-radius: var(--radius-sm);
-
-  padding: 6px 10px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-primary);
-
-  cursor: pointer;
-}
-
-#copy-device-id:active {
-  transform: scale(0.96);
-}
-
-/* Feedback copie */
-.device-id .info {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-}
-
-/* =======================
-   INPUT + BOUTON
-   ======================= */
-
-#activation-code {
-  height: var(--input-height);
-  padding: 0 12px;
-
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-
-  font-size: 0.95rem;
-}
-
-#activation-validate {
-  height: var(--input-height);
-
-  border-radius: var(--radius-md);
-  border: none;
-
-  background: var(--color-primary);
-  color: #fff;
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
-#activation-validate:active {
-  transform: scale(0.96);
-}
-
-/* =======================
-   MESSAGES
-   ======================= */
-
-.activation-container .error {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #d32f2f;
-}
-
-.activation-container .success {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #2c5f2d;
 }

@@ -1,4 +1,4 @@
-// utils/conges.js
+// js/domain/conges.js
 // Gestion centrale des congés (logique métier pure, sans UI)
 // ⚠️ Hypothèse métier verrouillée :
 // - Une seule période de congés à la fois

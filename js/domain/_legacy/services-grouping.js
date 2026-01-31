@@ -1,3 +1,5 @@
+// ⚠️ OBSOLÈTE — logique UI historique, ne plus utiliser dans la refonte
+
 import { getActivePeriodeLibelle } from "./periods.js";
 
 // Services toujours disponibles (hors saison)

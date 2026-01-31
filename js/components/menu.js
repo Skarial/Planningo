@@ -1,15 +1,11 @@
-// menu.js
+// js/components/menu.js
+
+import { setUiMode, UI_MODE } from "../state/ui-mode.js";
 
 import { exportAllData } from "../data/export-db.js";
 import { importAllData } from "../data/import-db.js";
 
-import {
-  refreshCurrentView,
-  showHome,
-  showHomeAtDate,
-  showMonth,
-  showGuidedMonth,
-} from "../router.js";
+import { refreshCurrentView, showHome, showGuidedMonth } from "../router.js";
 
 import { clearAllPlanning, clearPlanningMonth } from "../data/storage.js";
 import { getConfig, setConfig } from "../data/storage.js";
@@ -271,9 +267,16 @@ export function initMenu() {
     if (!consultInput.value) return;
 
     consultForm.classList.add("hidden");
-    showHomeAtDate(consultInput.value);
+
+    // 👉 Nouveau comportement : on fixe la date active, puis Home
+    import("../state/active-date.js").then(({ setActiveDateISO }) => {
+      setActiveDateISO(consultInput.value);
+      showHome();
+    });
+
     closeMenu();
   });
+
   // =======================
   // CHANGEMENT DE TÉLÉPHONE
   // =======================
@@ -507,18 +510,19 @@ export function initMenu() {
 
     switch (action) {
       case "home":
+        setUiMode(UI_MODE.CONSULTATION);
         showHome();
         break;
 
       case "day":
-        showDay();
         break;
 
       case "month":
-        showMonth();
         break;
 
       case "guided-month":
+        setUiMode(UI_MODE.SAISIE_MENSUELLE);
+
         showGuidedMonth();
         break;
 

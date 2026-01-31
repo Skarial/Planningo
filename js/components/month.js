@@ -1,4 +1,6 @@
-// month.js : planning mensuel interactif (édition locale, offline-first)
+// ⚠️ VUE DORMANTE — NON ROUTÉE
+// Remplacée fonctionnellement par home + month-calendar.
+// Conservée volontairement.
 
 import { suggestServices } from "../data/services.js";
 import {
@@ -16,9 +18,10 @@ import {
   toISODateLocal,
 } from "../utils.js";
 import { getConfig } from "../data/db.js";
-import { getActivePeriodeLibelle } from "../domain/periods.js";
 
 import { getCongesDaysISOForMonth } from "../domain/conges.js";
+import { getPeriodState } from "../domain/periods.js";
+import { getPeriodLabel } from "../utils/period-label.js";
 
 // =======================
 // ÉTAT LOCAL (AFFICHAGE)
@@ -103,7 +106,8 @@ export async function renderMonth() {
   const saisonEntry = await getConfig("saison");
   const saisonConfig = saisonEntry?.value ?? null;
 
-  const activePeriode = getActivePeriodeLibelle(saisonConfig);
+  const periodState = getPeriodState(saisonConfig);
+  const activePeriode = getPeriodLabel(periodState);
 
   // =======================
   // CONGÉS — JOURS DU MOIS

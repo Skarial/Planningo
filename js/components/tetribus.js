@@ -6,16 +6,12 @@ import { Tetribus } from "../games/tetribus/tetribus.game.js";
 let started = false;
 
 function hideAllViews() {
-  [
-    "view-home",
-    "view-day",
-    "view-month",
-    "view-guided-month",
-    "view-tetribus",
-  ].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = "none";
-  });
+  ["view-home", "view-month", "view-guided-month", "view-tetribus"].forEach(
+    (id) => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = "none";
+    },
+  );
 }
 
 // ⛔ masquer l’UI globale

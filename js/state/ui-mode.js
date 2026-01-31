@@ -10,5 +10,18 @@ export function getUiMode() {
 }
 
 export function setUiMode(mode) {
+  if (currentMode === mode) return;
   currentMode = mode;
+  notifyUiModeChange();
+}
+
+let listeners = [];
+
+export function subscribeUiMode(listener) {
+  if (typeof listener !== "function") return;
+  listeners.push(listener);
+}
+
+function notifyUiModeChange() {
+  listeners.forEach((fn) => fn(currentMode));
 }

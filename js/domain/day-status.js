@@ -1,3 +1,4 @@
+// js/domain/day-status.js
 /**
  * Statuts métier possibles pour un jour
  * Source unique de vérité

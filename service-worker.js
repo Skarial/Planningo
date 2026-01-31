@@ -80,21 +80,3 @@ self.addEventListener("message", (event) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

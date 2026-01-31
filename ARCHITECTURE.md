@@ -75,7 +75,6 @@ js/
 &nbsp;&nbsp;components/  
 &nbsp;&nbsp;&nbsp;&nbsp;activationScreen.js  
 &nbsp;&nbsp;&nbsp;&nbsp;home.js  
-&nbsp;&nbsp;&nbsp;&nbsp;day.js  
 &nbsp;&nbsp;&nbsp;&nbsp;month.js  
 &nbsp;&nbsp;&nbsp;&nbsp;guided-month.js  
 &nbsp;&nbsp;&nbsp;&nbsp;tetribus.js  
@@ -97,9 +96,6 @@ js/
 &nbsp;&nbsp;&nbsp;&nbsp;services.js  
 &nbsp;&nbsp;&nbsp;&nbsp;services-init.js  
 &nbsp;&nbsp;&nbsp;&nbsp;services-catalog.js
-
-&nbsp;&nbsp;state/  
-&nbsp;&nbsp;&nbsp;&nbsp;consulted-date.js
 
 &nbsp;&nbsp;sw/  
 &nbsp;&nbsp;&nbsp;&nbsp;sw-register.js
@@ -205,6 +201,20 @@ Le routing est interne et sans framework.
 
 Chaque vue est un module autonome dans `components/`.
 
+❗ État actuel des vues
+
+La vue "day" n’est plus exposée :
+
+- aucune navigation active
+- aucune section DOM correspondante
+- aucun état dédié
+
+Les vues actives sont :
+
+- home (vue centrale)
+- guided-month (saisie guidée)
+- tetribus
+
 ---
 
 ## 6. Stockage des données
@@ -222,6 +232,12 @@ IndexedDB :
 - Sauvegarde et restauration
 
 Objectif : stockage structuré, durable et hors ligne.
+
+state/
+active-date.js # date active globale
+ui-mode.js # mode consultation / saisie
+month-navigation.js # mois courant affiché
+month-calendar-state.js # état dérivé du calendrier mensuel
 
 ### Architecture de stockage
 

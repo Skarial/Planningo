@@ -1,3 +1,4 @@
+// js/domain/service-model.js
 /**
  * Modèle métier d’un service journalier
  */
