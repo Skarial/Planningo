@@ -473,45 +473,16 @@ export const Tetribus = {
     // Bouton GAUCHE / DROITE (pointer events only to avoid double trigger)
     bindMoveButton(btnLeft, () => this.moveLeft());
     bindMoveButton(btnRight, () => this.moveRight());
-
-    // Bouton ROTATION
+    // Bouton ROTATION (pointer events uniquement pour �viter les doubles triggers)
     let rotateTimeout = null;
     let isLongPress = false;
-
-    btnRotate.addEventListener("touchstart", (e) => {
-      e.preventDefault(); // ⛔ bloque click fantôme
-
-      isLongPress = false;
-
-      rotateTimeout = setTimeout(() => {
-        isLongPress = true;
-        this.startFastDrop();
-      }, 300);
-    });
-
-    btnRotate.addEventListener("touchend", (e) => {
-      e.preventDefault(); // ⛔ bloque click fantôme
-
-      clearTimeout(rotateTimeout);
-
-      if (isLongPress) {
-        this.stopFastDrop();
-      } else {
-        this.rotate();
-      }
-    });
-
-    // 🔒 sécurité si le doigt quitte le bouton
-    btnRotate.addEventListener("touchcancel", () => {
-      clearTimeout(rotateTimeout);
-      this.stopFastDrop();
-    });
 
     btnRotate.addEventListener("pointerdown", (e) => {
       if (e.cancelable) {
         e.preventDefault();
       }
 
+      btnRotate.setPointerCapture(e.pointerId);
       isLongPress = false;
 
       rotateTimeout = setTimeout(() => {
@@ -520,11 +491,14 @@ export const Tetribus = {
       }, 300);
     });
 
-    btnRotate.addEventListener("pointerup", (e) => {
-      if (e.cancelable) {
+    const stopRotate = (e) => {
+      if (e?.cancelable) {
         e.preventDefault();
       }
 
+      if (e?.pointerId !== undefined) {
+        btnRotate.releasePointerCapture(e.pointerId);
+      }
       clearTimeout(rotateTimeout);
 
       if (isLongPress) {
@@ -532,9 +506,14 @@ export const Tetribus = {
       } else {
         this.rotate();
       }
-    });
+    };
 
+    btnRotate.addEventListener("pointerup", stopRotate);
     btnRotate.addEventListener("pointercancel", () => {
+      clearTimeout(rotateTimeout);
+      this.stopFastDrop();
+    });
+    btnRotate.addEventListener("pointerleave", () => {
       clearTimeout(rotateTimeout);
       this.stopFastDrop();
     });
@@ -594,3 +573,4 @@ export const Tetribus = {
     return true;
   },
 };
+
