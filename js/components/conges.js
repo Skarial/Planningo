@@ -45,11 +45,11 @@ export async function renderCongesView() {
 
   const title = document.createElement("div");
   title.className = "settings-title";
-  title.textContent = "Conges";
+  title.textContent = "Congés";
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
-  subtitle.textContent = "Configurer vos periodes de conges";
+  subtitle.textContent = "Configurer vos périodes de congés";
 
   header.append(title, subtitle);
 
@@ -76,7 +76,7 @@ export async function renderCongesView() {
   const resetBtn = document.createElement("button");
   resetBtn.className = "settings-btn";
   resetBtn.type = "button";
-  resetBtn.textContent = "Supprimer les conges";
+  resetBtn.textContent = "Supprimer les congés";
 
   actions.append(addBtn, saveBtn, resetBtn);
 
@@ -199,7 +199,7 @@ export async function renderCongesView() {
 
     await setConfig("conges", { periods: nextPeriods });
     window.__homeCongesConfig = { periods: nextPeriods };
-    status.show("Conges enregistres");
+    status.show("Congés enregistrés");
   });
 
   resetBtn.addEventListener("click", async () => {
@@ -207,6 +207,6 @@ export async function renderCongesView() {
     periodsContainer.innerHTML = "";
     periodsContainer.appendChild(createPeriodRow({}, 0));
     window.__homeCongesConfig = null;
-    status.show("Conges supprimes");
+    status.show("Congés supprimés");
   });
 }

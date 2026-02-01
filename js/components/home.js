@@ -17,8 +17,10 @@ import { isDateInConges } from "../domain/conges.js";
 import { toISODateLocal } from "../utils.js";
 import { getConfig } from "../data/db.js";
 import { initMonthFromDateISO } from "../state/month-navigation.js";
-import { getPeriodState } from "../domain/periods.js";
+import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
+import { getServiceSuggestions } from "../domain/service-suggestions.js";
+import { getUiMode } from "../state/ui-mode.js";
 
 function parseISODateLocal(dateISO) {
   const [year, month, day] = dateISO.split("-").map(Number);
@@ -53,7 +55,15 @@ function formatDuration(minutes) {
   }
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  return `${h}h${String(m).padStart(2, "0")}`;
+  return `${h}H${String(m).padStart(2, "0")}`;
+}
+
+function shouldAddExtraMinutes(service) {
+  const code = typeof service?.code === "string" ? service.code.toUpperCase() : "";
+  if (!code) return false;
+  if (code === "DM" || code === "DAM" || code === "ANNEXE") return false;
+  if (code.startsWith("TAD")) return false;
+  return true;
 }
 
 function buildServiceTimeLines(service, periodLabel) {
@@ -90,13 +100,17 @@ function buildServiceTimeLines(service, periodLabel) {
 
   if (lines.length === 0) return null;
 
-  const totalMinutes = lines.reduce((sum, line) => {
+  let totalMinutes = lines.reduce((sum, line) => {
     const start = parseTimeToMinutes(line.start);
     const end = parseTimeToMinutes(line.end);
     if (start == null || end == null) return sum;
     const diff = end - start;
     return diff > 0 ? sum + diff : sum;
   }, 0);
+
+  if (shouldAddExtraMinutes(service)) {
+    totalMinutes += 5;
+  }
 
   return {
     lines,
@@ -287,9 +301,10 @@ export async function renderHome() {
 
     const weekday = document.createElement("div");
     weekday.className = "day-header-weekday";
-    weekday.textContent = date.toLocaleDateString("fr-FR", {
-      weekday: "short",
-    });
+    let weekdayShort = date.toLocaleDateString("fr-FR", { weekday: "short" });
+    weekdayShort = weekdayShort.replace(".", "");
+    weekday.textContent =
+      weekdayShort.charAt(0).toUpperCase() + weekdayShort.slice(1);
 
     right.append(service, time, duration, weekday);
 
@@ -341,7 +356,7 @@ export async function renderHome() {
         );
 
         const periodLabel = getPeriodLabel(
-          getPeriodState(window.__homeSaisonConfig),
+          getPeriodStateForDate(window.__homeSaisonConfig, date),
         );
         const timeInfo = buildServiceTimeLines(matchedService, periodLabel);
 
@@ -350,7 +365,21 @@ export async function renderHome() {
           time.innerHTML = "";
           timeInfo.lines.forEach((line) => {
             const row = document.createElement("div");
-            row.textContent = line.text;
+            row.className = "day-time-row";
+
+            const start = document.createElement("span");
+            start.className = "day-time-start";
+            start.textContent = line.start;
+
+            const sep = document.createElement("span");
+            sep.className = "day-time-sep";
+            sep.textContent = "–";
+
+            const end = document.createElement("span");
+            end.className = "day-time-end";
+            end.textContent = line.end;
+
+            row.append(start, sep, end);
             time.appendChild(row);
           });
 
@@ -407,21 +436,40 @@ export async function renderHome() {
     panel.style.pointerEvents = "auto";
 
     const label = document.createElement("div");
-    label.className = "edit-panel-label";
+    label.className = "edit-panel-label edit-panel-label-row";
 
     const iso = getActiveDateISO();
     const [y, m, d] = iso.split("-");
 
-    label.textContent = `Jour sélectionné : ${d}/${m}/${y}`;
+    const labelText = document.createElement("span");
+    labelText.textContent = `Jour sélectionné : ${d}/${m}/${y}`;
 
     const input = document.createElement("input");
     input.type = "text";
     input.className = "edit-panel-input";
     input.placeholder = "Code service (ex : 2910, DM, REPOS)";
     input.autocomplete = "off";
+    let isPrefilled = false;
+
+    input.addEventListener("beforeinput", () => {
+      if (!isPrefilled) return;
+      input.value = "";
+      isPrefilled = false;
+    });
 
     const suggestContainer = document.createElement("div");
     suggestContainer.className = "edit-panel-suggestions";
+
+    const backBtn = document.createElement("button");
+    backBtn.type = "button";
+    backBtn.className = "guided-btn ghost guided-back-btn";
+    backBtn.textContent = "← Retour";
+    backBtn.onclick = () => {
+      setHomeMode(HOME_MODE.VIEW);
+      renderHome();
+    };
+
+    label.append(labelText, backBtn);
 
     panel.append(label, input, suggestContainer);
     top.appendChild(panel);
@@ -431,47 +479,70 @@ export async function renderHome() {
       const entry = await getPlanningEntry(iso);
       if (entry && typeof entry.serviceCode === "string") {
         input.value = entry.serviceCode;
+        isPrefilled = true;
       }
     })();
 
     (async () => {
       const servicesCatalog = await getAllServices();
-      const baseCodes = ["REPOS", "DM", "DAM", "ANNEXE", "TAD"];
-      const serviceCodes = servicesCatalog
-        .map((service) => service?.code)
-        .filter((code) => typeof code === "string" && code.trim() !== "");
+      const prefsEntry = await getConfig("suggestions_prefs");
+      const suggestionsPrefs = prefsEntry?.value ?? null;
+
+      const grouped = getServiceSuggestions({
+        servicesCatalog,
+        saisonConfig: window.__homeSaisonConfig,
+        date: new Date(iso),
+        prefs: suggestionsPrefs,
+        mode: getUiMode(),
+      });
+
+      const allCodesRaw = [
+        ...grouped.REPOS,
+        ...grouped.DM,
+        ...grouped.DAM,
+        ...grouped.ANNEXE,
+        ...grouped.TAD,
+        ...Object.values(grouped.LIGNES).flat(),
+      ];
 
       const allCodes = Array.from(
-        new Set([...baseCodes, ...serviceCodes].map((code) => code.toUpperCase())),
+        new Set(allCodesRaw.map((code) => String(code).toUpperCase())),
       ).sort();
+
+      function createSuggestionButton(code, target) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "guided-btn";
+        btn.textContent = code;
+
+        btn.onclick = async () => {
+          await savePlanningEntry({
+            date: iso,
+            serviceCode: code,
+            locked: false,
+            extra: false,
+          });
+
+          setHomeMode(HOME_MODE.VIEW);
+          renderHome();
+        };
+
+        target.appendChild(btn);
+      }
 
       function renderSuggestionsFiltered(filter) {
         suggestContainer.innerHTML = "";
         const f = filter.trim().toUpperCase();
         if (!f) return;
 
-        allCodes
-          .filter((code) => code.startsWith(f))
-          .forEach((code) => {
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = "suggest-btn";
-            btn.textContent = code;
+        const matches = allCodes.filter((code) => code.startsWith(f));
+        if (matches.length === 0) return;
 
-            btn.onclick = async () => {
-              await savePlanningEntry({
-                date: iso,
-                serviceCode: code,
-                locked: false,
-                extra: false,
-              });
+        const grid = document.createElement("div");
+        grid.className = "guided-lines-grid";
+        suggestContainer.appendChild(grid);
 
-              setHomeMode(HOME_MODE.VIEW);
-              renderHome();
-            };
-
-            suggestContainer.appendChild(btn);
-          });
+        matches.forEach((code) => createSuggestionButton(code, grid));
       }
 
       renderSuggestionsFiltered(input.value);

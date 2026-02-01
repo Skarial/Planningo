@@ -7,6 +7,8 @@ import {
   showGuidedMonth,
   showCongesView,
   showSeasonView,
+  showSuggestionsView,
+  showSummaryView,
   showPhoneChangeView,
 } from "../router.js";
 
@@ -27,6 +29,11 @@ function afficherResetEnHaut() {
   });
 }
 
+function capitalizeFirst(input) {
+  if (typeof input !== "string" || input.length === 0) return input;
+  return input.charAt(0).toUpperCase() + input.slice(1);
+}
+
 export function initMenu() {
   // =======================
   // DOM — RESET
@@ -42,21 +49,6 @@ export function initMenu() {
   const resetPrevMonth = document.getElementById("reset-prev-month");
   const resetNextMonth = document.getElementById("reset-next-month");
   const resetConfirmMonth = document.getElementById("reset-confirm-month");
-
-  // =======================
-  // BARRE VISUELLE — APPUI LONG (OBLIGATOIRE)
-  // =======================
-
-  [resetAllBtn, resetConfirmMonth].forEach((btn) => {
-    if (!btn) return;
-
-    // eviter doublon
-    if (btn.querySelector(".long-press-bar")) return;
-
-    const bar = document.createElement("div");
-    bar.className = "long-press-bar";
-    btn.appendChild(bar);
-  });
 
   // =======================
   // ETATS
@@ -84,10 +76,12 @@ export function initMenu() {
     if (resetAllTimer) return;
 
     resetAllBtn.classList.add("holding");
+    menu.classList.add("long-pressing");
 
     resetAllTimer = setTimeout(async () => {
       resetAllTimer = null;
       resetAllBtn.classList.remove("holding");
+      menu.classList.remove("long-pressing");
 
       await clearAllPlanning();
       showToast("Planning entierement reinitialise");
@@ -106,6 +100,7 @@ export function initMenu() {
     clearTimeout(resetAllTimer);
     resetAllTimer = null;
     resetAllBtn.classList.remove("holding");
+    menu.classList.remove("long-pressing");
   }
 
   resetAllBtn.addEventListener("pointerdown", startResetAllPress);
@@ -124,6 +119,12 @@ export function initMenu() {
 
   if (!menu || !overlay || !toggle || !closeBtn) return;
 
+  if (!menu.querySelector(".menu-long-press-bar")) {
+    const bar = document.createElement("div");
+    bar.className = "menu-long-press-bar";
+    menu.appendChild(bar);
+  }
+
   toggle.classList.remove("hidden");
   overlay.classList.remove("hidden");
   menu.classList.remove("hidden");
@@ -138,6 +139,8 @@ export function initMenu() {
 
   const congesBtn = document.getElementById("menu-conges");
   const seasonBtn = document.getElementById("menu-season");
+  const suggestionsBtn = document.getElementById("menu-suggestions");
+  const summaryBtn = document.getElementById("menu-summary");
   const phoneBtn = document.getElementById("menu-phone-change");
 
   congesBtn?.addEventListener("click", () => {
@@ -147,6 +150,16 @@ export function initMenu() {
 
   seasonBtn?.addEventListener("click", () => {
     showSeasonView();
+    closeMenu();
+  });
+
+  suggestionsBtn?.addEventListener("click", () => {
+    showSuggestionsView();
+    closeMenu();
+  });
+
+  summaryBtn?.addEventListener("click", () => {
+    showSummaryView();
     closeMenu();
   });
 
@@ -285,10 +298,12 @@ export function initMenu() {
   // =======================
 
   function updateResetMonthLabel() {
-    resetMonthLabel.textContent = resetDate.toLocaleDateString("fr-FR", {
-      month: "long",
-      year: "numeric",
-    });
+    resetMonthLabel.textContent = capitalizeFirst(
+      resetDate.toLocaleDateString("fr-FR", {
+        month: "long",
+        year: "numeric",
+      }),
+    );
   }
 
   function renderResetPanel() {
@@ -305,6 +320,12 @@ export function initMenu() {
   }
 
   resetBtn.addEventListener("click", () => {
+    if (resetState === "choice" || resetState === "month") {
+      resetState = "closed";
+      renderResetPanel();
+      return;
+    }
+
     resetState = "choice";
     renderResetPanel();
     afficherResetEnHaut();
@@ -334,10 +355,12 @@ export function initMenu() {
     if (holdTimer) return;
 
     resetConfirmMonth.classList.add("holding");
+    menu.classList.add("long-pressing");
 
     holdTimer = setTimeout(async () => {
       holdTimer = null;
       resetConfirmMonth.classList.remove("holding");
+      menu.classList.remove("long-pressing");
 
       const monthISO = `${resetDate.getFullYear()}-${String(
         resetDate.getMonth() + 1,
@@ -364,6 +387,7 @@ export function initMenu() {
     clearTimeout(holdTimer);
     holdTimer = null;
     resetConfirmMonth.classList.remove("holding");
+    menu.classList.remove("long-pressing");
   }
 
   // =======================

@@ -14,6 +14,11 @@ import { toISODateLocal } from "../utils.js";
 import { showHome } from "../router.js";
 import { getGuidedStartDay, isDateInConges } from "../domain/conges.js";
 
+function capitalizeFirst(input) {
+  if (typeof input !== "string" || input.length === 0) return input;
+  return input.charAt(0).toUpperCase() + input.slice(1);
+}
+
 // =======================
 // VUE : PRÉPARER MOIS SUIVANT
 // =======================
@@ -130,6 +135,8 @@ export async function showGuidedMonth(forcedDate = null) {
   const saisonConfig = saisonEntry?.value ?? null;
   const congesEntry = await getConfig("conges");
   const congesConfig = congesEntry?.value ?? null;
+  const prefsEntry = await getConfig("suggestions_prefs");
+  const suggestionsPrefs = prefsEntry?.value ?? null;
 
   // =======================
   // UI
@@ -144,10 +151,12 @@ export async function showGuidedMonth(forcedDate = null) {
 
   const monthLabel = document.createElement("div");
   monthLabel.className = "guided-month-label";
-  monthLabel.textContent = targetDate.toLocaleDateString("fr-FR", {
-    month: "long",
-    year: "numeric",
-  });
+  monthLabel.textContent = capitalizeFirst(
+    targetDate.toLocaleDateString("fr-FR", {
+      month: "long",
+      year: "numeric",
+    }),
+  );
 
   const dayNumber = document.createElement("div");
   dayNumber.id = "guided-day-number";
@@ -167,10 +176,12 @@ export async function showGuidedMonth(forcedDate = null) {
     const nextMonthDate = new Date(targetDate);
     nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
 
-    const nextMonthLabel = nextMonthDate.toLocaleDateString("fr-FR", {
-      month: "long",
-      year: "numeric",
-    });
+    const nextMonthLabel = capitalizeFirst(
+      nextMonthDate.toLocaleDateString("fr-FR", {
+        month: "long",
+        year: "numeric",
+      }),
+    );
 
     const stats = await computeMonthStats();
 
@@ -274,11 +285,13 @@ export async function showGuidedMonth(forcedDate = null) {
 
     dayNumber.textContent = currentDay;
     dayNumber.classList.remove("guided-day-complete");
-    weekdayLabel.textContent = new Date(
+    const weekdayLong = new Date(
       year,
       monthIndex,
       currentDay,
     ).toLocaleDateString("fr-FR", { weekday: "long" });
+    weekdayLabel.textContent =
+      weekdayLong.charAt(0).toUpperCase() + weekdayLong.slice(1);
     servicesContainer.innerHTML = "";
     const currentDate = new Date(year, monthIndex, currentDay);
 
@@ -286,6 +299,7 @@ export async function showGuidedMonth(forcedDate = null) {
       servicesCatalog: allServices,
       saisonConfig,
       date: currentDate,
+      prefs: suggestionsPrefs,
       mode: getUiMode(),
     });
     groupedSuggestions = grouped;
@@ -294,21 +308,16 @@ export async function showGuidedMonth(forcedDate = null) {
     primaryGrid.className = "guided-primary-grid";
     servicesContainer.appendChild(primaryGrid);
 
-    addServiceButton("REPOS", primaryGrid);
-    addServiceButton("DM", primaryGrid);
-    addServiceButton("DAM", primaryGrid);
-    addServiceButton("ANNEXE", primaryGrid);
+    grouped.REPOS.forEach((code) => addServiceButton(code, primaryGrid));
+    grouped.DM.forEach((code) => addServiceButton(code, primaryGrid));
+    grouped.DAM.forEach((code) => addServiceButton(code, primaryGrid));
+    grouped.ANNEXE.forEach((code) => addServiceButton(code, primaryGrid));
 
-    // Bouton TAD (ouvre la liste des services TAD)
-    const tadServices = allServices.filter(
-      (s) => typeof s.code === "string" && s.code.startsWith("TAD"),
-    );
-
-    if (tadServices.length > 0) {
+    if (grouped.TAD.length > 0) {
       const btnTAD = document.createElement("button");
       btnTAD.textContent = "TAD";
       btnTAD.className = "guided-btn";
-      btnTAD.onclick = () => renderTAD(tadServices);
+      btnTAD.onclick = () => renderTAD(grouped.TAD);
       primaryGrid.appendChild(btnTAD);
     }
 
@@ -395,8 +404,8 @@ export async function showGuidedMonth(forcedDate = null) {
     tadGrid.className = "guided-lines-grid";
     servicesContainer.appendChild(tadGrid);
 
-    tadServices.forEach((service) => {
-      addServiceButton(service.code, tadGrid);
+    tadServices.forEach((code) => {
+      addServiceButton(code, tadGrid);
     });
   }
 

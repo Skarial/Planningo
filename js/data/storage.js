@@ -138,6 +138,40 @@ export async function getPlanningForMonth(monthISO) {
   });
 }
 
+export async function getPlanningEntriesInRange(startISO, endISO) {
+  const db = await openDB();
+  const results = [];
+  const start = startISO;
+  const end = endISO;
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORES.PLANNING, "readonly");
+    const store = tx.objectStore(STORES.PLANNING);
+
+    store.openCursor().onsuccess = (e) => {
+      const cursor = e.target.result;
+      if (!cursor) {
+        resolve(results);
+        return;
+      }
+
+      const key = cursor.key;
+      if (key >= start && key <= end) {
+        results.push({
+          date: cursor.value.date,
+          serviceCode: cursor.value.serviceCode ?? "REPOS",
+          locked: cursor.value.locked ?? false,
+          extra: cursor.value.extra ?? false,
+        });
+      }
+
+      cursor.continue();
+    };
+
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
 export async function getPlanningEntry(dateISO) {
   const db = await openDB();
 

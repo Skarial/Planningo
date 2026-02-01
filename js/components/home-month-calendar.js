@@ -40,6 +40,9 @@ export function renderHomeMonthCalendar(container, deps) {
       if (day.status === DAY_STATUS.REST) {
         el.classList.add("rest");
       }
+      if (day.status === DAY_STATUS.EMPTY || day.status === DAY_STATUS.FUTURE_EMPTY) {
+        el.classList.add("empty");
+      }
       if (day.isActive) el.classList.add("active");
 
       el.onclick = () => deps.onDaySelected?.(day.iso);

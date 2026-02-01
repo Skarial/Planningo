@@ -9,13 +9,15 @@ import { showTetribus, stopTetribus } from "./components/tetribus.js";
 import { renderCongesView } from "./components/conges.js";
 import { renderSeasonView } from "./components/season.js";
 import { renderPhoneChangeView } from "./components/phone-change.js";
+import { renderSummaryView } from "./components/summary.js";
+import { renderSuggestionsView } from "./components/suggestions.js";
 
 function getView(name) {
   return document.getElementById(`view-${name}`);
 }
 
 function hideAllViews() {
-  ["home", "guided-month", "conges", "season", "phone-change", "tetribus"].forEach((name) => {
+  ["home", "guided-month", "conges", "season", "suggestions", "phone-change", "summary", "tetribus"].forEach((name) => {
     const el = getView(name);
     if (el) el.hidden = true;
   });
@@ -60,10 +62,22 @@ export function showSeasonView() {
   renderSeasonView();
 }
 
+export function showSuggestionsView() {
+  const view = activateView("suggestions");
+  if (!view) return;
+  renderSuggestionsView();
+}
+
 export function showPhoneChangeView() {
   const view = activateView("phone-change");
   if (!view) return;
   renderPhoneChangeView();
+}
+
+export function showSummaryView() {
+  const view = activateView("summary");
+  if (!view) return;
+  renderSummaryView();
 }
 
 // =======================
@@ -95,8 +109,16 @@ export function refreshCurrentView() {
       showSeasonView();
       break;
 
+    case "suggestions":
+      showSuggestionsView();
+      break;
+
     case "phone-change":
       showPhoneChangeView();
+      break;
+
+    case "summary":
+      showSummaryView();
       break;
   }
 }
