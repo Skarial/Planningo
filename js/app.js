@@ -2,7 +2,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "1.0.140";
+export const APP_VERSION = "1.0.141";
 
 import { getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -70,6 +70,7 @@ function disablePullToRefresh() {
     "touchmove",
     (e) => {
       if (!e.touches || e.touches.length === 0) return;
+      if (!e.cancelable) return;
       const currentY = e.touches[0].clientY;
       const pullingDown = currentY > startY;
 
@@ -142,6 +143,7 @@ function showUpdateBanner(registration) {
     });
   });
 }
+
 
 
 
