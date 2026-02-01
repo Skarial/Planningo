@@ -1336,6 +1336,12 @@ textarea {
   font-size: 0.9rem;
 }
 
+#consult-date-submit {
+  width: fit-content;
+  padding: 0 14px;
+  align-self: flex-start;
+}
+
 #reset-all,
 #reset-confirm-month {
   background: transparent;
