@@ -1,4 +1,4 @@
-﻿# Compatibilite logiciel — Planning PWA
+﻿# Compatibilite logiciel — Planningo
 
 ## Generateur d'activation CLI (outil developpeur)
 
@@ -15,7 +15,7 @@ Un script local permet de generer un code d'activation sans navigateur.
 
 ## Objectif
 
-Ce document definit les environnements logiciels supportes, toleres et non supportes pour l'application Planning PWA Chauffeurs.
+Ce document definit les environnements logiciels supportes, toleres et non supportes pour l'application Planningo.
 
 Il a une valeur contractuelle.
 

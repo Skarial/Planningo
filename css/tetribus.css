@@ -22,14 +22,14 @@
   padding: 0;
   overflow: hidden;
 
-  background: #d7d7d7;
+  background: #121212;
   z-index: 9999;
 }
 
 #tetribus {
   font-family: "Trebuchet MS", "Gill Sans", "Candara", sans-serif;
-  background: #d7d7d7;
-  color: #1d1d1d;
+  background: radial-gradient(circle at 20% 10%, #1f1f1f, #121212 60%);
+  color: #f1f1f1;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -46,7 +46,7 @@
 /* HEADER */
 #tetribus #header {
   padding: 10px;
-  background: #d6d6d6;
+  background: linear-gradient(180deg, #1b1b1b, #141414);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -54,6 +54,7 @@
   position: relative;
   z-index: 10;
   pointer-events: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 #tetribus #header h1 {
@@ -63,34 +64,36 @@
 
 #tetribus #score,
 #tetribus #level {
-  font-size: 13px;
+  font-size: 12px;
+  color: #c7c7c7;
+  letter-spacing: 0.3px;
 }
 
 #tetribus #score-value,
 #tetribus #level-value {
   font-weight: bold;
-  color: #e86f23;
+  color: #ff8a3a;
 }
 
 #tetribus #tetribus-back {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: #ededed;
+  background: #1a1a1a;
   border: none;
-  border-radius: 16px;
+  border-radius: 12px;
 
   padding: 0;
   margin: 0;
 
-  font-size: 20px;
+  font-size: 0;
   line-height: 1;
   font-family: system-ui, "Trebuchet MS", "Gill Sans", "Candara", sans-serif;
-  color: #2b2b2b;
+  color: #f1f1f1;
 
   box-sizing: border-box;
 
@@ -102,7 +105,21 @@
 
   /* RESET ABSOLU */
   background-image: none !important;
-  box-shadow: none !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 6px 14px rgba(0, 0, 0, 0.35) !important;
+}
+
+#tetribus #tetribus-back::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  display: block;
+  background-color: #ff8a3a;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="14 6 8 12 14 18" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }
 
 /* ZONE DE JEU */
@@ -117,7 +134,7 @@
 #tetribus #canvas-wrapper {
   flex: 1;
   position: relative;
-  background: #cfcfcf;
+  background: #0f0f0f;
 }
 
 #tetribus #game-canvas {
@@ -127,14 +144,16 @@
   transform: translate(-50%, -50%);
   display: block;
 
-  background: #e7e7e7; /* zone jouable */
-  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.18); /* effet couloir */
+  background: #1a1a1a; /* zone jouable */
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06); /* effet couloir */
 }
 
 /* CONTRÔLES */
 #tetribus #controls-area {
   height: 132px;
-  background: #d6d6d6;
+  background: linear-gradient(180deg, #151515, #0f0f0f);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -143,25 +162,28 @@
   position: relative;
   z-index: 1;
   pointer-events: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 #tetribus .control-btn {
-  width: 78px;
-  height: 78px;
-  border-radius: 50%;
-  border: 2px solid #e86f23;
-  background: radial-gradient(circle at top, #ececec, #d5d5d5);
-  color: #1f1f1f;
-  font-size: 34px;
-  font-weight: bold;
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at 30% 30%, #2a2a2a, #141414 60%),
+    #141414;
+  color: #f1f1f1;
+  font-size: 0;
+  font-weight: 600;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   box-shadow:
-    0 6px 0 #b7b7b7,
-    0 10px 18px rgba(0, 0, 0, 0.18);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 10px 24px rgba(0, 0, 0, 0.45);
 
   cursor: pointer;
   user-select: none;
@@ -173,10 +195,10 @@
 }
 
 #tetribus .control-btn:active {
-  transform: translateY(4px) scale(0.96);
+  transform: translateY(2px) scale(0.97);
   box-shadow:
-    0 2px 0 #b7b7b7,
-    0 5px 10px rgba(0, 0, 0, 0.2);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 6px 14px rgba(0, 0, 0, 0.5);
 }
 
 .control-btn {
@@ -192,17 +214,18 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(232, 232, 232, 0.98);
+  background: rgba(18, 18, 18, 0.96);
   padding: 30px;
   border-radius: 16px;
   text-align: center;
-  border: 2px solid #e86f23;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   min-width: 250px;
   z-index: 1000;
+  color: #f1f1f1;
 }
 
 #tetribus #game-over h2 {
-  color: #b34343;
+  color: #ff6b6b;
   margin-bottom: 15px;
   font-size: 28px;
 }
@@ -213,7 +236,7 @@
 }
 
 #tetribus #restart-btn {
-  background: #1f1f1f;
+  background: #ff8a3a;
   color: #ffffff;
   border: none;
   padding: 15px 35px;
@@ -224,7 +247,7 @@
 }
 
 #tetribus #restart-btn:active {
-  background: #141414;
+  background: #e9772f;
 }
 
 /* UTILITAIRES */
@@ -233,31 +256,37 @@
 }
 
 /* GAUCHE */
-.btn-left::before {
+.btn-left::before,
+.btn-right::before,
+.btn-rotate::before {
   content: "";
-  border-top: 14px solid transparent;
-  border-bottom: 14px solid transparent;
-  border-right: 22px solid #e86f23;
-  margin-left: 6px;
+  width: 30px;
+  height: 30px;
+  display: block;
 }
 
-/* DROITE */
+/* PLAYSTATION-STYLE SYMBOLS */
+.btn-left::before {
+  border: 3px solid #55a7ff; /* carré bleu */
+  border-radius: 6px;
+  box-shadow: 0 0 0 2px rgba(85, 167, 255, 0.15);
+}
+
 .btn-right::before {
-  content: "";
-  border-top: 14px solid transparent;
-  border-bottom: 14px solid transparent;
-  border-left: 22px solid #e86f23;
-  margin-right: 6px;
+  border: 3px solid #ff6b6b; /* cercle rouge */
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.15);
 }
 
 .btn-rotate::before {
-  content: "";
-  width: 38px;
-  height: 38px;
-  border: 4px solid #e86f23;
-  border-radius: 50%;
-  border-top-color: transparent;
-  position: relative;
+  width: 54px;
+  height: 54px;
+  background-color: #66d08a; /* croix verte */
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18" stroke="black" stroke-width="4" stroke-linecap="round"/><line x1="18" y1="6" x2="6" y2="18" stroke="black" stroke-width="4" stroke-linecap="round"/></svg>');
+  box-shadow: 0 0 0 2px rgba(102, 208, 138, 0.15);
 }
 
 

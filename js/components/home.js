@@ -9,7 +9,7 @@ import { getAllServices } from "../data/storage.js";
 import { savePlanningEntry } from "../data/storage.js";
 import { renderHomeMonthCalendar } from "./home-month-calendar.js";
 
-import { getPlanningEntry } from "../data/storage.js";
+import { getPlanningEntry, getPlanningForMonth } from "../data/storage.js";
 
 import { getActiveDateISO, setActiveDateISO } from "../state/active-date.js";
 
@@ -374,8 +374,14 @@ export async function renderHome() {
   calendarAnchor.id = "home-calendar-anchor";
   bottom.appendChild(calendarAnchor);
 
+  const monthISO = getActiveDateISO()?.slice(0, 7);
+  const monthEntries = monthISO ? await getPlanningForMonth(monthISO) : [];
+  const monthMap = new Map(
+    monthEntries.map((entry) => [entry.date, entry]),
+  );
+
   renderHomeMonthCalendar(calendarAnchor, {
-    getServiceForDateISO: (iso) => getPlanningEntry(iso),
+    getServiceForDateISO: (iso) => monthMap.get(iso) || null,
 
     isDateInConges: (date) => {
       const congesEntry = window.__homeCongesConfig;

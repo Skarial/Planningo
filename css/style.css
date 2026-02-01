@@ -811,6 +811,11 @@ textarea {
   transform: scaleY(0.86);
 }
 
+.day-circle.rest {
+  background: #5c5c5c;
+  color: #ffffff;
+}
+
 .day-circle.active {
   background: var(--color-accent);
   color: #ffffff;

@@ -1,4 +1,5 @@
 import { getMonthCalendar } from "../state/month-calendar-state.js";
+import { DAY_STATUS } from "../domain/day-status.js";
 
 export function renderHomeMonthCalendar(container, deps) {
   container.innerHTML = "";
@@ -36,6 +37,9 @@ export function renderHomeMonthCalendar(container, deps) {
     } else {
       el.textContent = day.day;
 
+      if (day.status === DAY_STATUS.REST) {
+        el.classList.add("rest");
+      }
       if (day.isActive) el.classList.add("active");
 
       el.onclick = () => deps.onDaySelected?.(day.iso);

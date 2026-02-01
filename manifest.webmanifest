@@ -1,7 +1,7 @@
 {
-  "name": "Planning chauffeur",
-  "short_name": "Planning",
-  "description": "Application personnelle de consultation et saisie de planning",
+  "name": "Planningo",
+  "short_name": "Planningo",
+  "description": "Planningo, gestion personnelle du planning de service",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

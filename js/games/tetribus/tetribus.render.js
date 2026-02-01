@@ -12,8 +12,10 @@ export const TetribusRender = {
 
   resize: function () {
     const wrapper = document.getElementById("canvas-wrapper");
+    if (!wrapper) return false;
     const availableWidth = wrapper.clientWidth;
     const availableHeight = wrapper.clientHeight;
+    if (availableWidth === 0 || availableHeight === 0) return false;
 
     const cellSizeByWidth = Math.floor(availableWidth / 10);
     const cellSizeByHeight = Math.floor(availableHeight / 20);
@@ -21,6 +23,7 @@ export const TetribusRender = {
 
     this.canvas.width = this.cellSize * 10;
     this.canvas.height = this.cellSize * 20;
+    return true;
   },
 
   clear: function () {

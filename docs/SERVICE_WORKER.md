@@ -1,6 +1,6 @@
 ﻿# Service Worker — Gestion hors ligne et mises a jour
 
-Ce document decrit le role, les responsabilites et les limites du Service Worker de l'application Planning PWA Chauffeurs.
+Ce document decrit le role, les responsabilites et les limites du Service Worker de l'application Planningo.
 
 Il a une valeur contractuelle.
 

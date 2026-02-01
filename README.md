@@ -1,4 +1,4 @@
-﻿# Planning PWA
+﻿# Planningo
 
 Application web progressive de gestion de planning, developpee en JavaScript vanilla.
 
@@ -8,7 +8,7 @@ Projet personnel, concu pour un usage reel sur smartphone, en conditions de mobi
 
 ## Presentation generale
 
-Planning PWA est une application offline-first permettant la consultation et la saisie d'un planning de travail.
+Planningo est une application offline-first permettant la consultation et la saisie d'un planning de travail.
 
 L'application fonctionne :
 

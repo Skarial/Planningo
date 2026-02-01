@@ -38,6 +38,7 @@ export const Tetribus = {
   gameLoop: null,
   dropSpeed: 800,
   isFastDropping: false,
+  isPaused: false,
 
   pieces: [
     {
@@ -220,6 +221,7 @@ export const Tetribus = {
     this.linesCleared = 0;
     this.gameOver = false;
     this.dropSpeed = this.INITIAL_SPEED;
+    this.isPaused = false;
     this.updateUI();
     document.getElementById("game-over").classList.add("hidden");
     this.spawnPiece();
@@ -228,10 +230,11 @@ export const Tetribus = {
 
   startGameLoop: function () {
     if (this.gameLoop) clearInterval(this.gameLoop);
+    if (this.isPaused) return;
 
     this.gameLoop = setInterval(
       () => {
-        if (this.gameOver) return;
+        if (this.gameOver || this.isPaused) return;
         this.moveDown();
       },
       this.isFastDropping ? this.FAST_DROP_SPEED : this.dropSpeed,
@@ -439,100 +442,37 @@ export const Tetribus = {
 
     let moveInterval = null;
 
-    // Bouton GAUCHE
-    btnLeft.addEventListener("touchstart", (e) => {
-      if (e.cancelable) {
-        e.preventDefault();
-      }
+    const bindMoveButton = (button, moveFn) => {
+      button.addEventListener("pointerdown", (e) => {
+        if (e.cancelable) {
+          e.preventDefault();
+        }
 
-      this.moveLeft();
-      moveInterval = setInterval(() => this.moveLeft(), 120);
-    });
+        button.setPointerCapture(e.pointerId);
+        moveFn();
+        clearInterval(moveInterval);
+        moveInterval = setInterval(() => moveFn(), 120);
+      });
 
-    btnLeft.addEventListener("touchend", (e) => {
-      if (e.cancelable) {
-        e.preventDefault();
-      }
+      const stopMove = (e) => {
+        if (e?.cancelable) {
+          e.preventDefault();
+        }
 
-      clearInterval(moveInterval);
-    });
+        if (e?.pointerId !== undefined) {
+          button.releasePointerCapture(e.pointerId);
+        }
+        clearInterval(moveInterval);
+      };
 
-    btnLeft.addEventListener("pointerdown", (e) => {
-      if (e.cancelable) {
-        e.preventDefault();
-      }
+      button.addEventListener("pointerup", stopMove);
+      button.addEventListener("pointercancel", stopMove);
+      button.addEventListener("pointerleave", stopMove);
+    };
 
-      this.moveLeft();
-      moveInterval = setInterval(() => this.moveLeft(), 120);
-    });
-
-    btnLeft.addEventListener("pointerup", (e) => {
-      if (e.cancelable) {
-        e.preventDefault();
-      }
-
-      clearInterval(moveInterval);
-    });
-
-    btnLeft.addEventListener("pointercancel", () => {
-      clearInterval(moveInterval);
-    });
-
-    btnLeft.addEventListener("click", (e) => {
-      if (e.cancelable) {
-        e.preventDefault();
-      }
-
-      this.moveLeft();
-    });
-
-    // Bouton DROITE
-    btnRight.addEventListener("touchstart", (e) => {
-      if (e.cancelable) {
-        e.preventDefault();
-      }
-
-      this.moveRight();
-      moveInterval = setInterval(() => this.moveRight(), 120);
-    });
-
-    btnRight.addEventListener("touchend", (e) => {
-      if (e.cancelable) {
-        e.preventDefault();
-      }
-
-      clearInterval(moveInterval);
-    });
-
-    btnRight.addEventListener("pointerdown", (e) => {
-      if (e.cancelable) {
-        e.preventDefault();
-      }
-
-      this.moveRight();
-      moveInterval = setInterval(() => this.moveRight(), 120);
-    });
-
-    btnRight.addEventListener("pointerup", (e) => {
-      if (e.cancelable) {
-        e.preventDefault();
-      }
-
-      clearInterval(moveInterval);
-    });
-
-    btnRight.addEventListener("pointercancel", () => {
-      clearInterval(moveInterval);
-    });
-
-    btnRight.addEventListener("click", (e) => {
-      if (e.cancelable) {
-        e.preventDefault();
-      }
-
-      if (e.target !== btnRight) return;
-      this.moveRight();
-    });
+    // Bouton GAUCHE / DROITE (pointer events only to avoid double trigger)
+    bindMoveButton(btnLeft, () => this.moveLeft());
+    bindMoveButton(btnRight, () => this.moveRight());
 
     // Bouton ROTATION
     let rotateTimeout = null;
@@ -627,5 +567,30 @@ export const Tetribus = {
       this.gameLoop = null;
     }
     this.isFastDropping = false;
+    this.isPaused = false;
+  },
+
+  pause: function () {
+    if (this.gameOver) return;
+    if (this.gameLoop) {
+      clearInterval(this.gameLoop);
+      this.gameLoop = null;
+    }
+    this.isFastDropping = false;
+    this.isPaused = true;
+  },
+
+  resume: function () {
+    if (this.gameOver) return;
+    if (!this.isPaused) return;
+    this.isPaused = false;
+    this.startGameLoop();
+  },
+
+  refreshLayout: function () {
+    const ok = TetribusRender.resize();
+    if (!ok) return false;
+    this.render();
+    return true;
   },
 };

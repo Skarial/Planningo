@@ -58,11 +58,17 @@ export function showTetribus() {
 
   hideAllViews();
   view.hidden = false;
-  view.style.display = "";
+  view.style.display = "block";
 
   document.getElementById("menu-toggle")?.classList.add("hidden");
   document.getElementById("side-menu")?.classList.add("hidden");
   document.getElementById("menu-overlay")?.classList.add("hidden");
+
+  // Si on revient trop vite et que le canvas est detaché, on reconstruit
+  const canvasMissing = !document.getElementById("game-canvas");
+  if (started && canvasMissing) {
+    started = false;
+  }
 
   if (!started) {
     renderTetribusHTML(view); // 1) le HTML est cree
@@ -71,33 +77,54 @@ export function showTetribus() {
 
     // 3) ICI — PAS AILLEURS
     document.getElementById("tetribus-back").addEventListener("click", () => {
-      // 1) arreter le jeu
-      Tetribus.stop();
-      started = false;
+      // 1) pause du jeu (etat conserve)
+      Tetribus.pause();
 
       // 2) reafficher le menu et le bouton
       document.getElementById("menu-toggle")?.classList.remove("hidden");
       document.getElementById("side-menu")?.classList.remove("hidden");
       document.getElementById("menu-overlay")?.classList.remove("hidden");
 
-      // 3) retour a l'accueil
+      // 3) masquer la vue jeu immediatement
+      view.hidden = true;
+      view.style.display = "";
+
+      // 4) retour a l'accueil
       import("../router.js").then(({ showHome }) => {
         showHome();
       });
     });
+  } else {
+    let attempts = 0;
+    const tryResume = () => {
+      attempts += 1;
+      const ok = Tetribus.refreshLayout();
+      if (ok) {
+        Tetribus.resume();
+        return;
+      }
+      if (attempts < 6) {
+        requestAnimationFrame(tryResume);
+        return;
+      }
+      // Fallback : reconstruction propre si le canvas reste invalide
+      Tetribus.stop();
+      started = false;
+      renderTetribusHTML(view);
+      started = true;
+      Tetribus.init();
+    };
+    requestAnimationFrame(tryResume);
   }
 }
 
 export function stopTetribus() {
-  Tetribus.stop();
-  started = false;
+  Tetribus.pause();
 }
 
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
-    // onglet / app en arriere-plan -> arret total
-    if (window.Tetribus) {
-      window.Tetribus.stop();
-    }
+    // onglet / app en arriere-plan -> pause
+    Tetribus.pause();
   }
 });

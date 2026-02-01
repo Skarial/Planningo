@@ -43,7 +43,10 @@ function buildMonthCalendar({
 
     let status;
 
-    if (isConges) {
+    const isRepos =
+      service && typeof service.serviceCode === "string" && service.serviceCode === "REPOS";
+
+    if (isConges || isRepos) {
       status = DAY_STATUS.REST;
     } else {
       status = getDayStatus({

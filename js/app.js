@@ -1,8 +1,8 @@
 // js/app.js
 /*
-  Application Planning PWA
+  Application Planningo
 */
-export const APP_VERSION = "1.0.130";
+export const APP_VERSION = "1.0.131";
 
 import { getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -83,6 +83,7 @@ function showUpdateBanner(registration) {
     });
   });
 }
+
 
 
 
