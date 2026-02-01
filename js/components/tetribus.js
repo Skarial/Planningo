@@ -3,7 +3,22 @@
 
 import { Tetribus } from "../games/tetribus/tetribus.game.js";
 
-let started = false;\n\nfunction enterFullscreen() {\n  if (document.fullscreenElement) return;\n  const root = document.documentElement;\n  if (root?.requestFullscreen) {\n    root.requestFullscreen().catch(() => {});\n  }\n}\n\nfunction exitFullscreen() {\n  if (!document.fullscreenElement) return;\n  if (document.exitFullscreen) {\n    document.exitFullscreen().catch(() => {});\n  }\n}
+let started = false;
+
+function enterFullscreen() {
+  if (document.fullscreenElement) return;
+  const root = document.documentElement;
+  if (root?.requestFullscreen) {
+    root.requestFullscreen().catch(() => {});
+  }
+}
+
+function exitFullscreen() {
+  if (!document.fullscreenElement) return;
+  if (document.exitFullscreen) {
+    document.exitFullscreen().catch(() => {});
+  }
+}
 
 function hideAllViews() {
   document.querySelectorAll("#app-main > section").forEach((el) => {

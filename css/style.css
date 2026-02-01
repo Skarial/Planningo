@@ -679,7 +679,7 @@ textarea {
   color: var(--color-ink);
 }
 
-.settings-toggle {
+.settings-card .settings-toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -687,6 +687,8 @@ textarea {
   padding: 8px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   font-size: 0.95rem;
+  color: #000000;
+  font-weight: 600;
 }
 
 .settings-toggle:last-of-type {
@@ -812,9 +814,9 @@ textarea {
 
 .activation-code-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .activation-code-row code {
@@ -830,6 +832,7 @@ textarea {
   background: #e3e3e3;
   font-size: 0.8rem;
   cursor: pointer;
+  width: 100%;
 }
 
 .activation-info {
@@ -1024,7 +1027,7 @@ textarea {
   height: 20px;
   display: block;
   margin: 0 auto;
-  background-color: var(--color-accent);
+  background-color: #ffffff;
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
