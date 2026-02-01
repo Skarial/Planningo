@@ -1,7 +1,7 @@
 import { test, assert } from "../run-tests.js";
 import {
   parseFRDate,
-  getCongesPeriod,
+  getCongesPeriods,
   isDateInConges,
   getGuidedStartDay,
 } from "../../js/domain/conges.js";
@@ -22,20 +22,31 @@ test("parseFRDate rejette une date invalide", () => {
 });
 
 // =======================
-// getCongesPeriod
+// getCongesPeriods
 // =======================
 
-test("getCongesPeriod retourne null si config absente", () => {
-  const p = getCongesPeriod(null);
-  assert(p === null, "Période devrait être null");
+test("getCongesPeriods retourne [] si config absente", () => {
+  const p = getCongesPeriods(null);
+  assert(Array.isArray(p) && p.length === 0, "Périodes attendues vides");
 });
 
-test("getCongesPeriod normalise l’ordre des dates", () => {
-  const p = getCongesPeriod({
+test("getCongesPeriods normalise l’ordre des dates", () => {
+  const p = getCongesPeriods({
     start: "20/08/2025",
     end: "10/08/2025",
   });
-  assert(p.start < p.end, "Dates non normalisées");
+  assert(p.length === 1, "Une période attendue");
+  assert(p[0].start < p[0].end, "Dates non normalisées");
+});
+
+test("getCongesPeriods gère plusieurs périodes", () => {
+  const p = getCongesPeriods({
+    periods: [
+      { start: "01/08/2025", end: "03/08/2025" },
+      { start: "10/08/2025", end: "12/08/2025" },
+    ],
+  });
+  assert(p.length === 2, "Deux périodes attendues");
 });
 
 // =======================
@@ -54,6 +65,17 @@ test("isDateInConges retourne false si date hors période", () => {
   assert(isDateInConges(d, config) === false, "Date hors congés");
 });
 
+test("isDateInConges gère plusieurs périodes", () => {
+  const config = {
+    periods: [
+      { start: "01/08/2025", end: "03/08/2025" },
+      { start: "10/08/2025", end: "12/08/2025" },
+    ],
+  };
+  const d = new Date(2025, 7, 11);
+  assert(isDateInConges(d, config) === true, "Date devrait être en congés");
+});
+
 // =======================
 // getGuidedStartDay
 // =======================
@@ -67,4 +89,15 @@ test("getGuidedStartDay saute congés en début de mois", () => {
   const config = { start: "01/08/2025", end: "05/08/2025" };
   const day = getGuidedStartDay(2025, 7, config);
   assert(day === 6, "Jour guidé incorrect");
+});
+
+test("getGuidedStartDay utilise la période couvrant le 1er", () => {
+  const config = {
+    periods: [
+      { start: "01/08/2025", end: "03/08/2025" },
+      { start: "10/08/2025", end: "12/08/2025" },
+    ],
+  };
+  const day = getGuidedStartDay(2025, 7, config);
+  assert(day === 4, "Jour guidé incorrect");
 });

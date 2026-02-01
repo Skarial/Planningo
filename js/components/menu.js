@@ -120,8 +120,9 @@ export function initMenu() {
 
   const overlay = document.getElementById("menu-overlay");
   const toggle = document.getElementById("menu-toggle");
+  const closeBtn = document.getElementById("menu-close");
 
-  if (!menu || !overlay || !toggle) return;
+  if (!menu || !overlay || !toggle || !closeBtn) return;
 
   toggle.classList.remove("hidden");
   overlay.classList.remove("hidden");
@@ -193,6 +194,8 @@ export function initMenu() {
     menu.setAttribute("aria-hidden", "false");
 
     isOpen = true;
+    toggle.setAttribute("aria-expanded", "true");
+    document.body.classList.add("menu-open");
     document.body.style.overflow = "hidden";
   }
 
@@ -210,10 +213,12 @@ export function initMenu() {
     renderResetPanel();
 
     isOpen = false;
+    toggle.setAttribute("aria-expanded", "false");
     menu.style.transform = "";
     menu.style.transition = "";
     currentTranslateX = 0;
 
+    document.body.classList.remove("menu-open");
     document.body.style.overflow = "";
   }
 
@@ -221,6 +226,7 @@ export function initMenu() {
     isOpen ? closeMenu() : openMenu();
   });
 
+  closeBtn.addEventListener("click", closeMenu);
   overlay.addEventListener("click", closeMenu);
   // =======================
   // SWIPE GAUCHE — FERMETURE MENU

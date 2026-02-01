@@ -272,6 +272,11 @@ Separation stricte :
 
 Aucune logique metier n'est implementee dans l'interface.
 
+Conges :
+- Support de plusieurs periodes de conges
+- Format de config : { periods: [{ start: "jj/mm/aaaa", end: "jj/mm/aaaa" }] }
+- Compatibilite maintenue avec l'ancien format { start, end }
+
 ## 7bis. Frontieres non negociables
 
 Ces regles sont definitives et conditionnent toute evolution du projet.

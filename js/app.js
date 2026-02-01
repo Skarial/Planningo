@@ -2,7 +2,7 @@
 /*
   Application Planning PWA
 */
-export const APP_VERSION = "1.0.129";
+export const APP_VERSION = "1.0.130";
 
 import { getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -83,5 +83,6 @@ function showUpdateBanner(registration) {
     });
   });
 }
+
 
 

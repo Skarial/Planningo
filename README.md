@@ -28,6 +28,7 @@ L'application permet de :
 - consulter rapidement un planning (jour + mois depuis la vue Accueil),
 - naviguer par jour et par mois depuis une seule vue centrale,
 - saisir et modifier les services (saisie directe + saisie guidee),
+- configurer plusieurs periodes de conges,
 - fonctionner de maniere fiable hors connexion.
 
 Le perimetre fonctionnel est volontairement restreint et maitrise.

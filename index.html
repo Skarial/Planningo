@@ -36,11 +36,12 @@
     <!-- APP ROOT : CONTENEUR FLEX GLOBAL -->
     <div id="app-root">
       <!-- BOUTON MENU (HORS FLUX) -->
-      <button id="menu-toggle" aria-label="Menu">☰</button>
+      <button id="menu-toggle" aria-label="Menu" aria-expanded="false"></button>
       <div id="menu-overlay"></div>
 
       <!-- MENU LATÉRAL (HORS FLUX) -->
       <nav id="side-menu" aria-hidden="true">
+        <button id="menu-close" aria-label="Fermer le menu"></button>
         <div id="side-menu-scroll">
           <div class="menu-title">Menu</div>
 
