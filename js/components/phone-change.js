@@ -37,7 +37,7 @@ export async function renderPhoneChangeView() {
   exportNote.textContent = "A faire avant de changer de telephone.";
 
   const importBtn = document.createElement("button");
-  importBtn.className = "settings-btn";
+  importBtn.className = "settings-btn danger";
   importBtn.textContent = "Restaurer mes donnees";
 
   const importNote = document.createElement("div");

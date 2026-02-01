@@ -1,53 +1,13 @@
 // Storage.js
 
-// =======================
-// CONFIGURATION DB
-// =======================
-
-const DB_NAME = "planningDB";
-const DB_VERSION = 4;
-
-const STORES = {
-  SERVICES: "services",
-  PLANNING: "planning",
-  CONFIG: "config",
-};
-
-// =======================
-// OUVERTURE DB
-// =======================
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-
-      if (!db.objectStoreNames.contains(STORES.SERVICES)) {
-        db.createObjectStore(STORES.SERVICES, { keyPath: "code" });
-      }
-
-      if (!db.objectStoreNames.contains(STORES.PLANNING)) {
-        db.createObjectStore(STORES.PLANNING, { keyPath: "date" });
-      }
-
-      if (!db.objectStoreNames.contains(STORES.CONFIG)) {
-        db.createObjectStore(STORES.CONFIG, { keyPath: "key" });
-      }
-    };
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
+import { openDB, STORES } from "./db.js";
 
 // =======================
 // SERVICES
 // =======================
 
 export async function getAllServices() {
-  const db = await openDB();
+  const { db } = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.SERVICES, "readonly");
     const store = tx.objectStore(STORES.SERVICES);
@@ -58,7 +18,7 @@ export async function getAllServices() {
 }
 
 export async function addService(service) {
-  const db = await openDB();
+  const { db } = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.SERVICES, "readwrite");
     tx.objectStore(STORES.SERVICES).put(service);
@@ -71,7 +31,7 @@ export async function addService(service) {
 // PLANNING
 // =======================
 export async function deletePlanningEntry(dateISO) {
-  const db = await openDB();
+  const { db } = await openDB();
 
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.PLANNING, "readwrite");
@@ -82,7 +42,7 @@ export async function deletePlanningEntry(dateISO) {
 }
 
 export async function savePlanningEntry(entry) {
-  const db = await openDB();
+  const { db } = await openDB();
 
   // RÈGLE MÉTIER : service vide → suppression
   if (!entry.serviceCode) {
@@ -108,7 +68,7 @@ export async function savePlanningEntry(entry) {
 }
 
 export async function getPlanningForMonth(monthISO) {
-  const db = await openDB();
+  const { db } = await openDB();
   const results = [];
 
   return new Promise((resolve, reject) => {
@@ -139,7 +99,7 @@ export async function getPlanningForMonth(monthISO) {
 }
 
 export async function getPlanningEntriesInRange(startISO, endISO) {
-  const db = await openDB();
+  const { db } = await openDB();
   const results = [];
   const start = startISO;
   const end = endISO;
@@ -173,7 +133,7 @@ export async function getPlanningEntriesInRange(startISO, endISO) {
 }
 
 export async function getPlanningEntry(dateISO) {
-  const db = await openDB();
+  const { db } = await openDB();
 
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.PLANNING, "readonly");
@@ -192,7 +152,7 @@ export async function getPlanningEntry(dateISO) {
 }
 
 export async function clearAllPlanning() {
-  const db = await openDB();
+  const { db } = await openDB();
 
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.PLANNING, "readwrite");
@@ -204,7 +164,7 @@ export async function clearAllPlanning() {
 }
 
 export async function clearPlanningMonth(monthISO) {
-  const db = await openDB();
+  const { db } = await openDB();
 
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.PLANNING, "readwrite");
@@ -231,7 +191,7 @@ export async function clearPlanningMonth(monthISO) {
 // =======================
 
 export async function getConfig(key) {
-  const db = await openDB();
+  const { db } = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.CONFIG, "readonly");
     const req = tx.objectStore(STORES.CONFIG).get(key);
@@ -241,7 +201,7 @@ export async function getConfig(key) {
 }
 
 export async function setConfig(key, value) {
-  const db = await openDB();
+  const { db } = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.CONFIG, "readwrite");
     tx.objectStore(STORES.CONFIG).put({ key, value });

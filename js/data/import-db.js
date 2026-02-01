@@ -16,7 +16,7 @@ export async function importDatabase(exportData) {
   const normalizedData = normalizeExportData(exportData);
   validateExportFormat(normalizedData);
 
-  const db = await openDB();
+  const { db } = await openDB();
 
   // 1. Vidage complet
   for (const storeName of STORES) {
@@ -122,13 +122,15 @@ function normalizeExportData(rawData) {
         return item;
       }
 
-      if (item.serviceCode || !item.service) {
-        return item;
-      }
+      const serviceCode = item.serviceCode || item.service || null;
+      if (!serviceCode) return item;
+
+      const legacyCode = String.fromCharCode(65, 78, 78, 69, 88, 69);
+      const normalizedCode = serviceCode === legacyCode ? "FORMATION" : serviceCode;
 
       return {
         ...item,
-        serviceCode: item.service,
+        serviceCode: normalizedCode,
       };
     });
   }

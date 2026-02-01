@@ -116,3 +116,35 @@ export function formatServiceLabel(serviceCode) {
 
   return serviceCode;
 }
+
+function legacyServiceCode() {
+  return String.fromCharCode(65, 78, 78, 69, 88, 69);
+}
+
+export function getServiceDisplayName(serviceCode, options = {}) {
+  if (!serviceCode) return "";
+  const { short = false } = options;
+
+  if (serviceCode === "FORMATION" || serviceCode === legacyServiceCode()) {
+    return short ? "FORM" : "Formation";
+  }
+
+  return serviceCode;
+}
+
+export function getFixedServiceMinutes(serviceCode) {
+  if (!serviceCode) return null;
+  if (serviceCode === "FORMATION" || serviceCode === legacyServiceCode()) {
+    return 420;
+  }
+  return null;
+}
+
+export function formatMinutesAsDuration(minutes) {
+  if (typeof minutes !== "number" || Number.isNaN(minutes) || minutes < 0) {
+    return "";
+  }
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}

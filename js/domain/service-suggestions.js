@@ -19,7 +19,7 @@ export function getServiceSuggestions({
     REPOS: ["REPOS"],
     DM: [],
     DAM: [],
-    ANNEXE: [],
+    FORMATION: [],
     TAD: [],
     LIGNES: {},
   };
@@ -34,12 +34,12 @@ export function getServiceSuggestions({
     tad: prefs?.tad !== false,
     dm: prefs?.dm !== false,
     dam: prefs?.dam !== false,
-    annexe: prefs?.annexe !== false,
+    formation: prefs?.formation !== false,
     lignes: prefs?.lignes !== false,
   };
 
-  if (allow.annexe) {
-    result.ANNEXE.push("ANNEXE");
+  if (allow.formation) {
+    result.FORMATION.push("FORMATION");
   }
 
   servicesCatalog.forEach((service) => {
@@ -52,7 +52,7 @@ export function getServiceSuggestions({
       return;
     }
 
-    if (inSeason && !["DM", "DAM", "ANNEXE"].includes(upperCode) && !upperCode.startsWith("TAD")) {
+  if (inSeason && !["DM", "DAM", "FORMATION"].includes(upperCode) && !upperCode.startsWith("TAD")) {
       const periodes = Array.isArray(service.periodes) ? service.periodes : [];
       const hasSeason = periodes.some((p) => p && p.libelle === SEASON_LABEL);
       const hasMain = periodes.some((p) => p && p.libelle === MAIN_LABEL);
@@ -72,9 +72,9 @@ export function getServiceSuggestions({
       return;
     }
 
-    if (upperCode === "ANNEXE") {
-      if (!allow.annexe) return;
-      result.ANNEXE.push(code);
+    if (upperCode === "FORMATION") {
+      if (!allow.formation) return;
+      result.FORMATION.push(code);
       return;
     }
 
@@ -114,10 +114,10 @@ export function getServiceSuggestions({
   result.DAM.sort((a, b) =>
     a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
   );
-  result.ANNEXE.sort((a, b) =>
+  result.FORMATION.sort((a, b) =>
     a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
   );
-  result.ANNEXE.sort((a, b) =>
+  result.FORMATION.sort((a, b) =>
     a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
   );
   result.TAD.sort((a, b) =>

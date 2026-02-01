@@ -6,6 +6,7 @@ import { isDateInConges } from "../domain/conges.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
 import { hasPanier } from "../domain/service-panier.js";
+import { getFixedServiceMinutes } from "../utils.js";
 
 function formatDuration(totalMinutes) {
   if (typeof totalMinutes !== "number" || totalMinutes < 0) return "00:00";
@@ -24,7 +25,7 @@ function parseTimeToMinutes(value) {
 function shouldAddExtraMinutes(code) {
   if (!code) return false;
   const upper = String(code).toUpperCase();
-  if (upper === "DM" || upper === "DAM" || upper === "ANNEXE") return false;
+  if (upper === "DM" || upper === "DAM" || upper === "FORMATION") return false;
   if (upper.startsWith("TAD")) return false;
   return true;
 }
@@ -154,7 +155,7 @@ export async function renderSummaryView() {
   resultCard.id = "summary-results";
 
   const resultTitle = document.createElement("div");
-  resultTitle.className = "settings-title";
+  resultTitle.className = "summary-card-title";
   resultTitle.textContent = "Résultats";
 
   const resultGrid = document.createElement("div");
@@ -227,14 +228,20 @@ export async function renderSummaryView() {
             reposDays++;
           } else {
             workedDays++;
+            const fixedMinutes = getFixedServiceMinutes(entry.serviceCode);
+            if (fixedMinutes != null) {
+              totalMinutes += fixedMinutes;
+            } else {
+              const service = serviceMap.get(entry.serviceCode.toUpperCase()) || null;
+              const label = getPeriodLabel(
+                getPeriodStateForDate(saisonConfig, cursor),
+              );
+              totalMinutes += getServiceMinutes(service, label);
+            }
+
             if (hasPanier(entry.serviceCode)) {
               panierCount++;
             }
-            const service = serviceMap.get(entry.serviceCode.toUpperCase()) || null;
-            const label = getPeriodLabel(
-              getPeriodStateForDate(saisonConfig, cursor),
-            );
-            totalMinutes += getServiceMinutes(service, label);
           }
         }
       }
@@ -244,17 +251,21 @@ export async function renderSummaryView() {
 
     resultGrid.innerHTML = "";
 
+    const totalDuration = formatDuration(totalMinutes).replace(":", " : ");
     const rows = [
       ["Jours travaillés", workedDays],
       ["Nombre de paniers", panierCount],
       ["Jours de repos", reposDays],
       ["Jours de congés", congesDays],
-      ["Total heures travaillées", formatDuration(totalMinutes)],
+      ["Total heures travaillées", totalDuration],
     ];
 
-    rows.forEach(([label, value]) => {
+    rows.forEach(([label, value], idx) => {
       const row = document.createElement("div");
       row.className = "summary-row";
+      if (idx === rows.length - 1) {
+        row.classList.add("summary-total");
+      }
       row.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
       resultGrid.appendChild(row);
     });

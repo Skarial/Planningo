@@ -64,7 +64,7 @@ export async function renderSeasonView() {
   saveBtn.textContent = "Valider";
 
   const resetBtn = document.createElement("button");
-  resetBtn.className = "settings-btn";
+  resetBtn.className = "settings-btn danger";
   resetBtn.type = "button";
   resetBtn.textContent = "Reinitialiser la saison";
 

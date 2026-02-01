@@ -14,7 +14,7 @@ import { getPlanningEntry, getPlanningForMonth } from "../data/storage.js";
 import { getActiveDateISO, setActiveDateISO } from "../state/active-date.js";
 
 import { isDateInConges } from "../domain/conges.js";
-import { toISODateLocal } from "../utils.js";
+import { formatMinutesAsDuration, getFixedServiceMinutes, getServiceDisplayName, toISODateLocal } from "../utils.js";
 import { getConfig } from "../data/db.js";
 import { initMonthFromDateISO } from "../state/month-navigation.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
@@ -62,12 +62,18 @@ function formatDuration(minutes) {
 function shouldAddExtraMinutes(service) {
   const code = typeof service?.code === "string" ? service.code.toUpperCase() : "";
   if (!code) return false;
-  if (code === "DM" || code === "DAM" || code === "ANNEXE") return false;
+  if (code === "DM" || code === "DAM" || code === "FORMATION") return false;
   if (code.startsWith("TAD")) return false;
   return true;
 }
 
 function buildServiceTimeLines(service, periodLabel) {
+  if (getFixedServiceMinutes(service?.code) != null) {
+    return {
+      lines: [],
+      duration: formatMinutesAsDuration(getFixedServiceMinutes(service?.code)),
+    };
+  }
   if (!service || !Array.isArray(service.periodes)) return null;
   const matchingPeriod =
     service.periodes.find(
@@ -133,6 +139,24 @@ function renderMonthNav(container) {
   const btnNext = document.createElement("button");
   btnNext.className = "month-arrow arrow-right";
 
+  const todayISO = toISODateLocal(new Date());
+  const isOnToday = getActiveDateISO() === todayISO;
+
+  let btnToday = null;
+  if (!isOnToday) {
+    btnToday = document.createElement("button");
+    btnToday.className = "month-today-btn";
+    btnToday.type = "button";
+    btnToday.textContent = "Aujourd'hui";
+    wrapper.classList.add("month-nav-with-today");
+
+    btnToday.addEventListener("click", () => {
+      if (getHomeMode() === HOME_MODE.EDIT_DAY) return;
+      setActiveDateISO(todayISO);
+      renderHome();
+    });
+  }
+
   btnPrev.addEventListener("click", () => {
     if (getHomeMode() === HOME_MODE.EDIT_DAY) return;
 
@@ -151,7 +175,11 @@ function renderMonthNav(container) {
     renderHome();
   });
 
-  wrapper.append(btnPrev, btnNext);
+  if (btnToday) {
+    wrapper.append(btnPrev, btnToday, btnNext);
+  } else {
+    wrapper.append(btnPrev, btnNext);
+  }
   container.appendChild(wrapper);
 }
 
@@ -328,7 +356,7 @@ export async function renderHome() {
       }
 
       service.hidden = false;
-      service.textContent = entry.serviceCode;
+      service.textContent = getServiceDisplayName(entry.serviceCode);
 
       if (entry.serviceCode === "REPOS") {
         service.classList.add("repos");
@@ -336,6 +364,17 @@ export async function renderHome() {
         time.textContent = "";
         duration.hidden = true;
         duration.textContent = "";
+        panier.hidden = true;
+        panier.textContent = "";
+        return;
+      }
+
+      const fixedMinutes = getFixedServiceMinutes(entry.serviceCode);
+      if (fixedMinutes != null) {
+        time.hidden = true;
+        time.textContent = "";
+        duration.hidden = false;
+        duration.textContent = formatMinutesAsDuration(fixedMinutes);
         panier.hidden = true;
         panier.textContent = "";
         return;
@@ -523,7 +562,7 @@ export async function renderHome() {
         ...grouped.REPOS,
         ...grouped.DM,
         ...grouped.DAM,
-        ...grouped.ANNEXE,
+        ...grouped.FORMATION,
         ...grouped.TAD,
         ...Object.values(grouped.LIGNES).flat(),
       ];
@@ -536,7 +575,7 @@ export async function renderHome() {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "guided-btn";
-        btn.textContent = code;
+        btn.textContent = getServiceDisplayName(code, { short: true });
 
         btn.onclick = async () => {
           await savePlanningEntry({
@@ -577,3 +616,6 @@ export async function renderHome() {
     input.focus();
   }
 }
+
+
+

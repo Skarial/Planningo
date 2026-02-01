@@ -88,6 +88,8 @@ Cette application PWA repose sur les regles suivantes :
 - La version de l'application (APP_VERSION) n'est jamais utilisee seule pour decider d'afficher une mise a jour.
 - Aucune banniere de mise a jour n'est affichee sans Service Worker en attente.
 
+Note : un log console de version DB peut exister a des fins de debug (sans impact fonctionnel).
+
 ---
 
 ## 3. Regle unique d'affichage de la banniere de mise a jour

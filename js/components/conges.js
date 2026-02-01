@@ -74,7 +74,7 @@ export async function renderCongesView() {
   saveBtn.textContent = "Valider";
 
   const resetBtn = document.createElement("button");
-  resetBtn.className = "settings-btn";
+  resetBtn.className = "settings-btn danger";
   resetBtn.type = "button";
   resetBtn.textContent = "Supprimer les congés";
 

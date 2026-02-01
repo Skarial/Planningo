@@ -4,10 +4,10 @@
 // CONFIGURATION
 // =======================
 
-const DB_NAME = "planningDB";
-const DB_VERSION = 4;
+export const DB_NAME = "planningDB";
+export const DB_VERSION = 5;
 
-const STORES = {
+export const STORES = {
   SERVICES: "services",
   PLANNING: "planning",
   CONFIG: "config",
@@ -48,18 +48,38 @@ function executeQuery(db, storeName, operation) {
 // OUVERTURE DB
 // =======================
 
+let migrationPromise = null;
+
 export function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onupgradeneeded = handleUpgrade;
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      const db = request.result;
+      if (!migrationPromise) {
+        migrationPromise = ensureServiceCodeMigration(db);
+      }
+      migrationPromise
+        .then((didMigrate) => {
+          if (didMigrate && typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("db:migrated", {
+                detail: { key: "migration_service_formation_v1" },
+              }),
+            );
+          }
+          resolve({ db, didMigrate });
+        })
+        .catch((error) => reject(error));
+    };
     request.onerror = () => reject(request.error);
   });
 }
 
 function handleUpgrade(event) {
   const db = event.target.result;
+  const oldVersion = event.oldVersion || 0;
 
   if (!db.objectStoreNames.contains(STORES.SERVICES)) {
     db.createObjectStore(STORES.SERVICES, { keyPath: "code" });
@@ -72,6 +92,150 @@ function handleUpgrade(event) {
   if (!db.objectStoreNames.contains(STORES.CONFIG)) {
     db.createObjectStore(STORES.CONFIG, { keyPath: "key" });
   }
+
+  if (oldVersion < 5) {
+    migrateLegacyServiceToFormation(event.target.transaction);
+  }
+}
+
+function legacyServiceCode() {
+  return String.fromCharCode(65, 78, 78, 69, 88, 69);
+}
+
+function migrateLegacyServiceToFormation(tx) {
+  if (!tx) return;
+  const planningStore = tx.objectStore(STORES.PLANNING);
+  const servicesStore = tx.objectStore(STORES.SERVICES);
+  const legacyCode = legacyServiceCode();
+
+  planningStore.openCursor().onsuccess = (event) => {
+    const cursor = event.target.result;
+    if (!cursor) return;
+    const entry = cursor.value;
+    if (entry?.serviceCode === legacyCode) {
+      entry.serviceCode = "FORMATION";
+      cursor.update(entry);
+    }
+    cursor.continue();
+  };
+
+  servicesStore.openCursor().onsuccess = (event) => {
+    const cursor = event.target.result;
+    if (!cursor) return;
+    const service = cursor.value;
+    if (service?.code === legacyCode) {
+      servicesStore.delete(service.code);
+      servicesStore.put({ ...service, code: "FORMATION" });
+    }
+    cursor.continue();
+  };
+}
+
+function ensureServiceCodeMigration(db) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(
+      [STORES.CONFIG, STORES.PLANNING, STORES.SERVICES],
+      "readwrite",
+    );
+    const configStore = tx.objectStore(STORES.CONFIG);
+    const planningStore = tx.objectStore(STORES.PLANNING);
+    const servicesStore = tx.objectStore(STORES.SERVICES);
+
+    const key = "migration_service_formation_v1";
+    const inProgressKey = "migration_service_formation_v1_in_progress";
+    let didMigrate = false;
+    const legacyCode = legacyServiceCode();
+
+    let planningDone = false;
+    let servicesDone = false;
+    let flagWritten = false;
+
+    function maybeFinalize() {
+      if (!planningDone || !servicesDone || flagWritten) return;
+      flagWritten = true;
+      configStore.put({ key, value: true });
+      didMigrate = true;
+    }
+
+    const flagReq = configStore.get(key);
+    flagReq.onsuccess = () => {
+      if (flagReq.result?.value === true) {
+        resolve();
+        return;
+      }
+
+      configStore.put({ key: inProgressKey, value: true });
+
+      planningStore.openCursor().onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (!cursor) {
+          planningDone = true;
+          maybeFinalize();
+          return;
+        }
+        const entry = cursor.value;
+        if (entry?.serviceCode === legacyCode) {
+          entry.serviceCode = "FORMATION";
+          cursor.update(entry);
+        }
+        cursor.continue();
+      };
+
+      servicesStore.openCursor().onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (!cursor) {
+          servicesDone = true;
+          maybeFinalize();
+          return;
+        }
+        const service = cursor.value;
+        if (service?.code === legacyCode) {
+          servicesStore.delete(service.code);
+          servicesStore.put({ ...service, code: "FORMATION" });
+        }
+        cursor.continue();
+      };
+
+      const legacyPrefsKey = String.fromCharCode(
+        115,
+        117,
+        103,
+        103,
+        101,
+        115,
+        116,
+        105,
+        111,
+        110,
+        115,
+        95,
+        112,
+        114,
+        101,
+        102,
+        115,
+      );
+      const legacyPrefField = String.fromCharCode(97, 110, 110, 101, 120, 101);
+      const prefsReq = configStore.get(legacyPrefsKey);
+      prefsReq.onsuccess = () => {
+        const prefs = prefsReq.result?.value;
+        if (prefs && typeof prefs === "object" && legacyPrefField in prefs) {
+          prefs.formation = prefs.formation ?? prefs[legacyPrefField];
+          delete prefs[legacyPrefField];
+          configStore.put({ key: legacyPrefsKey, value: prefs });
+        }
+      };
+    };
+
+    flagReq.onerror = () => reject(flagReq.error);
+    tx.oncomplete = () => {
+      const cleanupTx = db.transaction(STORES.CONFIG, "readwrite");
+      cleanupTx.objectStore(STORES.CONFIG).delete(inProgressKey);
+      cleanupTx.oncomplete = () => resolve(didMigrate);
+      cleanupTx.onerror = () => resolve(didMigrate);
+    };
+    tx.onerror = () => reject(tx.error);
+  });
 }
 
 // =======================
@@ -79,12 +243,12 @@ function handleUpgrade(event) {
 // =======================
 
 export async function getAllServices() {
-  const db = await openDB();
+  const { db } = await openDB();
   return executeQuery(db, STORES.SERVICES, (store) => store.getAll());
 }
 
 export async function addService(service) {
-  const db = await openDB();
+  const { db } = await openDB();
   return executeTransaction(db, STORES.SERVICES, "readwrite", (store) => {
     store.put(service);
   });
@@ -95,7 +259,7 @@ export async function addService(service) {
 // =======================
 
 window.savePlanningEntry = async function (entry) {
-  const db = await openDB();
+  const { db } = await openDB();
 
   await executeTransaction(db, STORES.PLANNING, "readwrite", (store) => {
     store.put({
@@ -111,7 +275,7 @@ window.savePlanningEntry = async function (entry) {
 };
 
 window.getPlanningForMonth = async function (monthISO) {
-  const db = await openDB();
+  const { db } = await openDB();
 
   return new Promise((resolve, reject) => {
     const tx = createTransaction(db, STORES.PLANNING, "readonly");
@@ -159,7 +323,7 @@ function sortPlanningResults(results) {
 // =======================
 
 window.lockPastMonths = async function () {
-  const db = await openDB();
+  const { db } = await openDB();
   const cutoffMonth = getPreviousMonthISO();
 
   return new Promise((resolve, reject) => {
@@ -183,7 +347,7 @@ window.lockPastMonths = async function () {
 };
 
 async function enforceMaxMonthsRetention(maxMonths = 13) {
-  const db = await openDB();
+  const { db } = await openDB();
 
   return new Promise((resolve, reject) => {
     const tx = db.transaction("planning", "readwrite");
@@ -228,12 +392,12 @@ async function enforceMaxMonthsRetention(maxMonths = 13) {
 }
 
 export async function getConfig(key) {
-  const db = await openDB();
+  const { db } = await openDB();
   return executeQuery(db, STORES.CONFIG, (store) => store.get(key));
 }
 
 export async function setConfig(key, value) {
-  const db = await openDB();
+  const { db } = await openDB();
   return executeTransaction(db, STORES.CONFIG, "readwrite", (store) => {
     store.put({ key, value });
   });

@@ -10,7 +10,7 @@ import {
 } from "../data/storage.js";
 
 import { getConfig } from "../data/db.js";
-import { toISODateLocal } from "../utils.js";
+import { getServiceDisplayName, toISODateLocal } from "../utils.js";
 import { showHome } from "../router.js";
 import { getGuidedStartDay, isDateInConges } from "../domain/conges.js";
 import { hasPanier } from "../domain/service-panier.js";
@@ -311,22 +311,32 @@ export async function showGuidedMonth(forcedDate = null) {
     });
     groupedSuggestions = grouped;
 
+    const primaryLabel = document.createElement("div");
+    primaryLabel.className = "guided-section-label";
+    primaryLabel.textContent = "Types";
+    servicesContainer.appendChild(primaryLabel);
+
     const primaryGrid = document.createElement("div");
     primaryGrid.className = "guided-primary-grid";
     servicesContainer.appendChild(primaryGrid);
 
-    grouped.REPOS.forEach((code) => addServiceButton(code, primaryGrid));
-    grouped.DM.forEach((code) => addServiceButton(code, primaryGrid));
-    grouped.DAM.forEach((code) => addServiceButton(code, primaryGrid));
-    grouped.ANNEXE.forEach((code) => addServiceButton(code, primaryGrid));
+    grouped.REPOS.forEach((code) => addServiceButton(code, primaryGrid, "guided-btn-primary"));
+    grouped.DM.forEach((code) => addServiceButton(code, primaryGrid, "guided-btn-primary"));
+    grouped.DAM.forEach((code) => addServiceButton(code, primaryGrid, "guided-btn-primary"));
+    grouped.FORMATION.forEach((code) => addServiceButton(code, primaryGrid, "guided-btn-primary"));
 
     if (grouped.TAD.length > 0) {
       const btnTAD = document.createElement("button");
       btnTAD.textContent = "TAD";
-      btnTAD.className = "guided-btn";
+      btnTAD.className = "guided-btn guided-btn-primary";
       btnTAD.onclick = () => renderTAD(grouped.TAD);
       primaryGrid.appendChild(btnTAD);
     }
+
+    const linesLabel = document.createElement("div");
+    linesLabel.className = "guided-section-label";
+    linesLabel.textContent = "Lignes";
+    servicesContainer.appendChild(linesLabel);
 
     const otherGrid = document.createElement("div");
     otherGrid.className = "guided-lines-grid";
@@ -337,7 +347,7 @@ export async function showGuidedMonth(forcedDate = null) {
       .forEach((line) => {
         const btn = document.createElement("button");
         btn.textContent = `Ligne ${line}`;
-        btn.className = "guided-btn";
+        btn.className = "guided-btn guided-btn-secondary";
         if (selectedLine === line) {
           btn.classList.add("active");
         }
@@ -420,10 +430,10 @@ export async function showGuidedMonth(forcedDate = null) {
   // BOUTON SERVICE = ENREGISTRE + JOUR SUIVANT
   // =======================
 
-  function addServiceButton(code, target) {
+  function addServiceButton(code, target, extraClass = "") {
     const btn = document.createElement("button");
-    btn.textContent = code;
-    btn.className = "guided-btn";
+    btn.textContent = getServiceDisplayName(code, { short: true });
+    btn.className = `guided-btn ${extraClass}`.trim();
 
     btn.onclick = async () => {
       const date = new Date(year, monthIndex, currentDay);

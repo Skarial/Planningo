@@ -30,6 +30,7 @@ L'application permet de :
 - saisir et modifier les services (saisie directe + saisie guidee),
 - configurer plusieurs periodes de conges,
 - fonctionner de maniere fiable hors connexion.
+ - gerer le service Formation (code interne : FORMATION).
 
 Le perimetre fonctionnel est volontairement restreint et maitrise.
 
@@ -134,5 +135,5 @@ Voir le fichier `LICENSE`.
 
 ## Statut
 
-Projet stable, autonome, sans dependance externe.
+Projet stable (v2.0.0), autonome, sans dependance externe.
 Le comportement documente fait foi.

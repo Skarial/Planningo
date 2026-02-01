@@ -342,6 +342,12 @@ sw : cycle de vie PWA
 games : module isole
 css : presentation visuelle
 
+## Migration et compatibilite
+
+- Version IndexedDB : 5
+- Migration automatique legacy : conversion vers le service FORMATION
+- Migration idempotente, verrouillee et declenchee a l'ouverture DB
+
 ## Priorite de l'import sur l'activation
 
 L'import de donnees constitue une restauration complete de l'etat applicatif.

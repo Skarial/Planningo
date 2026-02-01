@@ -1,13 +1,10 @@
 // js/data/export-db.js
 
-import { openDB } from "./db.js";
+import { DB_NAME, DB_VERSION, openDB } from "./db.js";
 
 // =======================
 // CONSTANTES
 // =======================
-
-const DB_NAME = "planningDB";
-const DB_VERSION = 4;
 
 const STORES = ["services", "planning", "config"];
 
@@ -16,7 +13,7 @@ const STORES = ["services", "planning", "config"];
 // =======================
 
 export async function exportDatabase() {
-  const db = await openDB();
+  const { db } = await openDB();
 
   const exportData = {
     signature: "PLANNING_PWA_EXPORT_V1",

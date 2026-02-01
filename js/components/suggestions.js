@@ -6,7 +6,7 @@ const DEFAULT_PREFS = {
   tad: true,
   dm: true,
   dam: true,
-  annexe: true,
+  formation: true,
   lignes: true,
 };
 
@@ -15,7 +15,7 @@ function normalizePrefs(value) {
     tad: value?.tad !== false,
     dm: value?.dm !== false,
     dam: value?.dam !== false,
-    annexe: value?.annexe !== false,
+    formation: value?.formation !== false,
     lignes: value?.lignes !== false,
   };
 }
@@ -92,7 +92,7 @@ export async function renderSuggestionsView() {
   addToggle("Tad", "tad");
   addToggle("Dm", "dm");
   addToggle("Dam", "dam");
-  addToggle("Annexe", "annexe");
+  addToggle("Formation", "formation");
 
   card.appendChild(status.node);
 

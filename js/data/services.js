@@ -16,7 +16,7 @@ const SCORE_WEIGHTS = {
 const SUGGESTION_LIMIT = 8;
 
 // Services toujours disponibles (pas de périodes)
-const ALWAYS_AVAILABLE_CODES = ["REPOS", "DM", "DAM", "TAD", "ANNEXE"];
+const ALWAYS_AVAILABLE_CODES = ["REPOS", "DM", "DAM", "TAD", "FORMATION"];
 
 // =======================
 // HELPERS INTERNES
@@ -76,7 +76,7 @@ export async function suggestServices({
   if (!query) return [];
 
   const services = await getAllServices();
-  const virtualServices = [{ code: "ANNEXE", type: SERVICE_TYPES.STANDARD }];
+  const virtualServices = [{ code: "FORMATION", type: SERVICE_TYPES.STANDARD }];
 
   const eligible = [...virtualServices, ...services].filter((service) => {
     const code = service.code.toUpperCase();

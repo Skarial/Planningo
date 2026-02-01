@@ -11,7 +11,7 @@
   --color-surface: #f1f1f1;
   --color-day: #2a2a2a;
   --color-service: #2f2f2f;
-  --color-time: #6f7fb1;
+  --color-time: #7a8298;
   --color-duration: #5b8c5a;
   --color-weekday: #d7854b;
 
@@ -140,6 +140,10 @@ textarea {
   justify-content: center;
 }
 
+.month-nav-with-today {
+  gap: 18px;
+}
+
 .month-arrow {
   width: 28px;
   height: 28px;
@@ -170,6 +174,47 @@ textarea {
 
 .arrow-right::before {
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+}
+
+.month-today-btn {
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-soft);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  position: relative;
+}
+
+.month-today-btn:active {
+  transform: scale(0.98);
+}
+
+.month-today-btn::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: -2px;
+  height: 1px;
+  background: var(--color-accent);
+  opacity: 0.45;
+}
+
+.month-today-btn:focus-visible {
+  color: var(--color-ink);
+}
+
+.month-today-btn:focus-visible::after {
+  opacity: 0.85;
+}
+
+.month-today-btn:active::after {
+  opacity: 1;
 }
 
 /* ==========================================================================
@@ -241,7 +286,7 @@ textarea {
 }
 
 .day-header-service.repos {
-  color: #e08a54;
+  color: #cf885f;
   font-weight: 700;
 }
 
@@ -281,21 +326,21 @@ textarea {
 .day-header-duration {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-duration);
+  color: var(--color-time);
   margin-top: 2px;
 }
 
 .day-header-panier {
   font-size: 1rem;
   font-weight: 700;
-  color: #111111;
+  color: var(--color-time);
   margin-top: 2px;
 }
 
 .day-header-weekday {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-weekday);
+  color: var(--color-time);
   margin-top: 4px;
 }
 
@@ -453,7 +498,7 @@ textarea {
   font-size: 0.7rem;
   letter-spacing: 2px;
   color: #b2b2b2;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .guided-btn {
@@ -470,6 +515,18 @@ textarea {
   padding: 3px 6px;
   min-width: 0;
   box-shadow: none;
+}
+
+.guided-btn-primary {
+  background: #e3e3e3;
+  border-color: #b5b5b5;
+  font-weight: 700;
+}
+
+.guided-btn-secondary {
+  background: #f0f0f0;
+  border-color: #cdcdcd;
+  color: #3a3a3a;
 }
 
 .guided-btn.active {
@@ -493,9 +550,9 @@ textarea {
   min-height: 32px;
   width: 100%;
   border-radius: 4px;
-  border: 1px solid rgba(232, 111, 35, 0.4);
+  border: 1px solid #c8c8c8;
   background: transparent;
-  color: var(--color-accent);
+  color: var(--color-muted);
   font-weight: 600;
   cursor: pointer;
   padding: 4px 8px;
@@ -592,9 +649,10 @@ textarea {
   flex-direction: column;
   gap: 10px;
   padding: 14px;
-  background: #dcdcdc;
-  border: 1px solid #c9c9c9;
-  border-radius: 6px;
+  background: #e2e2e2;
+  border: 1px solid #d3d3d3;
+  border-radius: 10px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
 }
 
 .settings-periods {
@@ -608,9 +666,9 @@ textarea {
   flex-direction: column;
   gap: 8px;
   padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #c9c9c9;
-  background: #e6e6e6;
+  border-radius: 10px;
+  border: 1px solid #d6d6d6;
+  background: #ededed;
 }
 
 .settings-period-header {
@@ -629,9 +687,9 @@ textarea {
 
 .settings-period-remove {
   height: 28px;
-  border-radius: 4px;
-  border: 1px solid #c8c8c8;
-  background: #ededed;
+  border-radius: 6px;
+  border: 1px solid #d3d3d3;
+  background: #f0f0f0;
   font-size: 0.8rem;
   cursor: pointer;
 }
@@ -649,8 +707,8 @@ textarea {
 
 .settings-card input {
   height: 36px;
-  border-radius: 4px;
-  border: 1px solid #c8c8c8;
+  border-radius: 8px;
+  border: 1px solid #d6d6d6;
   padding: 0 8px;
   background: var(--input-bg);
   background-image: none;
@@ -664,9 +722,9 @@ textarea {
 
 .settings-btn {
   height: 36px;
-  border-radius: 4px;
-  border: 1px solid #c8c8c8;
-  background: #ededed;
+  border-radius: 8px;
+  border: 1px solid #d3d3d3;
+  background: #efefef;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -676,6 +734,7 @@ textarea {
   border-color: #1f1f1f;
   background: #1f1f1f;
   color: #fff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
 }
 
 .settings-note {
@@ -708,8 +767,8 @@ textarea {
   width: 46px;
   height: 26px;
   border-radius: 999px;
-  border: 1px solid #c8c8c8;
-  background: #d9d9d9;
+  border: 1px solid #d0d0d0;
+  background: #dedede;
   position: relative;
   cursor: pointer;
   transition: background 0.2s ease, border-color 0.2s ease;
@@ -731,8 +790,8 @@ textarea {
 }
 
 .settings-toggle input[type="checkbox"]:checked {
-  background: #2d6cdf;
-  border-color: #2d6cdf;
+  background: #d58d5b;
+  border-color: #d58d5b;
 }
 
 .settings-toggle input[type="checkbox"]:checked::before {
@@ -757,8 +816,48 @@ textarea {
   font-size: 1rem;
 }
 
+.summary-row.summary-total {
+  padding-top: 8px;
+  margin-top: 4px;
+  border-top: 1px solid #d2d2d2;
+}
+
+.summary-row.summary-total span,
+.summary-row.summary-total strong {
+  font-weight: 700;
+}
+
+.summary-card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-bottom: 8px;
+}
+
 .hidden {
   display: none !important;
+}
+
+/* Toast simple (migration, messages rapides) */
+.toast-notification {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + var(--safe-bottom));
+  transform: translateX(-50%);
+  background: #1f1f1f;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 12000;
+  pointer-events: none;
+}
+
+.toast-notification.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
 }
 
 /* ==========================================================================
@@ -930,7 +1029,7 @@ textarea {
   font-weight: 600;
   line-height: 1;
 
-  background: #1f1f1f;
+  background: #3a3a3a;
   color: #ffffff;
 
   cursor: pointer;
@@ -938,18 +1037,18 @@ textarea {
 }
 
 .day-circle.empty {
-  background: #ffffff;
-  color: #111111;
-  border: 1px solid #d0d0d0;
+  background: #f3f3f3;
+  color: #2b2b2b;
+  border: 1px solid #d8d8d8;
 }
 
 .day-circle.rest {
-  background: #5c5c5c;
+  background: #707070;
   color: #ffffff;
 }
 
 .day-circle.active {
-  background: var(--color-accent);
+  background: #cf885f;
   color: #ffffff;
 }
 
@@ -1204,13 +1303,15 @@ textarea {
 }
 
 #reset-month {
-  background: #c6c6c6;
-  border-color: #c0c0c0;
+  background: transparent;
+  border-color: #d0d0d0;
+  color: var(--color-muted);
 }
 
 #reset-month:active {
-  background: #b6b6b6;
-  border-color: #b0b0b0;
+  background: rgba(0, 0, 0, 0.04);
+  border-color: #c2c2c2;
+  color: #2a2a2a;
 }
 
 .menu-form label {
@@ -1229,24 +1330,42 @@ textarea {
 
 .menu-form button {
   height: 36px;
-  border-radius: 4px;
-  border: 1px solid #c8c8c8;
-  background: #ededed;
+  border-radius: 8px;
+  border: 1px solid #d3d3d3;
+  background: #efefef;
   font-size: 0.9rem;
 }
 
 #reset-all,
 #reset-confirm-month {
+  background: transparent;
+  color: #9b4b4b;
+  border-color: rgba(155, 75, 75, 0.45);
+  font-weight: 600;
+}
+
+#reset-all.holding,
+#reset-confirm-month.holding {
   background: #b25a5a;
   color: #fff;
   border-color: #b25a5a;
-  font-weight: 600;
+}
+
+.settings-btn.danger {
+  background: transparent;
+  color: #9b4b4b;
+  border-color: rgba(155, 75, 75, 0.4);
+}
+
+.settings-btn.danger:active {
+  background: rgba(155, 75, 75, 0.08);
+  border-color: rgba(155, 75, 75, 0.6);
 }
 
 #reset-all:active,
 #reset-confirm-month:active {
-  background: #9f4f4f;
-  border-color: #9f4f4f;
+  background: rgba(155, 75, 75, 0.08);
+  border-color: rgba(155, 75, 75, 0.6);
 }
 
 .menu-long-press {
@@ -1786,6 +1905,9 @@ body.menu-open #menu-toggle {
   }
 }
 
+.month-nav.month-nav-with-today {
+  gap: 18px;
+}
 
 
 

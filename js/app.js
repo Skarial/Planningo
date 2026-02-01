@@ -2,9 +2,9 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "1.0.141";
+export const APP_VERSION = "2.0.1";
 
-import { getConfig } from "./data/db.js";
+import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
 
 import { registerServiceWorker } from "./sw/sw-register.js";
@@ -46,11 +46,31 @@ async function initApp() {
   // 4️⃣ Service Worker + bannière
   await registerServiceWorker(showUpdateBanner);
 
+  // 4b️⃣ Debug : version DB (console uniquement)
+  console.info(`[DB] version ${DB_VERSION}`);
+
   // 5️⃣ Bloquer le "pull-to-refresh" mobile
   disablePullToRefresh();
 
   // 6️⃣ Bloquer zoom natif (double tap / pinch)
   disableNativeZoom();
+
+  // Toast migration (si necessaire)
+  window.addEventListener("db:migrated", () => {
+    showToast("Migration terminée");
+  });
+}
+
+function showToast(message) {
+  const toast = document.createElement("div");
+  toast.className = "toast-notification";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("visible"));
+  setTimeout(() => {
+    toast.classList.remove("visible");
+    setTimeout(() => toast.remove(), 240);
+  }, 1800);
 }
 
 function disablePullToRefresh() {
@@ -143,6 +163,14 @@ function showUpdateBanner(registration) {
     });
   });
 }
+
+
+
+
+
+
+
+
 
 
 
