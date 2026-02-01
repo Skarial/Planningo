@@ -2,7 +2,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "1.0.136";
+export const APP_VERSION = "1.0.137";
 
 import { getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -45,6 +45,65 @@ async function initApp() {
 
   // 4️⃣ Service Worker + bannière
   await registerServiceWorker(showUpdateBanner);
+
+  // 5️⃣ Bloquer le "pull-to-refresh" mobile
+  disablePullToRefresh();
+
+  // 6️⃣ Bloquer zoom natif (double tap / pinch)
+  disableNativeZoom();
+}
+
+function disablePullToRefresh() {
+  let startY = 0;
+
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches && e.touches.length > 0) {
+        startY = e.touches[0].clientY;
+      }
+    },
+    { passive: true },
+  );
+
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!e.touches || e.touches.length === 0) return;
+      const currentY = e.touches[0].clientY;
+      const pullingDown = currentY > startY;
+
+      if (window.scrollY === 0 && pullingDown) {
+        e.preventDefault();
+      }
+    },
+    { passive: false },
+  );
+}
+
+// Bloque double-tap zoom + pinch sur iOS (best effort)
+function disableNativeZoom() {
+  let lastTouchEnd = 0;
+
+  document.addEventListener(
+    "touchend",
+    (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    },
+    { passive: false },
+  );
+
+  document.addEventListener(
+    "gesturestart",
+    (e) => {
+      e.preventDefault();
+    },
+    { passive: false },
+  );
 }
 
 // =======================
@@ -83,6 +142,7 @@ function showUpdateBanner(registration) {
     });
   });
 }
+
 
 
 
