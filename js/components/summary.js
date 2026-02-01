@@ -10,7 +10,7 @@ function formatDuration(totalMinutes) {
   if (typeof totalMinutes !== "number" || totalMinutes < 0) return "0H00";
   const h = Math.floor(totalMinutes / 60);
   const m = totalMinutes % 60;
-  return `${h}H${String(m).padStart(2, "0")}`;
+  return `${h} H ${String(m).padStart(2, "0")}`;
 }
 
 function parseTimeToMinutes(value) {
