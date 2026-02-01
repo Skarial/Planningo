@@ -5,6 +5,7 @@ import { getConfig } from "../data/db.js";
 import { isDateInConges } from "../domain/conges.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
+import { hasPanier } from "../domain/service-panier.js";
 
 function formatDuration(totalMinutes) {
   if (typeof totalMinutes !== "number" || totalMinutes < 0) return "00:00";
@@ -207,6 +208,7 @@ export async function renderSummaryView() {
     let reposDays = 0;
     let congesDays = 0;
     let totalMinutes = 0;
+    let panierCount = 0;
 
     const cursor = new Date(start.getTime());
     while (cursor <= end) {
@@ -225,6 +227,9 @@ export async function renderSummaryView() {
             reposDays++;
           } else {
             workedDays++;
+            if (hasPanier(entry.serviceCode)) {
+              panierCount++;
+            }
             const service = serviceMap.get(entry.serviceCode.toUpperCase()) || null;
             const label = getPeriodLabel(
               getPeriodStateForDate(saisonConfig, cursor),
@@ -241,6 +246,7 @@ export async function renderSummaryView() {
 
     const rows = [
       ["Jours travaillés", workedDays],
+      ["Nombre de paniers", panierCount],
       ["Jours de repos", reposDays],
       ["Jours de congés", congesDays],
       ["Total heures travaillées", formatDuration(totalMinutes)],

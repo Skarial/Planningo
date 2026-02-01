@@ -13,6 +13,7 @@ import { getConfig } from "../data/db.js";
 import { toISODateLocal } from "../utils.js";
 import { showHome } from "../router.js";
 import { getGuidedStartDay, isDateInConges } from "../domain/conges.js";
+import { hasPanier } from "../domain/service-panier.js";
 
 function capitalizeFirst(input) {
   if (typeof input !== "string" || input.length === 0) return input;
@@ -98,6 +99,7 @@ export async function showGuidedMonth(forcedDate = null) {
     let workDays = 0;
     let reposDays = 0;
     let congesDays = 0;
+    let panierCount = 0;
 
     for (let d = 1; d <= daysInMonth; d++) {
       const date = new Date(year, monthIndex, d);
@@ -114,11 +116,15 @@ export async function showGuidedMonth(forcedDate = null) {
         reposDays++;
       } else {
         workDays++;
+        if (hasPanier(entry.serviceCode)) {
+          panierCount++;
+        }
       }
     }
 
     return {
       workDays,
+      panierCount,
       reposDays,
       congesDays,
       totalDays: workDays + reposDays + congesDays,
@@ -209,6 +215,7 @@ export async function showGuidedMonth(forcedDate = null) {
     }
 
     addStat("Jours de travail", stats.workDays);
+    addStat("Nombre de paniers", stats.panierCount);
     addStat("Jours de repos", stats.reposDays);
     addStat("Jours de congés", stats.congesDays);
 
@@ -441,3 +448,5 @@ export async function showGuidedMonth(forcedDate = null) {
     target.appendChild(btn);
   }
 }
+
+

@@ -285,6 +285,13 @@ textarea {
   margin-top: 2px;
 }
 
+.day-header-panier {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111111;
+  margin-top: 2px;
+}
+
 .day-header-weekday {
   font-size: 1rem;
   font-weight: 600;

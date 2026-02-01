@@ -21,6 +21,7 @@ import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
 import { getServiceSuggestions } from "../domain/service-suggestions.js";
 import { getUiMode } from "../state/ui-mode.js";
+import { hasPanier } from "../domain/service-panier.js";
 
 function parseISODateLocal(dateISO) {
   const [year, month, day] = dateISO.split("-").map(Number);
@@ -299,6 +300,10 @@ export async function renderHome() {
     duration.className = "day-header-duration";
     duration.hidden = true;
 
+    const panier = document.createElement("div");
+    panier.className = "day-header-panier";
+    panier.hidden = true;
+
     const weekday = document.createElement("div");
     weekday.className = "day-header-weekday";
     let weekdayShort = date.toLocaleDateString("fr-FR", { weekday: "short" });
@@ -306,7 +311,7 @@ export async function renderHome() {
     weekday.textContent =
       weekdayShort.charAt(0).toUpperCase() + weekdayShort.slice(1);
 
-    right.append(service, time, duration, weekday);
+    right.append(service, time, duration, panier, weekday);
 
     section.append(left, right);
     daySummary.appendChild(section);
@@ -331,6 +336,8 @@ export async function renderHome() {
         time.textContent = "";
         duration.hidden = true;
         duration.textContent = "";
+        panier.hidden = true;
+        panier.textContent = "";
         return;
       }
 
@@ -342,6 +349,14 @@ export async function renderHome() {
       if (entry?.duration) {
         duration.hidden = false;
         duration.textContent = entry.duration;
+      }
+
+      if (hasPanier(entry.serviceCode)) {
+        panier.hidden = false;
+        panier.textContent = "Panier";
+      } else {
+        panier.hidden = true;
+        panier.textContent = "";
       }
 
       if (entry?.startTime && entry?.endTime) return;
@@ -387,6 +402,14 @@ export async function renderHome() {
             duration.hidden = false;
             duration.textContent = timeInfo.duration;
           }
+        }
+
+        if (hasPanier(entry.serviceCode)) {
+          panier.hidden = false;
+          panier.textContent = "Panier";
+        } else {
+          panier.hidden = true;
+          panier.textContent = "";
         }
       });
     });
