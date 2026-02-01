@@ -59,7 +59,7 @@ function sortByScore(scoredServices) {
 // =======================
 
 /**
- * Suggestions clavier pour le planning mensuel
+ * Suggestions clavier pour la saisie du planning
  *
  * RÈGLES :
  * - filtrage texte d’abord

@@ -457,6 +457,27 @@ export const Tetribus = {
       clearInterval(moveInterval);
     });
 
+    btnLeft.addEventListener("pointerdown", (e) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+
+      this.moveLeft();
+      moveInterval = setInterval(() => this.moveLeft(), 120);
+    });
+
+    btnLeft.addEventListener("pointerup", (e) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+
+      clearInterval(moveInterval);
+    });
+
+    btnLeft.addEventListener("pointercancel", () => {
+      clearInterval(moveInterval);
+    });
+
     btnLeft.addEventListener("click", (e) => {
       if (e.cancelable) {
         e.preventDefault();
@@ -480,6 +501,27 @@ export const Tetribus = {
         e.preventDefault();
       }
 
+      clearInterval(moveInterval);
+    });
+
+    btnRight.addEventListener("pointerdown", (e) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+
+      this.moveRight();
+      moveInterval = setInterval(() => this.moveRight(), 120);
+    });
+
+    btnRight.addEventListener("pointerup", (e) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+
+      clearInterval(moveInterval);
+    });
+
+    btnRight.addEventListener("pointercancel", () => {
       clearInterval(moveInterval);
     });
 
@@ -521,6 +563,38 @@ export const Tetribus = {
 
     // 🔒 sécurité si le doigt quitte le bouton
     btnRotate.addEventListener("touchcancel", () => {
+      clearTimeout(rotateTimeout);
+      this.stopFastDrop();
+    });
+
+    btnRotate.addEventListener("pointerdown", (e) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+
+      isLongPress = false;
+
+      rotateTimeout = setTimeout(() => {
+        isLongPress = true;
+        this.startFastDrop();
+      }, 300);
+    });
+
+    btnRotate.addEventListener("pointerup", (e) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+
+      clearTimeout(rotateTimeout);
+
+      if (isLongPress) {
+        this.stopFastDrop();
+      } else {
+        this.rotate();
+      }
+    });
+
+    btnRotate.addEventListener("pointercancel", () => {
       clearTimeout(rotateTimeout);
       this.stopFastDrop();
     });

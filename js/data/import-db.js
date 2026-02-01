@@ -13,7 +13,8 @@ const STORES = ["services", "planning", "config"];
 // =======================
 
 export async function importDatabase(exportData) {
-  validateExportFormat(exportData);
+  const normalizedData = normalizeExportData(exportData);
+  validateExportFormat(normalizedData);
 
   const db = await openDB();
 
@@ -22,9 +23,9 @@ export async function importDatabase(exportData) {
     await clearStore(db, storeName);
   }
 
-  // 2. Restauration dans l’ordre
+  // 2. Restauration dans l'ordre
   for (const storeName of STORES) {
-    const records = exportData.stores[storeName] || [];
+    const records = normalizedData.stores[storeName] || [];
     await restoreStore(db, storeName, records);
   }
 
@@ -32,7 +33,7 @@ export async function importDatabase(exportData) {
 
   db.close();
 
-  // 3. Redémarrage obligatoire
+  // 3. Redemarrage obligatoire
   location.reload();
 }
 // =======================
@@ -44,12 +45,12 @@ function validateExportFormat(data) {
     throw new Error("Export invalide : objet attendu");
   }
 
-  if (data.signature !== "PLANNING_PWA_EXPORT_V1") {
+  if (data.signature && data.signature !== "PLANNING_PWA_EXPORT_V1") {
     throw new Error("Export invalide : signature inconnue");
   }
 
-  if (!data.meta || data.meta.exportVersion !== 1) {
-    throw new Error("Export invalide : version non supportée");
+  if (data.meta && data.meta.exportVersion && data.meta.exportVersion !== 1) {
+    throw new Error("Export invalide : version non supportee");
   }
 
   if (!data.stores || typeof data.stores !== "object") {
@@ -67,6 +68,73 @@ function validateExportFormat(data) {
 // =======================
 // UTILITAIRES
 // =======================
+
+function normalizeExportData(rawData) {
+  if (!rawData || typeof rawData !== "object") {
+    return rawData;
+  }
+
+  let data = rawData;
+
+  if (!data.stores && (rawData.services || rawData.planning || rawData.config)) {
+    data = {
+      ...rawData,
+      stores: {
+        services: rawData.services,
+        planning: rawData.planning,
+        config: rawData.config,
+      },
+    };
+  }
+
+  if (!data.stores || typeof data.stores !== "object") {
+    return data;
+  }
+
+  if (data.stores.services == null) {
+    data.stores.services = [];
+  }
+
+  if (data.stores.planning == null) {
+    data.stores.planning = [];
+  }
+
+  if (data.stores.config == null) {
+    data.stores.config = [];
+  }
+
+  if (
+    data.stores.config &&
+    !Array.isArray(data.stores.config) &&
+    typeof data.stores.config === "object"
+  ) {
+    data.stores.config = Object.entries(data.stores.config).map(
+      ([key, value]) => ({
+        key,
+        value,
+      }),
+    );
+  }
+
+  if (Array.isArray(data.stores.planning)) {
+    data.stores.planning = data.stores.planning.map((item) => {
+      if (!item || typeof item !== "object") {
+        return item;
+      }
+
+      if (item.serviceCode || !item.service) {
+        return item;
+      }
+
+      return {
+        ...item,
+        serviceCode: item.service,
+      };
+    });
+  }
+
+  return data;
+}
 
 function clearStore(db, storeName) {
   return new Promise((resolve, reject) => {
@@ -108,7 +176,7 @@ export async function importAllData() {
 
     input.onchange = async () => {
       const confirmed = confirm(
-        "L’import remplacera toutes les données existantes. Continuer ?",
+        "L'import remplacera toutes les donnees existantes. Continuer ?",
       );
       if (!confirmed) return;
 

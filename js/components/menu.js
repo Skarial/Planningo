@@ -1,48 +1,22 @@
 // js/components/menu.js
 
 import { setUiMode, UI_MODE } from "../state/ui-mode.js";
-
-import { exportAllData } from "../data/export-db.js";
-import { importAllData } from "../data/import-db.js";
-
-import { refreshCurrentView, showHome, showGuidedMonth } from "../router.js";
+import {
+  refreshCurrentView,
+  showHome,
+  showGuidedMonth,
+  showCongesView,
+  showSeasonView,
+  showPhoneChangeView,
+} from "../router.js";
 
 import { clearAllPlanning, clearPlanningMonth } from "../data/storage.js";
-import { getConfig, setConfig } from "../data/storage.js";
 import { APP_VERSION } from "../app.js";
-
-function isoToFR(iso) {
-  if (!iso) return "";
-  const [y, m, d] = iso.split("-");
-  return `${d}/${m}/${y}`;
-}
-
-function frToISO(fr) {
-  if (!fr) return "";
-  const [d, m, y] = fr.split("/");
-  return `${y}-${m}-${d}`;
-}
-
-// =======================
-// SAISON — RESTAURATION
-// =======================
-
-async function loadSeasonForm() {
-  const entry = await getConfig("saison");
-  const saison = entry?.value;
-  if (!saison) return;
-
-  const start = document.getElementById("season-start");
-  const end = document.getElementById("season-end");
-  if (!start || !end) return;
-
-  start.value = saison.saisonDebut || "";
-  end.value = saison.saisonFin || "";
-}
 
 // =======================
 // MENU
 // =======================
+
 function afficherResetEnHaut() {
   const resetPanel = document.getElementById("reset-panel");
   if (!resetPanel) return;
@@ -76,7 +50,7 @@ export function initMenu() {
   [resetAllBtn, resetConfirmMonth].forEach((btn) => {
     if (!btn) return;
 
-    // éviter doublon
+    // eviter doublon
     if (btn.querySelector(".long-press-bar")) return;
 
     const bar = document.createElement("div");
@@ -85,7 +59,7 @@ export function initMenu() {
   });
 
   // =======================
-  // ÉTATS
+  // ETATS
   // =======================
 
   let isOpen = false;
@@ -116,7 +90,7 @@ export function initMenu() {
       resetAllBtn.classList.remove("holding");
 
       await clearAllPlanning();
-      showToast("Planning entièrement réinitialisé");
+      showToast("Planning entierement reinitialise");
 
       refreshCurrentView();
 
@@ -156,98 +130,28 @@ export function initMenu() {
   menu.classList.remove("open");
   overlay.classList.remove("open");
   menu.inert = true;
+
   // =======================
-  // CONGÉS
+  // OUTILS (VUES DEDIEES)
   // =======================
 
   const congesBtn = document.getElementById("menu-conges");
-  const congesForm = document.getElementById("conges-form");
-  const congesStart = document.getElementById("conges-start");
-  const congesEnd = document.getElementById("conges-end");
-  const congesSubmit = document.getElementById("conges-submit");
-  const congesReset = document.getElementById("conges-reset");
-
-  async function loadCongesForm() {
-    const entry = await getConfig("conges");
-    const value = entry?.value;
-    if (!value) return;
-
-    congesStart.value = frToISO(value.start);
-    congesEnd.value = frToISO(value.end);
-  }
-
-  loadCongesForm();
+  const seasonBtn = document.getElementById("menu-season");
+  const phoneBtn = document.getElementById("menu-phone-change");
 
   congesBtn?.addEventListener("click", () => {
-    congesForm.classList.toggle("hidden");
-  });
-
-  congesSubmit?.addEventListener("click", async () => {
-    if (!congesStart.value || !congesEnd.value) {
-      showToast("Dates invalides");
-      return;
-    }
-
-    const startFR = isoToFR(congesStart.value);
-    const endFR = isoToFR(congesEnd.value);
-
-    await setConfig("conges", {
-      start: startFR,
-      end: endFR,
-    });
-
-    congesForm.classList.add("hidden");
-    refreshCurrentView();
+    showCongesView();
     closeMenu();
   });
-
-  congesReset?.addEventListener("click", async () => {
-    await setConfig("conges", {});
-    congesStart.value = "";
-    congesEnd.value = "";
-    congesForm.classList.add("hidden");
-    refreshCurrentView();
-
-    closeMenu();
-  });
-
-  // =======================
-  // SAISON
-  // =======================
-
-  const seasonBtn = document.getElementById("menu-season");
-  const seasonForm = document.getElementById("season-form");
-  const seasonStart = document.getElementById("season-start");
-  const seasonEnd = document.getElementById("season-end");
-  const seasonSubmit = document.getElementById("season-submit");
-  const seasonReset = document.getElementById("season-reset");
-
-  loadSeasonForm();
 
   seasonBtn?.addEventListener("click", () => {
-    seasonForm.classList.toggle("hidden");
-  });
-
-  seasonSubmit?.addEventListener("click", async () => {
-    const start = seasonStart.value.trim();
-    const end = seasonEnd.value.trim();
-
-    await setConfig(
-      "saison",
-      start && end ? { saisonDebut: start, saisonFin: end } : {},
-    );
-
-    seasonForm.classList.add("hidden");
+    showSeasonView();
     closeMenu();
   });
 
-  seasonReset?.addEventListener("click", async () => {
-    await setConfig("saison", {});
-    seasonStart.value = "";
-    seasonEnd.value = "";
-    seasonForm.classList.add("hidden");
+  phoneBtn?.addEventListener("click", () => {
+    showPhoneChangeView();
     closeMenu();
-    showHome();
   });
 
   // =======================
@@ -268,37 +172,13 @@ export function initMenu() {
 
     consultForm.classList.add("hidden");
 
-    // 👉 Nouveau comportement : on fixe la date active, puis Home
+    // Nouveau comportement : on fixe la date active, puis Home
     import("../state/active-date.js").then(({ setActiveDateISO }) => {
       setActiveDateISO(consultInput.value);
       showHome();
     });
 
     closeMenu();
-  });
-
-  // =======================
-  // CHANGEMENT DE TÉLÉPHONE
-  // =======================
-
-  const phoneBtn = document.getElementById("menu-phone-change");
-  const phoneSub = document.getElementById("menu-phone-sub");
-
-  const exportBtn = document.getElementById("menu-export");
-  const importBtn = document.getElementById("menu-import");
-
-  phoneBtn?.addEventListener("click", () => {
-    phoneSub.classList.toggle("hidden");
-  });
-
-  exportBtn?.addEventListener("click", async () => {
-    closeMenu();
-    await exportAllData();
-  });
-
-  importBtn?.addEventListener("click", async () => {
-    closeMenu();
-    await importAllData();
   });
 
   // =======================
@@ -364,7 +244,7 @@ export function initMenu() {
     const deltaX = touch.clientX - touchStartX;
     const deltaY = touch.clientY - touchStartY;
 
-    // si geste vertical → abandon swipe
+    // si geste vertical -> abandon swipe
     if (Math.abs(deltaY) > Math.abs(deltaX)) {
       isSwiping = false;
       menu.style.transition = "";
@@ -458,7 +338,7 @@ export function initMenu() {
       ).padStart(2, "0")}`;
 
       await clearPlanningMonth(monthISO);
-      showToast("Planning du mois réinitialisé");
+      showToast("Planning du mois reinitialise");
 
       refreshCurrentView();
 
@@ -498,13 +378,23 @@ export function initMenu() {
     updateResetMonthLabel();
   });
 
+  function setActiveMenu(action) {
+    const buttons = menu.querySelectorAll("button[data-action]");
+    buttons.forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.action === action);
+    });
+  }
+
+  setActiveMenu("home");
+
   // =======================
   // NAVIGATION
   // =======================
 
   menu.addEventListener("click", (e) => {
-    const action = e.target.dataset.action;
-    if (!action) return;
+    const button = e.target.closest("button[data-action]");
+    if (!button) return;
+    const action = button.dataset.action;
 
     if (resetState !== "closed") return;
 
@@ -512,23 +402,23 @@ export function initMenu() {
       case "home":
         setUiMode(UI_MODE.CONSULTATION);
         showHome();
+        setActiveMenu("home");
         break;
 
       case "day":
-        break;
-
-      case "month":
         break;
 
       case "guided-month":
         setUiMode(UI_MODE.SAISIE_MENSUELLE);
 
         showGuidedMonth();
+        setActiveMenu("guided-month");
         break;
 
       case "tetribus":
         import("../router.js").then(({ showTetribusView }) => {
           showTetribusView();
+          setActiveMenu("tetribus");
         });
         break;
     }

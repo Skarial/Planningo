@@ -1,167 +1,165 @@
-## Générateur d’activation CLI (outil développeur)
+﻿# Compatibilite logiciel — Planning PWA
 
-Un script local permet de générer un code d’activation sans navigateur.
+## Generateur d'activation CLI (outil developpeur)
+
+Un script local permet de generer un code d'activation sans navigateur.
 
 - Fichier :
-  -- tools/generate-activation.py : logique de génération
-  -- tools/gen-code : raccourci exécutable
+  -- tools/generate-activation.js : logique de generation
+  -- tools/gen-code : raccourci executable
 - Usage : ./tools/gen-code DEVICE_ID
 - Exemple :
   -- ./tools/gen-code a9c4f2d1-87b3
-  -- Résultat : 3f8a91c4b2de
-- Algorithme strictement identique au générateur HTML
-
-# Compatibilité logiciel — Planning PWA
+  -- Resultat : 3f8a91c4b2de
+- Algorithme strictement identique au generateur HTML
 
 ## Objectif
 
-Ce document définit les environnements logiciels **supportés**, **tolérés** et **non supportés**
-pour l’application Planning PWA Chauffeurs.
+Ce document definit les environnements logiciels supportes, toleres et non supportes pour l'application Planning PWA Chauffeurs.
 
-Il a une valeur **contractuelle**.
+Il a une valeur contractuelle.
 
 ## Garanties techniques acquises
 
-### 1. Domain métier pur
+### 1. Domain metier pur
 
-- Aucun accès direct au stockage
-- Aucune dépendance navigateur
-- Données injectées par paramètres
-- Logique déterministe et testable
+- Aucun acces direct au stockage
+- Aucune dependance navigateur
+- Donnees injectees par parametres
+- Logique deterministe et testable
 
-Fichiers concernés :
+Fichiers concernes :
 
 - `domain/conges.js`
 - `domain/periods.js`
-- `domain/services-grouping.js`
 - `domain/activation.js`
 
 ---
 
 ## Stockage local
 
-L’application repose sur :
+L'application repose sur :
 
-- IndexedDB pour les données persistantes
-- LocalStorage pour les états légers
+- IndexedDB pour les donnees persistantes
+- LocalStorage pour les etats legers
+- Retention du planning : conservation automatique des 36 derniers mois
 
 Limitations connues :
 
-- La suppression des données navigateur supprime les données de l’application
-- Le mode navigation privée peut bloquer IndexedDB
+- La suppression des donnees navigateur supprime les donnees de l'application
+- Le mode navigation privee peut bloquer IndexedDB
 
 ### 2. Stockage abstrait par contrat
 
-Un contrat de stockage unique est défini :
+Un contrat de stockage unique est defini :
 
 - `data/storage.interface.js`
 
-Toute implémentation doit respecter ce contrat.
+Toute implementation doit respecter ce contrat.
 
 ---
 
 ### 3. Adaptateurs interchangeables
 
-Implémentations existantes :
+Implementations existantes :
 
 - `storage.memory.js` (tests / fallback)
 - `storage.file.js` (mock logiciel)
-- `storage.abstract.js` (point d’entrée stable)
-- `storage.selector.js` (sélection runtime)
+- `storage.abstract.js` (point d'entree stable)
+- `storage.selector.js` (selection runtime)
 
-Le domain ne connaît jamais l’implémentation concrète.
+Le domain ne connait jamais l'implementation concrete.
 
 ---
 
-### 4. IndexedDB isolé
+### 4. IndexedDB isole
 
-Le stockage IndexedDB reste cantonné à :
+Le stockage IndexedDB reste cantonne a :
 
 - `data/storage.js`
 
-Il n’est jamais utilisé par le domain.
+Il n'est jamais utilise par le domain.
 
 ---
 
 ### 5. Tests unitaires fiables
 
 - Runner asynchrone sans framework
-- Tests exécutés réellement
+- Tests executes reellement
 - Aucun faux positif
 
 Tous les adaptateurs respectent le contrat par les tests.
 
 ---
 
-## Environnements non supportés
+## Environnements non supportes
 
-Les environnements suivants ne sont **pas supportés** :
+Les environnements suivants ne sont pas supportes :
 
-- Navigateurs obsolètes sans Service Worker
+- Navigateurs obsoletes sans Service Worker
 - Navigateurs sans IndexedDB
-- Mode navigation privée bloquant le stockage
-- Navigateurs embarqués non standards
+- Mode navigation privee bloquant le stockage
+- Navigateurs embarques non standards
 
-## Spécificités Android
+## Specificites Android
 
-- Support stable d’IndexedDB
+- Support stable d'IndexedDB
 - Service Worker fiable
-- PWA fortement recommandée
+- PWA fortement recommandee
 
-## Plateformes supportées
+## Plateformes supportees
 
-L’application est officiellement supportée sur :
+L'application est officiellement supportee sur :
 
 - Android (Chrome, WebView)
-- iOS (Safari, PWA installée)
-- Desktop (Chrome, Edge, Firefox récents)
+- iOS (Safari, PWA installee)
+- Desktop (Chrome, Edge, Firefox recents)
 
 Conditions :
 
-- JavaScript activé
+- JavaScript active
 - IndexedDB disponible
-- Service Worker supporté
+- Service Worker supporte
 - LocalStorage disponible
 
-## Mode d’installation
+## Mode d'installation
 
-L’application peut être utilisée :
+L'application peut etre utilisee :
 
 - en navigation web
-- en PWA installée
+- en PWA installee
 
-Le mode PWA est **recommandé** pour :
+Le mode PWA est recommande pour :
 
 - la persistance hors ligne
-- la stabilité
+- la stabilite
 - la gestion correcte du cache
 
 ## Fonctionnement hors ligne
 
-- L’application fonctionne intégralement hors ligne
-- Aucune connexion réseau n’est requise après le premier chargement
-- Aucune fonctionnalité ne dépend d’un serveur distant
+- L'application fonctionne integralement hors ligne
+- Aucune connexion reseau n'est requise apres le premier chargement
+- Aucune fonctionnalite ne depend d'un serveur distant
 
-## Évolutions futures
+## Evolutions futures
 
-Une version logicielle desktop pourra être envisagée.
+Une version logicielle desktop pourra etre envisagee.
 
 Dans ce cas :
 
 - le stockage fichier remplacera IndexedDB
-- le cœur métier restera inchangé
+- le coeur metier restera inchange
 
 ## Conclusion
 
-Le projet peut évoluer vers :
+Le projet peut evoluer vers :
 
 - un logiciel desktop (Electron, Tauri)
-- un stockage fichier réel
+- un stockage fichier reel
 - un autre runtime
 
-sans modification du domain ni des règles métier.
+sans modification du domain ni des regles metier.
 
-Toute évolution future devra respecter ces garanties.
+Toute evolution future devra respecter ces garanties.
 
-Toute configuration hors de ce périmètre
-n’est pas garantie comme fonctionnelle.
+Toute configuration hors de ce perimetre n'est pas garantie comme fonctionnelle.

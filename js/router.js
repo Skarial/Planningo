@@ -6,15 +6,18 @@ import { renderHome } from "./components/home.js";
 
 import { showGuidedMonth as renderGuidedMonth } from "./components/guided-month.js";
 import { showTetribus, stopTetribus } from "./components/tetribus.js";
+import { renderCongesView } from "./components/conges.js";
+import { renderSeasonView } from "./components/season.js";
+import { renderPhoneChangeView } from "./components/phone-change.js";
 
 function getView(name) {
   return document.getElementById(`view-${name}`);
 }
 
 function hideAllViews() {
-  ["home", "guided-month", "tetribus"].forEach((name) => {
+  ["home", "guided-month", "conges", "season", "phone-change", "tetribus"].forEach((name) => {
     const el = getView(name);
-    if (el) el.style.display = "none";
+    if (el) el.hidden = true;
   });
 
   stopTetribus();
@@ -42,6 +45,28 @@ export function showGuidedMonth() {
 }
 
 // =======================
+// OUTILS
+// =======================
+
+export function showCongesView() {
+  const view = activateView("conges");
+  if (!view) return;
+  renderCongesView();
+}
+
+export function showSeasonView() {
+  const view = activateView("season");
+  if (!view) return;
+  renderSeasonView();
+}
+
+export function showPhoneChangeView() {
+  const view = activateView("phone-change");
+  if (!view) return;
+  renderPhoneChangeView();
+}
+
+// =======================
 // ROUTER INTERNE
 // =======================
 
@@ -61,6 +86,18 @@ export function refreshCurrentView() {
     case "guided-month":
       showGuidedMonth();
       break;
+
+    case "conges":
+      showCongesView();
+      break;
+
+    case "season":
+      showSeasonView();
+      break;
+
+    case "phone-change":
+      showPhoneChangeView();
+      break;
   }
 }
 
@@ -74,7 +111,7 @@ function activateView(name) {
   currentView = name;
 
   hideAllViews();
-  view.style.display = "block";
+  view.hidden = false;
   view.innerHTML = "";
 
   return view;

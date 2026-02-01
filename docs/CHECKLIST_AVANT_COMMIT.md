@@ -32,6 +32,7 @@ Aucun commit ne doit être effectué si un point est en échec.
 - [ ] Le domain ne lit jamais directement le stockage
 - [ ] Les données sont injectées au domain par paramètres
 - [ ] Aucun format implicite ou magique
+- [ ] La retention du planning est reglee sur 36 mois
 
 ## 3. Service Worker
 

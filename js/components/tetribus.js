@@ -1,23 +1,16 @@
 // js/components/tetribus.js
-// Intégration propre du mini-jeu Tetribus (ES modules)
+// Integration propre du mini-jeu Tetribus (ES modules)
 
 import { Tetribus } from "../games/tetribus/tetribus.game.js";
 
 let started = false;
 
 function hideAllViews() {
-  ["view-home", "view-month", "view-guided-month", "view-tetribus"].forEach(
-    (id) => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = "none";
-    },
-  );
+  document.querySelectorAll("#app-main > section").forEach((el) => {
+    el.hidden = true;
+    el.style.display = "";
+  });
 }
-
-// ⛔ masquer l’UI globale
-document.getElementById("menu-toggle")?.classList.add("hidden");
-document.getElementById("side-menu")?.classList.add("hidden");
-document.getElementById("menu-overlay")?.classList.add("hidden");
 
 function renderTetribusHTML(container) {
   container.innerHTML = `
@@ -32,7 +25,6 @@ function renderTetribusHTML(container) {
         <div id="high-score">
           Record : <span id="high-score-value">0</span>
         </div>
-
 
         <div id="game-area">
           <div id="canvas-wrapper">
@@ -65,25 +57,30 @@ export function showTetribus() {
   }
 
   hideAllViews();
-  view.style.display = "block";
+  view.hidden = false;
+  view.style.display = "";
+
+  document.getElementById("menu-toggle")?.classList.add("hidden");
+  document.getElementById("side-menu")?.classList.add("hidden");
+  document.getElementById("menu-overlay")?.classList.add("hidden");
 
   if (!started) {
-    renderTetribusHTML(view); // 1️⃣ le HTML est créé
+    renderTetribusHTML(view); // 1) le HTML est cree
     started = true;
-    Tetribus.init(); // 2️⃣ le jeu démarre
+    Tetribus.init(); // 2) le jeu demarre
 
-    // 3️⃣ ICI — PAS AILLEURS
+    // 3) ICI — PAS AILLEURS
     document.getElementById("tetribus-back").addEventListener("click", () => {
-      // 1) arrêter le jeu
+      // 1) arreter le jeu
       Tetribus.stop();
       started = false;
 
-      // 2) réafficher le menu et le bouton ☰
+      // 2) reafficher le menu et le bouton
       document.getElementById("menu-toggle")?.classList.remove("hidden");
       document.getElementById("side-menu")?.classList.remove("hidden");
       document.getElementById("menu-overlay")?.classList.remove("hidden");
 
-      // 3) retour à l’accueil
+      // 3) retour a l'accueil
       import("../router.js").then(({ showHome }) => {
         showHome();
       });
@@ -98,7 +95,7 @@ export function stopTetribus() {
 
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
-    // onglet / app en arrière-plan → arrêt total
+    // onglet / app en arriere-plan -> arret total
     if (window.Tetribus) {
       window.Tetribus.stop();
     }

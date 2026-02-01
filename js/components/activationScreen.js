@@ -29,37 +29,48 @@ export async function showActivationScreen() {
 
 function render(deviceId) {
   return `
-    <div class="activation-container">
-      <h1>Activation requise</h1>
+    <div class="activation-root">
+      <div class="activation-card">
+        <div class="activation-title">Activation requise</div>
+        <div class="activation-subtitle">
+          Un code d’activation est nécessaire pour utiliser l’application.
+        </div>
 
-      <p>Un code d’activation est nécessaire pour utiliser l’application.</p>
+        <div class="activation-device">
+          <div class="activation-label">Device ID</div>
+          <div class="activation-code-row">
+            <code id="device-id-value">${deviceId}</code>
+            <button id="copy-device-id" class="activation-copy">Copier</button>
+          </div>
+          <p id="copy-feedback" class="activation-info" hidden>
+            Device ID copié
+          </p>
+        </div>
 
-      <div class="device-id">
-        <label>Device ID</label>
-        <code id="device-id-value">${deviceId}</code>
-        <button id="copy-device-id">Copier</button>
-        <p id="copy-feedback" class="info" hidden>Device ID copié</p>
+        <input
+          type="text"
+          id="activation-code"
+          class="activation-input"
+          placeholder="Code d’activation"
+          autocomplete="off"
+        />
+
+        <button id="activation-validate" class="activation-primary">
+          Valider
+        </button>
+
+        <button id="activation-import" class="activation-secondary">
+          Importer mes données
+        </button>
+
+        <p id="activation-error" class="activation-error" hidden>
+          Code invalide. Vérifiez la saisie ou le Device ID transmis.
+        </p>
+
+        <p id="activation-success" class="activation-success" hidden>
+          Activation réussie. Redémarrage…
+        </p>
       </div>
-
-      <input
-        type="text"
-        id="activation-code"
-        placeholder="Code d’activation"
-        autocomplete="off"
-      />
-      <button id="activation-import" class="secondary">
-        Importer mes données
-      </button>
-
-      <button id="activation-validate">Valider</button>
-
-      <p id="activation-error" class="error" hidden>
-        Code invalide. Vérifiez la saisie ou le Device ID transmis.
-      </p>
-
-      <p id="activation-success" class="success" hidden>
-        Activation réussie. Redémarrage…
-      </p>
     </div>
   `;
 }

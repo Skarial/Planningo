@@ -1,156 +1,157 @@
-# Sauvegarde et restauration des données
+﻿# Sauvegarde et restauration des donnees
 
-Ce document décrit le mécanisme de sauvegarde et de restauration des données de l’application.
+Ce document decrit le mecanisme de sauvegarde et de restauration des donnees de l'application.
 
-Toutes les opérations sont effectuées **localement**, sans serveur et sans connexion réseau.
-
----
-
-## Principe général
-
-L’application permet :
-
-- l’export complet des données locales dans un fichier,
-- l’import de ce fichier sur le même appareil ou un autre appareil,
-  avec restauration complète et immédiate de l’état applicatif.
-
-Ces mécanismes permettent de conserver l’état de l’application en cas de :
-
-- changement de téléphone,
-- réinstallation,
-- réinitialisation volontaire.
+Toutes les operations sont effectuees localement, sans serveur et sans connexion reseau.
 
 ---
 
-## Données concernées par la sauvegarde
+## Principe general
 
-La sauvegarde contient l’intégralité des données stockées localement, notamment :
+L'application permet :
+
+- l'export complet des donnees locales dans un fichier,
+- l'import de ce fichier sur le meme appareil ou un autre appareil,
+  avec restauration complete et immediate de l'etat applicatif.
+
+Ces mecanismes permettent de conserver l'etat de l'application en cas de :
+
+- changement de telephone,
+- reinstallation,
+- reinitialisation volontaire.
+
+---
+
+## Donnees concernees par la sauvegarde
+
+La sauvegarde contient l'integralite des donnees stockees localement, notamment :
 
 - le planning,
 - les services,
-- les paramètres,
-- l’état d’activation.
-- le Device ID,
+- les parametres,
+- l'etat d'activation,
+- le Device ID.
 
-Le fichier de sauvegarde représente un **instantané complet** de l’état local
-de l’application à un instant donné.
+Note : le planning conserve automatiquement les 36 derniers mois.
+Les donnees plus anciennes sont purgees avant la sauvegarde.
 
-Toutes les données proviennent de la base IndexedDB de l’application.
+Le fichier de sauvegarde represente un instantane complet de l'etat local de l'application a un instant donne.
+
+Toutes les donnees proviennent de la base IndexedDB de l'application.
 
 ---
 
-## Export des données
+## Export des donnees
 
 ### Fonctionnement
 
-Lors d’un export :
+Lors d'un export :
 
-1. La base de données locale est ouverte.
+1. La base de donnees locale est ouverte.
 2. Tous les stores connus sont lus.
-3. Les données sont regroupées dans un objet structuré.
-4. Un fichier de sauvegarde est généré.
+3. Les donnees sont regroupees dans un objet structure.
+4. Un fichier de sauvegarde est genere.
 
 Le fichier contient :
 
-- les données,
-- des métadonnées (version, date, format).
+- les donnees,
+- des metadonnees (version, date, format).
 
-Aucune donnée n’est transmise à l’extérieur.
+Aucune donnee n'est transmise a l'exterieur.
 
 ---
 
-## Import des données
+## Import des donnees
 
 ### Fonctionnement
 
-Lors d’un import :
+Lors d'un import :
 
-1. Le fichier de sauvegarde est chargé.
-2. Son format est validé.
-3. Les données locales existantes sont supprimées.
-4. Les données du fichier sont restaurées.
-5. L’application redémarre automatiquement.
+1. Le fichier de sauvegarde est charge.
+2. Son format est valide.
+3. Les donnees locales existantes sont supprimees.
+4. Les donnees du fichier sont restaurees.
+5. L'application redemarre automatiquement.
 
-La restauration est **totale**.
+La restauration est totale.
 
-La restauration a priorité absolue sur tout autre mécanisme applicatif,
-y compris l’activation.
+La restauration a priorite absolue sur tout autre mecanisme applicatif,
+ y compris l'activation.
 
 ---
 
-## Effet sur l’activation
+## Effet sur l'activation
 
-L’activation fait partie intégrante des données sauvegardées.
+L'activation fait partie integrante des donnees sauvegardees.
 
-Lors d’un import valide :
+Lors d'un import valide :
 
-- l’état d’activation est restauré tel quel,
-- aucun code d’activation n’est requis,
-- aucun recalcul ou recontrôle n’est effectué,
-- l’écran d’activation est définitivement ignoré.
+- l'etat d'activation est restaure tel quel,
+- aucun code d'activation n'est requis,
+- aucun recalcul ou recontrole n'est effectue,
+- l'ecran d'activation est definitivement ignore.
 
-Ce comportement est indépendant :
+Ce comportement est independant :
 
-- de la version de l’application,
+- de la version de l'application,
 - du Device ID courant,
 - du Service Worker.
 
 ---
 
-## Compatibilité des sauvegardes
+## Compatibilite des sauvegardes
 
-- Le format de sauvegarde est versionné.
-- Une sauvegarde incompatible est refusée.
-- Aucune tentative de migration automatique n’est effectuée.
+- Le format de sauvegarde est versionne.
+- Une sauvegarde incompatible est refusee.
+- Aucune tentative de migration automatique n'est effectuee.
 
-La validité d’un fichier repose notamment sur :
+La validite d'un fichier repose notamment sur :
 
 - une signature explicite du format,
-- une version de format supportée,
-- une structure cohérente des données.
+- une version de format supportee,
+- une structure coherente des donnees.
 
 ---
 
-## Sécurité et confidentialité
+## Securite et confidentialite
 
-- Les données ne quittent jamais l’appareil sans action explicite.
-- Aucun chiffrement n’est appliqué au fichier de sauvegarde.
-- La confidentialité repose sur le contrôle du fichier par  
-  l’utilisateur.
+- Les donnees ne quittent jamais l'appareil sans action explicite.
+- Aucun chiffrement n'est applique au fichier de sauvegarde.
+- La confidentialite repose sur le controle du fichier par l'utilisateur.
 
-La restauration permet volontairement de rétablir un état d’activation,
-y compris sur un autre appareil.
+La restauration permet volontairement de retablir un etat d'activation,
+ y compris sur un autre appareil.
 
-Ce choix est assumé et fait partie du modèle d’usage.
+Ce choix est assume et fait partie du modele d'usage.
 
 ---
 
 ## Relation entre sauvegarde et activation
 
-La sauvegarde est le mécanisme de persistance ultime de l’application.
+La sauvegarde est le mecanisme de persistance ultime de l'application.
 
-À ce titre :
+A ce titre :
 
-- elle prévaut sur toute règle d’activation,
-- elle permet une continuité d’usage sans friction,
-- elle garantit l’absence de perte fonctionnelle lors d’un changement d’appareil.
+- elle prevaut sur toute regle d'activation,
+- elle permet une continuite d'usage sans friction,
+- elle garantit l'absence de perte fonctionnelle lors d'un changement d'appareil.
 
-Toute évolution future devra préserver cette priorité.
+Toute evolution future devra preserver cette priorite.
 
 ## Limites
 
-- La sauvegarde ne protège pas contre une suppression définitive sans export préalable.
-- Le fichier peut être modifié manuellement, ce qui peut entraîner un import invalide.
+- La sauvegarde ne protege pas contre une suppression definitive sans export prealable.
+- Le fichier peut etre modifie manuellement, ce qui peut entrainer un import invalide.
 
 ---
 
 ## Statut du document
 
-Ce document décrit un comportement **contractuel**.
+Ce document decrit un comportement contractuel.
 
-Toute modification du mécanisme de sauvegarde ou de restauration doit être :
+Toute modification du mecanisme de sauvegarde ou de restauration doit etre :
 
-- implémentée dans le code,
-- reflétée strictement dans ce document,
+- implementee dans le code,
+- refletee strictement dans ce document,
 - compatible avec les sauvegardes existantes,
-- non régressive pour les utilisateurs actifs.
+- non regressive pour les utilisateurs actifs.

@@ -107,7 +107,7 @@ window.savePlanningEntry = async function (entry) {
   });
 
   // nettoyage après écriture
-  await enforceMaxMonthsRetention(13);
+  await enforceMaxMonthsRetention(36);
 };
 
 window.getPlanningForMonth = async function (monthISO) {

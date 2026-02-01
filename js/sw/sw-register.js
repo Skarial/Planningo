@@ -14,9 +14,18 @@ export function registerServiceWorker(onUpdateAvailable) {
         "./service-worker.js",
       );
 
-      console.log("[SW] enregistrÃ©");
+      console.log("[SW] enregistre");
 
-      // DÃ©tection fiable d'une nouvelle version
+      const notifyIfWaiting = () => {
+        if (swRegistration?.waiting && typeof onUpdateAvailable === "function") {
+          onUpdateAvailable(swRegistration);
+        }
+      };
+
+      // Affichage immediat si une version attend déjà
+      notifyIfWaiting();
+
+      // Détection fiable d'une nouvelle version
       swRegistration.addEventListener("updatefound", () => {
         const newWorker = swRegistration.installing;
         if (!newWorker) return;
@@ -26,14 +35,24 @@ export function registerServiceWorker(onUpdateAvailable) {
             newWorker.state === "installed" &&
             navigator.serviceWorker.controller
           ) {
-            if (typeof onUpdateAvailable === "function") {
-              onUpdateAvailable(swRegistration);
-            }
+            notifyIfWaiting();
           }
         });
       });
+
+      // Check periodique pour une app qui reste ouverte
+      const UPDATE_INTERVAL = 15 * 60 * 1000;
+      setInterval(() => {
+        swRegistration?.update().catch(() => {});
+      }, UPDATE_INTERVAL);
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          swRegistration?.update().catch(() => {});
+        }
+      });
     } catch (err) {
-      console.error("[SW] Ã©chec enregistrement", err);
+      console.error("[SW] echec enregistrement", err);
     }
   });
 }
@@ -41,3 +60,4 @@ export function registerServiceWorker(onUpdateAvailable) {
 export function getServiceWorkerRegistration() {
   return swRegistration;
 }
+

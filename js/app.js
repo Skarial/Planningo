@@ -2,7 +2,7 @@
 /*
   Application Planning PWA
 */
-export const APP_VERSION = "1.0.128";
+export const APP_VERSION = "1.0.129";
 
 import { getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -25,7 +25,8 @@ window.addEventListener("DOMContentLoaded", initApp);
 async function initApp() {
   // 0️⃣ Activation (bloquante)
   const activation = await getConfig("activation_ok");
-  if (activation?.value !== "true") {
+  const imported = await getConfig("imported_ok");
+  if (activation?.value !== "true" && imported?.value !== "true") {
     await showActivationScreen();
     return;
   }
@@ -82,4 +83,5 @@ function showUpdateBanner(registration) {
     });
   });
 }
+
 

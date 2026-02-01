@@ -1,47 +1,47 @@
-# Planning PWA
+﻿# Planning PWA
 
-Application web progressive de gestion de planning, développée en JavaScript vanilla.
+Application web progressive de gestion de planning, developpee en JavaScript vanilla.
 
-Projet personnel, conçu pour un usage réel sur smartphone, en conditions de mobilité.
+Projet personnel, concu pour un usage reel sur smartphone, en conditions de mobilite.
 
 ---
 
-## Présentation générale
+## Presentation generale
 
-Planning PWA est une application **offline-first** permettant la consultation et la saisie d’un planning de travail.
+Planning PWA est une application offline-first permettant la consultation et la saisie d'un planning de travail.
 
-L’application fonctionne :
+L'application fonctionne :
 
 - sans serveur,
 - sans compte utilisateur,
-- sans dépendance externe,
+- sans dependance externe,
 - avec stockage local uniquement.
 
-Elle est conçue pour être installée comme une application native via les mécanismes PWA.
+Elle est concue pour etre installee comme une application native via les mecanismes PWA.
 
 ---
 
 ## Objectif fonctionnel
 
-L’application permet de :
+L'application permet de :
 
-- consulter rapidement un planning,
-- naviguer par jour et par mois,
-- saisir et modifier les services,
-- fonctionner de manière fiable hors connexion.
+- consulter rapidement un planning (jour + mois depuis la vue Accueil),
+- naviguer par jour et par mois depuis une seule vue centrale,
+- saisir et modifier les services (saisie directe + saisie guidee),
+- fonctionner de maniere fiable hors connexion.
 
-Le périmètre fonctionnel est volontairement restreint et maîtrisé.
+Le perimetre fonctionnel est volontairement restreint et maitrise.
 
 ---
 
-## Contexte métier
+## Contexte metier
 
-L’application a été conçue à partir d’un besoin réel de terrain, avec les contraintes suivantes :
+L'application a ete concue a partir d'un besoin reel de terrain, avec les contraintes suivantes :
 
 - usage principal sur smartphone,
-- réseau instable ou absent,
-- nécessité de rapidité et de lisibilité,
-- fiabilité des données locales.
+- reseau instable ou absent,
+- necessite de rapidite et de lisibilite,
+- fiabilite des donnees locales.
 
 Voir : `docs/CONTEXTE_METIER.md`
 
@@ -52,35 +52,36 @@ Voir : `docs/CONTEXTE_METIER.md`
 - HTML / CSS / JavaScript vanilla
 - Architecture modulaire (components / domain / data / state)
 - Router interne par masquage DOM
-- IndexedDB pour les données persistantes
-- LocalStorage pour l’état applicatif léger
-- Service Worker avec cache versionné
-- Hébergement GitHub Pages
+- IndexedDB pour les donnees persistantes
+- Retention automatique du planning : 36 derniers mois
+- LocalStorage pour l'etat applicatif leger
+- Service Worker avec cache versionne
+- Hebergement GitHub Pages
 
-Aucune bibliothèque externe n’est utilisée.
+Aucune bibliotheque externe n'est utilisee.
 
 Voir : `ARCHITECTURE.md`
 
 ---
 
-## Offline et mises à jour
+## Offline et mises a jour
 
-L’application est conçue pour fonctionner **entièrement hors ligne**.
+L'application est concue pour fonctionner entierement hors ligne.
 
-La gestion du cache et des mises à jour repose exclusivement sur le Service Worker, avec un comportement déterministe et contrôlé.
+La gestion du cache et des mises a jour repose exclusivement sur le Service Worker, avec un comportement deterministe et controle.
 
 Voir : `docs/SERVICE_WORKER.md`
 
 ---
 
-## Activation de l’application
+## Activation de l'application
 
-L’application nécessite une activation locale par code lors de la première utilisation sur un appareil.
+L'application necessite une activation locale par code lors de la premiere utilisation sur un appareil.
 
-L’activation est :
+L'activation est :
 
-- liée à l’appareil,
-- stockée localement,
+- liee a l'appareil,
+- stockee localement,
 - restaurable via sauvegarde.
 
 Voir : `docs/ACTIVATION.md`
@@ -89,52 +90,38 @@ Voir : `docs/ACTIVATION.md`
 
 ## Sauvegarde et restauration
 
-Les données peuvent être :
+Les donnees peuvent etre :
 
-- sauvegardées dans un fichier local,
-- restaurées intégralement sur le même appareil ou un autre.
+- sauvegardees dans un fichier local,
+- restaurees integralement sur le meme appareil ou un autre.
 
-La sauvegarde inclut l’activation si elle est présente.
+La sauvegarde inclut l'activation si elle est presente.
 
 Voir : `docs/SAUVEGARDE_RESTAURATION.md`
 
 ---
 
-## Installation en tant qu’application (PWA)
+## Installation en tant qu'application (PWA)
 
 ### Android (Chrome)
 
-1. Ouvrir l’application dans Chrome.
-2. Menu ⋮ → **Ajouter à l’écran d’accueil**.
+1. Ouvrir l'application dans Chrome.
+2. Menu ⋮ → Ajouter a l'ecran d'accueil.
 3. Valider.
 
 ### iOS (Safari)
 
-1. Ouvrir l’application dans Safari.
-2. Bouton **Partager**.
-3. **Sur l’écran d’accueil**.
+1. Ouvrir l'application dans Safari.
+2. Bouton Partager.
+3. Sur l'ecran d'accueil.
 
-L’application apparaît ensuite comme une application native.
+L'application apparait ensuite comme une application native.
 
 ---
 
-## Aperçu
+## Apercu
 
-### Accueil
-
-![Accueil](docs/home.jpg)
-
-### Vue jour
-
-![Jour](docs/day.jpg)
-
-### Vue mois
-
-![Mois](docs/month.jpg)
-
-### Saisie guidée
-
-![Saisie guidée](docs/guided-month.jpg)
+Captures a jour a ajouter (nouveau design en cours).
 
 ---
 
@@ -146,5 +133,5 @@ Voir le fichier `LICENSE`.
 
 ## Statut
 
-Projet stable, autonome, sans dépendance externe.  
-Le comportement documenté fait foi.
+Projet stable, autonome, sans dependance externe.
+Le comportement documente fait foi.

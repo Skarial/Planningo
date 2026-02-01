@@ -1,81 +1,81 @@
-# CONTEXTE MÉTIER — Pourquoi cette application existe
+﻿# CONTEXTE METIER — Pourquoi cette application existe
 
-## 1. Problème réel rencontré par les chauffeurs
+## 1. Probleme reel rencontre par les chauffeurs
 
 Les chauffeurs de bus consultent leur planning via des outils internes qui :
 
-- ne sont pas adaptés au smartphone
-- nécessitent du réseau
-- sont lents à charger
-- ne permettent pas une vision rapide et claire des journées
-- ne permettent pas d’annoter ou structurer facilement son planning personnel
+- ne sont pas adaptes au smartphone
+- necessitent du reseau
+- sont lents a charger
+- ne permettent pas une vision rapide et claire des journees
+- ne permettent pas d'annoter ou structurer facilement son planning personnel
 
 En pratique, beaucoup de chauffeurs :
 
-- prennent des captures d’écran
+- prennent des captures d'ecran
 - notent sur papier
 - utilisent des notes personnelles
 
-Il n’existe pas d’outil simple, rapide, personnel, utilisable partout.
+Il n'existe pas d'outil simple, rapide, personnel, utilisable partout.
 
 ---
 
 ## 2. Contraintes terrain
 
-Réalité quotidienne :
+Realite quotidienne :
 
-- Zones sans réseau
+- Zones sans reseau
 - Besoin de consulter son planning en quelques secondes
 - Usage quasi exclusif sur smartphone
-- Besoin d’un affichage clair, sans navigation complexe
+- Besoin d'un affichage clair, sans navigation complexe
 - Aucun besoin de synchronisation serveur
-- Données strictement personnelles
+- Donnees strictement personnelles
 
-Ces contraintes rendent les applications web classiques inadaptées.
+Ces contraintes rendent les applications web classiques inadaptees.
 
 ---
 
 ## 3. Pourquoi une PWA offline-first
 
-Choix techniques dictés par le terrain :
+Choix techniques dictes par le terrain :
 
-- Fonctionnement total sans réseau
-- Installation sur l’écran d’accueil comme une application native
-- Chargement instantané
-- Données stockées uniquement sur le téléphone
-- Aucune authentification nécessaire
-- Respect de la vie privée par conception
+- Fonctionnement total sans reseau
+- Installation sur l'ecran d'accueil comme une application native
+- Chargement instantane
+- Donnees stockees uniquement sur le telephone
+- Aucune authentification necessaire
+- Respect de la vie privee par conception
 
 ---
 
-## 4. Objectif de l’application
+## 4. Objectif de l'application
 
-Permettre à un chauffeur de :
+Permettre a un chauffeur de :
 
-- Consulter son planning immédiatement
-- Naviguer jour / mois très rapidement
+- Consulter son planning immediatement
+- Naviguer jour / mois tres rapidement
 - Saisir son planning facilement
 - Regrouper visuellement ses services
 - Avoir un outil personnel, fiable, toujours disponible
 
 ---
 
-## 5. Ce que cette application n’est pas
+## 5. Ce que cette application n'est pas
 
-- Ce n’est pas un outil officiel
-- Ce n’est pas connecté au SI de l’entreprise
-- Ce n’est pas un outil collaboratif
-- Ce n’est pas une application serveur
+- Ce n'est pas un outil officiel
+- Ce n'est pas connecte au SI de l'entreprise
+- Ce n'est pas un outil collaboratif
+- Ce n'est pas une application serveur
 
-C’est un **outil personnel métier**, optimisé pour l’usage réel.
+C'est un outil personnel metier, optimise pour l'usage reel.
 
 ---
 
-## 6. Intérêt pour une équipe de développement
+## 6. Interet pour une equipe de developpement
 
 Ce projet apporte :
 
 - Un retour terrain authentique
-- Un cas réel où offline-first est indispensable
-- Une démonstration qu’un outil très simple peut résoudre un problème concret
-- Une base fonctionnelle pouvant être industrialisée et intégrée à un SI existant
+- Un cas reel ou offline-first est indispensable
+- Une demonstration qu'un outil tres simple peut resoudre un probleme concret
+- Une base fonctionnelle pouvant etre industrialisee et integree a un SI existant
