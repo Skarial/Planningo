@@ -13,8 +13,11 @@ const CORE_ASSETS = [
   "./",
   "./index.html",
   "./css/style.css",
+  "./css/tetribus.css",
   "./js/app.js",
   "./manifest.webmanifest",
+  "./assets/icons/icon-192.png",
+  "./assets/icons/icon-512.png",
 ];
 
 // =======================
@@ -79,6 +82,7 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
+
 
 
 
