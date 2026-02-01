@@ -247,6 +247,8 @@ textarea {
   line-height: 0.95;
   font-weight: 800;
   color: var(--color-day);
+  letter-spacing: -0.02em;
+  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
 .day-header-month {
@@ -255,11 +257,13 @@ textarea {
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--color-muted);
+  opacity: 0.85;
 }
 
 .day-header-year {
   font-size: 1.1rem;
   color: var(--color-muted);
+  opacity: 0.8;
 }
 
 /* Colonne droite */
@@ -337,12 +341,6 @@ textarea {
   margin-top: 2px;
 }
 
-.day-header-weekday {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-time);
-  margin-top: 4px;
-}
 
 /* ==========================================================================
    5bis. Ã‰DITION JOUR â€” PANNEAU DE SUGGESTIONS
@@ -498,7 +496,7 @@ textarea {
   font-size: 0.7rem;
   letter-spacing: 2px;
   color: #b2b2b2;
-  margin-top: 10px;
+  margin-top: 14px;
 }
 
 .guided-btn {
@@ -1062,7 +1060,7 @@ textarea {
 
 .home-bottom {
   flex: 0 0 auto;
-  padding-bottom: clamp(16px, 4vh, 64px);
+  padding-bottom: clamp(32px, 7vh, 120px);
 }
 
 .home-spacer {
@@ -1636,8 +1634,23 @@ body.menu-open #menu-toggle {
   justify-content: space-between;
   align-items: flex-start;
 
-  padding: clamp(20px, 5vh, 56px) 18px 12px;
+  padding: clamp(14px, 4vh, 40px) 18px 12px;
   gap: clamp(16px, 5vh, 40px);
+  position: relative;
+}
+
+.home-day-summary::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 22px;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.03);
+  z-index: -1;
 }
 
 @media (max-width: 320px) {

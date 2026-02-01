@@ -332,14 +332,7 @@ export async function renderHome() {
     panier.className = "day-header-panier";
     panier.hidden = true;
 
-    const weekday = document.createElement("div");
-    weekday.className = "day-header-weekday";
-    let weekdayShort = date.toLocaleDateString("fr-FR", { weekday: "short" });
-    weekdayShort = weekdayShort.replace(".", "");
-    weekday.textContent =
-      weekdayShort.charAt(0).toUpperCase() + weekdayShort.slice(1);
-
-    right.append(service, time, duration, panier, weekday);
+    right.append(service, time, duration, panier);
 
     section.append(left, right);
     daySummary.appendChild(section);
