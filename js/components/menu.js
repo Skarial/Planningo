@@ -142,6 +142,7 @@ export function initMenu() {
   const suggestionsBtn = document.getElementById("menu-suggestions");
   const summaryBtn = document.getElementById("menu-summary");
   const phoneBtn = document.getElementById("menu-phone-change");
+  const alarmBtn = document.getElementById("menu-alarm");
 
   congesBtn?.addEventListener("click", () => {
     showCongesView();
@@ -161,6 +162,10 @@ export function initMenu() {
   summaryBtn?.addEventListener("click", () => {
     showSummaryView();
     closeMenu();
+  });
+
+  alarmBtn?.addEventListener("click", () => {
+    showToast("Bient\u00f4t disponible");
   });
 
   phoneBtn?.addEventListener("click", () => {
@@ -476,6 +481,7 @@ function showToast(message) {
   toast.textContent = message;
 
   document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("visible"));
 
   setTimeout(() => {
     toast.classList.remove("visible");
