@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 import { getDayStatus, DAY_STATUS } from "../../js/domain/day-status.js";
 
 function d(dateStr) {
@@ -9,13 +15,13 @@ const today = d("2025-12-01");
 console.assert(
   getDayStatus({ service: { code: "2910" }, date: d("2025-12-02"), today }) ===
     DAY_STATUS.WORKED,
-  "Jour travaillé incorrect",
+  "Jour travaillÃ© incorrect",
 );
 
 console.assert(
   getDayStatus({ service: null, date: d("2025-11-30"), today }) ===
     DAY_STATUS.EMPTY,
-  "Jour passé vide incorrect",
+  "Jour passÃ© vide incorrect",
 );
 
 console.assert(
@@ -23,3 +29,4 @@ console.assert(
     DAY_STATUS.FUTURE_EMPTY,
   "Jour futur vide incorrect",
 );
+

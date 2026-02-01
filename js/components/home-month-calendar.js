@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 import { getMonthCalendar } from "../state/month-calendar-state.js";
 import { DAY_STATUS } from "../domain/day-status.js";
 
@@ -7,11 +13,11 @@ export function renderHomeMonthCalendar(container, deps) {
   const calendar = getMonthCalendar(deps);
   if (!calendar) return;
 
-  // ✅ 1. WRAPPER DÉCLARÉ EN PREMIER
+  // âœ… 1. WRAPPER DÃ‰CLARÃ‰ EN PREMIER
   const wrapper = document.createElement("div");
   wrapper.className = "home-month";
 
-  // ✅ 2. EN-TÊTE JOURS (FR, ALIGNÉ)
+  // âœ… 2. EN-TÃŠTE JOURS (FR, ALIGNÃ‰)
   const weekdays = ["L", "M", "M", "J", "V", "S", "D"];
   const header = document.createElement("div");
   header.className = "home-weekdays";
@@ -24,7 +30,7 @@ export function renderHomeMonthCalendar(container, deps) {
 
   wrapper.appendChild(header);
 
-  // ✅ 3. GRILLE UNIQUE (ALIGNEMENT GARANTI)
+  // âœ… 3. GRILLE UNIQUE (ALIGNEMENT GARANTI)
   const grid = document.createElement("div");
   grid.className = "home-month-grid";
 
@@ -45,7 +51,7 @@ export function renderHomeMonthCalendar(container, deps) {
       }
       if (day.isActive) el.classList.add("active");
 
-      el.onclick = () => deps.onDaySelected?.(day.iso);
+      el.onclick = () => deps.onDaySelected(day.iso);
     }
 
     grid.appendChild(el);
@@ -54,3 +60,4 @@ export function renderHomeMonthCalendar(container, deps) {
   wrapper.appendChild(grid);
   container.appendChild(wrapper);
 }
+

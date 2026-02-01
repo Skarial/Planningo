@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/data/db.js
 
 // =======================
@@ -112,7 +118,7 @@ function migrateLegacyServiceToFormation(tx) {
     const cursor = event.target.result;
     if (!cursor) return;
     const entry = cursor.value;
-    if (entry?.serviceCode === legacyCode) {
+    if (entry.serviceCode === legacyCode) {
       entry.serviceCode = "FORMATION";
       cursor.update(entry);
     }
@@ -123,7 +129,7 @@ function migrateLegacyServiceToFormation(tx) {
     const cursor = event.target.result;
     if (!cursor) return;
     const service = cursor.value;
-    if (service?.code === legacyCode) {
+    if (service.code === legacyCode) {
       servicesStore.delete(service.code);
       servicesStore.put({ ...service, code: "FORMATION" });
     }
@@ -174,7 +180,7 @@ function ensureServiceCodeMigration(db) {
           return;
         }
         const entry = cursor.value;
-        if (entry?.serviceCode === legacyCode) {
+        if (entry.serviceCode === legacyCode) {
           entry.serviceCode = "FORMATION";
           cursor.update(entry);
         }
@@ -189,7 +195,7 @@ function ensureServiceCodeMigration(db) {
           return;
         }
         const service = cursor.value;
-        if (service?.code === legacyCode) {
+        if (service.code === legacyCode) {
           servicesStore.delete(service.code);
           servicesStore.put({ ...service, code: "FORMATION" });
         }
@@ -270,7 +276,7 @@ window.savePlanningEntry = async function (entry) {
     });
   });
 
-  // nettoyage après écriture
+  // nettoyage aprÃ¨s Ã©criture
   await enforceMaxMonthsRetention(36);
 };
 
@@ -319,7 +325,7 @@ function sortPlanningResults(results) {
 }
 
 // =======================
-// VERROUILLAGE MOIS PASSÉS
+// VERROUILLAGE MOIS PASSÃ‰S
 // =======================
 
 window.lockPastMonths = async function () {
@@ -393,7 +399,8 @@ async function enforceMaxMonthsRetention(maxMonths = 13) {
 
 export async function getConfig(key) {
   const { db } = await openDB();
-  return executeQuery(db, STORES.CONFIG, (store) => store.get(key));
+  const result = await executeQuery(db, STORES.CONFIG, (store) => store.get(key));
+  return result || { key, value: null };
 }
 
 export async function setConfig(key, value) {
@@ -402,3 +409,4 @@ export async function setConfig(key, value) {
     store.put({ key, value });
   });
 }
+

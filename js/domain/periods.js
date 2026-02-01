@@ -1,5 +1,11 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 /**
- * États métier possibles pour la période globale
+ * Ã‰tats mÃ©tier possibles pour la pÃ©riode globale
  */
 export const PERIOD_STATE = {
   DEFAULT: "default",
@@ -27,7 +33,7 @@ function parseISODate(input) {
 }
 
 /**
- * Indique si une saison est réellement configurée
+ * Indique si une saison est rÃ©ellement configurÃ©e
  */
 export function isSeasonConfigured(saisonConfig) {
   const s = saisonConfig;
@@ -42,11 +48,11 @@ export function isSeasonConfigured(saisonConfig) {
 }
 
 /**
- * Retourne l’état métier de la période globale
+ * Retourne lâ€™Ã©tat mÃ©tier de la pÃ©riode globale
  *
- * RÈGLE MÉTIER (inchangée) :
- * - saison NON configurée → DEFAULT
- * - saison configurée     → SEASONAL
+ * RÃˆGLE MÃ‰TIER (inchangÃ©e) :
+ * - saison NON configurÃ©e â†’ DEFAULT
+ * - saison configurÃ©e     â†’ SEASONAL
  */
 export function getPeriodState(saisonConfig) {
   return isSeasonConfigured(saisonConfig)
@@ -74,3 +80,4 @@ export function getPeriodStateForDate(saisonConfig, date) {
     ? PERIOD_STATE.SEASONAL
     : PERIOD_STATE.DEFAULT;
 }
+

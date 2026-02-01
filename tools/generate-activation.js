@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 #!/usr/bin/env node
 
 import { generateActivationCode } from "./activation-algo.js";
@@ -16,3 +22,4 @@ try {
   console.error(e.message);
   process.exit(1);
 }
+

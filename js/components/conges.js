@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/components/conges.js
 
 import { getConfig, setConfig } from "../data/storage.js";
@@ -139,12 +145,12 @@ export async function renderCongesView() {
   }
 
   const entry = await getConfig("conges");
-  const value = entry?.value;
+  const value = entry.value;
   let periods = [];
 
-  if (Array.isArray(value?.periods)) {
+  if (Array.isArray(value.periods)) {
     periods = value.periods;
-  } else if (value?.start || value?.end) {
+  } else if (value.start || value.end) {
     periods = [{ start: value.start, end: value.end }];
   }
 
@@ -169,8 +175,8 @@ export async function renderCongesView() {
 
     rows.forEach((row) => {
       const inputs = row.querySelectorAll("input[type='date']");
-      const startISO = inputs[0]?.value ?? "";
-      const endISO = inputs[1]?.value ?? "";
+      const startISO = inputs[0].value || "";
+      const endISO = inputs[1].value || "";
 
       if (!startISO && !endISO) return;
       if (!startISO || !endISO) {
@@ -210,3 +216,4 @@ export async function renderCongesView() {
     status.show("Congés supprimés");
   });
 }
+

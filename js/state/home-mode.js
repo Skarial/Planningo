@@ -1,5 +1,11 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/state/home-mode.js
-// État UI local à HOME (vue centrale)
+// Ã‰tat UI local Ã  HOME (vue centrale)
 
 export const HOME_MODE = {
   VIEW: "VIEW",
@@ -19,3 +25,4 @@ export function setHomeMode(mode) {
 
   currentHomeMode = mode;
 }
+

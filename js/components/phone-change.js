@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/components/phone-change.js
 
 import { exportAllData } from "../data/export-db.js";
@@ -58,3 +64,4 @@ export async function renderPhoneChangeView() {
     await importAllData();
   });
 }
+

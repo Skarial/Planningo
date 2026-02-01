@@ -1,10 +1,16 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/data/storage.memory.js
-// Implémentation mémoire du contrat storage.interface
+// ImplÃ©mentation mÃ©moire du contrat storage.interface
 
 const memory = new Map();
 
 export async function storageGet(key) {
-  return memory.has(key) ? memory.get(key) : null;
+  return memory.has(key)  memory.get(key) : null;
 }
 
 export async function storageSet(key, value) {
@@ -32,3 +38,4 @@ export async function storageImportAll(data) {
     memory.set(key, value);
   }
 }
+

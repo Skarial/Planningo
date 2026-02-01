@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/data/device.js
 
 import { getConfig, setConfig } from "./db.js";
@@ -35,3 +41,4 @@ function generateDeviceId() {
 
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
+

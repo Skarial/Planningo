@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/domain/activation.js
 
 export function validateActivation(providedHash, storedHash) {
@@ -6,3 +12,4 @@ export function validateActivation(providedHash, storedHash) {
 
   return providedHash === storedHash;
 }
+

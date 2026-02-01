@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 import { test, assert } from "../run-tests.js";
 import {
   parseFRDate,
@@ -12,13 +18,13 @@ import {
 
 test("parseFRDate valide une date FR correcte", () => {
   const d = parseFRDate("15/08/2025");
-  assert(d instanceof Date, "Date non parsée");
-  assert(d.getFullYear() === 2025, "Année incorrecte");
+  assert(d instanceof Date, "Date non parsÃ©e");
+  assert(d.getFullYear() === 2025, "AnnÃ©e incorrecte");
 });
 
 test("parseFRDate rejette une date invalide", () => {
   const d = parseFRDate("32/01/2025");
-  assert(d === null, "Date invalide acceptée");
+  assert(d === null, "Date invalide acceptÃ©e");
 });
 
 // =======================
@@ -27,26 +33,26 @@ test("parseFRDate rejette une date invalide", () => {
 
 test("getCongesPeriods retourne [] si config absente", () => {
   const p = getCongesPeriods(null);
-  assert(Array.isArray(p) && p.length === 0, "Périodes attendues vides");
+  assert(Array.isArray(p) && p.length === 0, "PÃ©riodes attendues vides");
 });
 
-test("getCongesPeriods normalise l’ordre des dates", () => {
+test("getCongesPeriods normalise lâ€™ordre des dates", () => {
   const p = getCongesPeriods({
     start: "20/08/2025",
     end: "10/08/2025",
   });
-  assert(p.length === 1, "Une période attendue");
-  assert(p[0].start < p[0].end, "Dates non normalisées");
+  assert(p.length === 1, "Une pÃ©riode attendue");
+  assert(p[0].start < p[0].end, "Dates non normalisÃ©es");
 });
 
-test("getCongesPeriods gère plusieurs périodes", () => {
+test("getCongesPeriods gÃ¨re plusieurs pÃ©riodes", () => {
   const p = getCongesPeriods({
     periods: [
       { start: "01/08/2025", end: "03/08/2025" },
       { start: "10/08/2025", end: "12/08/2025" },
     ],
   });
-  assert(p.length === 2, "Deux périodes attendues");
+  assert(p.length === 2, "Deux pÃ©riodes attendues");
 });
 
 // =======================
@@ -55,17 +61,17 @@ test("getCongesPeriods gère plusieurs périodes", () => {
 
 test("isDateInConges retourne true si date incluse", () => {
   const config = { start: "10/08/2025", end: "20/08/2025" };
-  const d = new Date(2025, 7, 15); // 15 août
-  assert(isDateInConges(d, config) === true, "Date devrait être en congés");
+  const d = new Date(2025, 7, 15); // 15 aoÃ»t
+  assert(isDateInConges(d, config) === true, "Date devrait Ãªtre en congÃ©s");
 });
 
-test("isDateInConges retourne false si date hors période", () => {
+test("isDateInConges retourne false si date hors pÃ©riode", () => {
   const config = { start: "10/08/2025", end: "20/08/2025" };
   const d = new Date(2025, 7, 25);
-  assert(isDateInConges(d, config) === false, "Date hors congés");
+  assert(isDateInConges(d, config) === false, "Date hors congÃ©s");
 });
 
-test("isDateInConges gère plusieurs périodes", () => {
+test("isDateInConges gÃ¨re plusieurs pÃ©riodes", () => {
   const config = {
     periods: [
       { start: "01/08/2025", end: "03/08/2025" },
@@ -73,25 +79,25 @@ test("isDateInConges gère plusieurs périodes", () => {
     ],
   };
   const d = new Date(2025, 7, 11);
-  assert(isDateInConges(d, config) === true, "Date devrait être en congés");
+  assert(isDateInConges(d, config) === true, "Date devrait Ãªtre en congÃ©s");
 });
 
 // =======================
 // getGuidedStartDay
 // =======================
 
-test("getGuidedStartDay retourne 1 sans congés", () => {
+test("getGuidedStartDay retourne 1 sans congÃ©s", () => {
   const day = getGuidedStartDay(2025, 7, null);
-  assert(day === 1, "Jour de départ incorrect");
+  assert(day === 1, "Jour de dÃ©part incorrect");
 });
 
-test("getGuidedStartDay saute congés en début de mois", () => {
+test("getGuidedStartDay saute congÃ©s en dÃ©but de mois", () => {
   const config = { start: "01/08/2025", end: "05/08/2025" };
   const day = getGuidedStartDay(2025, 7, config);
-  assert(day === 6, "Jour guidé incorrect");
+  assert(day === 6, "Jour guidÃ© incorrect");
 });
 
-test("getGuidedStartDay utilise la période couvrant le 1er", () => {
+test("getGuidedStartDay utilise la pÃ©riode couvrant le 1er", () => {
   const config = {
     periods: [
       { start: "01/08/2025", end: "03/08/2025" },
@@ -99,5 +105,6 @@ test("getGuidedStartDay utilise la période couvrant le 1er", () => {
     ],
   };
   const day = getGuidedStartDay(2025, 7, config);
-  assert(day === 4, "Jour guidé incorrect");
+  assert(day === 4, "Jour guidÃ© incorrect");
 });
+

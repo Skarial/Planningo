@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // tests/run-tests.js
 // Runner minimal async (sans framework)
 
@@ -13,10 +19,10 @@ export async function runAllTests() {
   for (const { name, fn } of tests) {
     try {
       await fn();
-      console.log("✅", name);
+      console.log("âœ…", name);
       passed++;
     } catch (err) {
-      console.error("❌", name);
+      console.error("âŒ", name);
       console.error(err.message);
       failed++;
     }
@@ -30,10 +36,11 @@ export function assert(condition, message) {
 }
 
 export function summary() {
-  console.log("—".repeat(40));
-  console.log(`Tests réussis : ${passed}`);
-  console.log(`Tests échoués : ${failed}`);
+  console.log("â€”".repeat(40));
+  console.log(`Tests rÃ©ussis : ${passed}`);
+  console.log(`Tests Ã©chouÃ©s : ${failed}`);
   if (failed > 0) {
-    throw new Error("Des tests ont échoué");
+    throw new Error("Des tests ont Ã©chouÃ©");
   }
 }
+

@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 export const UI_MODE = {
   CONSULTATION: "consultation",
   SAISIE_MENSUELLE: "saisie_mensuelle",
@@ -25,3 +31,4 @@ export function subscribeUiMode(listener) {
 function notifyUiModeChange() {
   listeners.forEach((fn) => fn(currentMode));
 }
+

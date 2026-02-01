@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/components/menu.js
 
 import { setUiMode, UI_MODE } from "../state/ui-mode.js";
@@ -10,6 +16,7 @@ import {
   showSuggestionsView,
   showSummaryView,
   showPhoneChangeView,
+  showLegalView,
 } from "../router.js";
 
 import { clearAllPlanning, clearPlanningMonth } from "../data/storage.js";
@@ -36,7 +43,7 @@ function capitalizeFirst(input) {
 
 export function initMenu() {
   // =======================
-  // DOM — RESET
+  // DOM â€” RESET
   // =======================
 
   const resetBtn = document.getElementById("menu-reset");
@@ -63,7 +70,7 @@ export function initMenu() {
   let isSwiping = false;
 
   // =======================
-  // RESET TOTAL — APPUI LONG (FIABLE)
+  // RESET TOTAL â€” APPUI LONG (FIABLE)
   // =======================
 
   let resetAllTimer = null;
@@ -108,7 +115,7 @@ export function initMenu() {
   resetAllBtn.addEventListener("pointercancel", cancelResetAllPress);
 
   // =======================
-  // MENU — DOM
+  // MENU â€” DOM
   // =======================
 
   const menu = document.getElementById("side-menu");
@@ -143,33 +150,39 @@ export function initMenu() {
   const summaryBtn = document.getElementById("menu-summary");
   const phoneBtn = document.getElementById("menu-phone-change");
   const alarmBtn = document.getElementById("menu-alarm");
+  const legalBtn = document.getElementById("menu-legal");
 
-  congesBtn?.addEventListener("click", () => {
+  congesBtn.addEventListener("click", () => {
     showCongesView();
     closeMenu();
   });
 
-  seasonBtn?.addEventListener("click", () => {
+  seasonBtn.addEventListener("click", () => {
     showSeasonView();
     closeMenu();
   });
 
-  suggestionsBtn?.addEventListener("click", () => {
+  suggestionsBtn.addEventListener("click", () => {
     showSuggestionsView();
     closeMenu();
   });
 
-  summaryBtn?.addEventListener("click", () => {
+  summaryBtn.addEventListener("click", () => {
     showSummaryView();
     closeMenu();
   });
 
-  alarmBtn?.addEventListener("click", () => {
+  alarmBtn.addEventListener("click", () => {
     showToast("Bient\u00f4t disponible");
   });
 
-  phoneBtn?.addEventListener("click", () => {
+  phoneBtn.addEventListener("click", () => {
     showPhoneChangeView();
+    closeMenu();
+  });
+
+  legalBtn.addEventListener("click", () => {
+    showLegalView();
     closeMenu();
   });
 
@@ -182,11 +195,11 @@ export function initMenu() {
   const consultInput = document.getElementById("consult-date-input");
   const consultSubmit = document.getElementById("consult-date-submit");
 
-  consultBtn?.addEventListener("click", () => {
+  consultBtn.addEventListener("click", () => {
     consultForm.classList.toggle("hidden");
   });
 
-  consultSubmit?.addEventListener("click", () => {
+  consultSubmit.addEventListener("click", () => {
     if (!consultInput.value) return;
 
     consultForm.classList.add("hidden");
@@ -247,7 +260,7 @@ export function initMenu() {
   closeBtn.addEventListener("click", closeMenu);
   overlay.addEventListener("click", closeMenu);
   // =======================
-  // SWIPE GAUCHE — FERMETURE MENU
+  // SWIPE GAUCHE â€” FERMETURE MENU
   // =======================
 
   menu.addEventListener("touchstart", (e) => {
@@ -299,7 +312,7 @@ export function initMenu() {
   });
 
   // =======================
-  // RESET — MOIS
+  // RESET â€” MOIS
   // =======================
 
   function updateResetMonthLabel() {
@@ -383,7 +396,7 @@ export function initMenu() {
   }
 
   function cancelHold(e) {
-    if (e?.pointerId !== undefined) {
+    if (e.pointerId !== undefined) {
       resetConfirmMonth.releasePointerCapture(e.pointerId);
     }
 
@@ -396,7 +409,7 @@ export function initMenu() {
   }
 
   // =======================
-  // RESET — NAVIGATION MOIS
+  // RESET â€” NAVIGATION MOIS
   // =======================
 
   resetPrevMonth.addEventListener("click", (e) => {
@@ -488,3 +501,4 @@ function showToast(message) {
     setTimeout(() => toast.remove(), 300);
   }, 2200);
 }
+

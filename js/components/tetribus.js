@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/components/tetribus.js
 // Integration propre du mini-jeu Tetribus (ES modules)
 
@@ -8,7 +14,7 @@ let started = false;
 function enterFullscreen() {
   if (document.fullscreenElement) return;
   const root = document.documentElement;
-  if (root?.requestFullscreen) {
+  if (root.requestFullscreen) {
     root.requestFullscreen().catch(() => {});
   }
 }
@@ -33,7 +39,7 @@ function renderTetribusHTML(container) {
       <div id="game-container">
 
         <div id="header">
-          <button id="tetribus-back">←</button>
+          <button id="tetribus-back">â†</button>
           <div id="score">Score : <span id="score-value">0</span></div>
           <div id="level">Niveau : <span id="level-value">1</span></div>
         </div>
@@ -75,11 +81,11 @@ export function showTetribus() {
   view.hidden = false;
   view.style.display = "block";
 
-  document.getElementById("menu-toggle")?.classList.add("hidden");
-  document.getElementById("side-menu")?.classList.add("hidden");
-  document.getElementById("menu-overlay")?.classList.add("hidden");
+  document.getElementById("menu-toggle").classList.add("hidden");
+  document.getElementById("side-menu").classList.add("hidden");
+  document.getElementById("menu-overlay").classList.add("hidden");
 
-  // Si on revient trop vite et que le canvas est detaché, on reconstruit
+  // Si on revient trop vite et que le canvas est detachÃ©, on reconstruit
   const canvasMissing = !document.getElementById("game-canvas");
   if (started && canvasMissing) {
     started = false;
@@ -90,15 +96,15 @@ export function showTetribus() {
     started = true;
     Tetribus.init(); // 2) le jeu demarre
 
-    // 3) ICI — PAS AILLEURS
+    // 3) ICI â€” PAS AILLEURS
     document.getElementById("tetribus-back").addEventListener("click", () => {
       // 1) pause du jeu (etat conserve)
       Tetribus.pause();
 
       // 2) reafficher le menu et le bouton
-      document.getElementById("menu-toggle")?.classList.remove("hidden");
-      document.getElementById("side-menu")?.classList.remove("hidden");
-      document.getElementById("menu-overlay")?.classList.remove("hidden");
+      document.getElementById("menu-toggle").classList.remove("hidden");
+      document.getElementById("side-menu").classList.remove("hidden");
+      document.getElementById("menu-overlay").classList.remove("hidden");
 
       // 3) masquer la vue jeu immediatement
       view.hidden = true;
@@ -143,4 +149,5 @@ document.addEventListener("visibilitychange", () => {
     Tetribus.pause();
   }
 });
+
 

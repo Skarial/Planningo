@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/domain/service-panier.js
 
 const PANIER_CODES = new Set([
@@ -75,3 +81,4 @@ export function hasPanier(code) {
   const normalized = String(code).toUpperCase().trim();
   return PANIER_CODES.has(normalized);
 }
+

@@ -1,12 +1,18 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/data/storage.file.js
-// Adaptateur stockage "fichier" — MOCK (en mémoire)
+// Adaptateur stockage "fichier" â€” MOCK (en mÃ©moire)
 // Respecte strictement storage.interface.js
 
 let fileData = {};
 
 export async function storageGet(key) {
   return Object.prototype.hasOwnProperty.call(fileData, key)
-    ? fileData[key]
+     fileData[key]
     : null;
 }
 
@@ -34,3 +40,4 @@ export async function storageImportAll(data) {
   }
   fileData = JSON.parse(JSON.stringify(data));
 }
+

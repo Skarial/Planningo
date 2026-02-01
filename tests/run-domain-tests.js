@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 import "./domain/periods.test.js";
 import "./domain/conges.test.js";
 import "./domain/activation.test.js";
@@ -8,3 +14,4 @@ import "./domain/month-calendar-state.test.js";
 
 await runAllTests();
 summary();
+

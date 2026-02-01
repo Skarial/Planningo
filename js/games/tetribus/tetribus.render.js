@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 export const TetribusRender = {
   canvas: null,
   ctx: null,
@@ -41,7 +47,7 @@ export const TetribusRender = {
         const color = cell.color;
         const lineNumber = cell.lineNumber;
 
-        // Sécurité : cellule mal formée
+        // SÃ©curitÃ© : cellule mal formÃ©e
         if (!color) continue;
 
         const hasLeft =
@@ -94,7 +100,7 @@ export const TetribusRender = {
     ctx.fillStyle = "#111";
     ctx.fillRect(px + 1, py + Math.floor(s * 0.55), s - 2, 2);
 
-    // Châssis
+    // ChÃ¢ssis
     ctx.fillRect(px + 1, py + s - 5, s - 2, 4);
 
     // ======================
@@ -105,7 +111,7 @@ export const TetribusRender = {
       ctx.fillStyle = "rgba(190,230,255,0.9)";
       ctx.fillRect(px + 3, py + 5, Math.floor(s * 0.55), Math.floor(s * 0.4));
 
-      // Numéro de ligne
+      // NumÃ©ro de ligne
       if (lineNumber !== undefined) {
         const textX = px + Math.floor(s * 0.35);
         const textY = py + Math.floor(s * 0.18);
@@ -114,9 +120,9 @@ export const TetribusRender = {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
-        // Contour (épaisseur)
+        // Contour (Ã©paisseur)
         ctx.lineWidth = 3;
-        ctx.strokeStyle = "#7a5c00"; // jaune foncé / ocre
+        ctx.strokeStyle = "#7a5c00"; // jaune foncÃ© / ocre
         ctx.strokeText(lineNumber, textX, textY);
 
         // Remplissage
@@ -133,7 +139,7 @@ export const TetribusRender = {
     // MILIEU DU BUS
     // ======================
     if (hasLeft && hasRight) {
-      // Fenêtres
+      // FenÃªtres
       ctx.fillStyle = "rgba(200,220,255,0.6)";
       ctx.fillRect(px + 3, py + 5, s - 6, Math.floor(s * 0.28));
 
@@ -144,7 +150,7 @@ export const TetribusRender = {
     }
 
     // ======================
-    // ARRIÈRE DU BUS
+    // ARRIÃˆRE DU BUS
     // ======================
     if (hasLeft && !hasRight) {
       ctx.fillStyle = "#ff3333";
@@ -169,3 +175,4 @@ export const TetribusRender = {
     }
   },
 };
+

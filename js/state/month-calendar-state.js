@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 import { DAY_STATUS, getDayStatus } from "../domain/day-status.js";
 import { getCurrentMonth } from "./month-navigation.js";
 import { getActiveDateISO } from "./active-date.js";
@@ -87,3 +93,4 @@ export function getMonthCalendar(deps) {
     activeDateISO: getActiveDateISO(),
   });
 }
+

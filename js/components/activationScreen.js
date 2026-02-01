@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/components/activationScreen.js
 
 import { APP_VERSION } from "../app.js";
@@ -33,7 +39,7 @@ function render(deviceId) {
       <div class="activation-card">
         <div class="activation-title">Activation requise</div>
         <div class="activation-subtitle">
-          Un code d’activation est nécessaire pour utiliser l’application.
+          Un code dâ€™activation est nÃ©cessaire pour utiliser lâ€™application.
         </div>
 
         <div class="activation-device">
@@ -43,7 +49,7 @@ function render(deviceId) {
             <button id="copy-device-id" class="activation-copy">Copier</button>
           </div>
           <p id="copy-feedback" class="activation-info" hidden>
-            Device ID copié
+            Device ID copiÃ©
           </p>
         </div>
 
@@ -51,7 +57,7 @@ function render(deviceId) {
           type="text"
           id="activation-code"
           class="activation-input"
-          placeholder="Code d’activation"
+          placeholder="Code dâ€™activation"
           autocomplete="off"
         />
 
@@ -60,15 +66,15 @@ function render(deviceId) {
         </button>
 
         <button id="activation-import" class="activation-secondary">
-          Importer mes données
+          Importer mes donnÃ©es
         </button>
 
         <p id="activation-error" class="activation-error" hidden>
-          Code invalide. Vérifiez la saisie ou le Device ID transmis.
+          Code invalide. VÃ©rifiez la saisie ou le Device ID transmis.
         </p>
 
         <p id="activation-success" class="activation-success" hidden>
-          Activation réussie. Redémarrage…
+          Activation rÃ©ussie. RedÃ©marrageâ€¦
         </p>
       </div>
     </div>
@@ -86,12 +92,12 @@ function bindEvents(root, deviceId) {
   const success = root.querySelector("#activation-success");
   const importBtn = root.querySelector("#activation-import");
 
-  importBtn?.addEventListener("click", async () => {
-    root.innerHTML = "<p>Restauration des données…</p>";
+  importBtn.addEventListener("click", async () => {
+    root.innerHTML = "<p>Restauration des donnÃ©esâ€¦</p>";
     try {
       await importAllData();
     } catch (e) {
-      alert("Import des données impossible");
+      alert("Import des donnÃ©es impossible");
       location.reload();
     }
   });
@@ -130,7 +136,7 @@ function bindEvents(root, deviceId) {
 
     await setConfig("activation_ok", "true");
 
-    // ✅ version courante considérée comme déjà vue
+    // âœ… version courante considÃ©rÃ©e comme dÃ©jÃ  vue
     localStorage.setItem("lastSeenAppVersion", APP_VERSION);
 
     success.hidden = false;
@@ -139,10 +145,11 @@ function bindEvents(root, deviceId) {
 
   button.addEventListener("click", validate);
 
-  // Touche Entrée
+  // Touche EntrÃ©e
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       validate();
     }
   });
 }
+

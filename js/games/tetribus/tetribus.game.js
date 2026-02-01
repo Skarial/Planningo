@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 import { TetribusRender } from "./tetribus.render.js";
 
 export const Tetribus = {
@@ -9,10 +15,10 @@ export const Tetribus = {
   FAST_DROP_SPEED: 50,
   pieceBag: [],
   refillBag: function () {
-    // créer une copie des pièces
+    // crÃ©er une copie des piÃ¨ces
     this.pieceBag = [...this.pieces];
 
-    // mélange Fisher-Yates
+    // mÃ©lange Fisher-Yates
     for (let i = this.pieceBag.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.pieceBag[i], this.pieceBag[j]] = [
@@ -211,7 +217,7 @@ export const Tetribus = {
   },
 
   start: function () {
-    // 🔹 Charger le meilleur score sauvegardé
+    // ðŸ”¹ Charger le meilleur score sauvegardÃ©
     const savedHighScore = localStorage.getItem("tetribus_high_score");
     this.highScore = savedHighScore ? Number(savedHighScore) : 0;
     this.refillBag();
@@ -455,11 +461,11 @@ export const Tetribus = {
       });
 
       const stopMove = (e) => {
-        if (e?.cancelable) {
+        if (e.cancelable) {
           e.preventDefault();
         }
 
-        if (e?.pointerId !== undefined) {
+        if (e.pointerId !== undefined) {
           button.releasePointerCapture(e.pointerId);
         }
         clearInterval(moveInterval);
@@ -473,7 +479,7 @@ export const Tetribus = {
     // Bouton GAUCHE / DROITE (pointer events only to avoid double trigger)
     bindMoveButton(btnLeft, () => this.moveLeft());
     bindMoveButton(btnRight, () => this.moveRight());
-    // Bouton ROTATION (pointer events uniquement pour �viter les doubles triggers)
+    // Bouton ROTATION (pointer events uniquement pour éviter les doubles triggers)
     let rotateTimeout = null;
     let isLongPress = false;
 
@@ -492,11 +498,11 @@ export const Tetribus = {
     });
 
     const stopRotate = (e) => {
-      if (e?.cancelable) {
+      if (e.cancelable) {
         e.preventDefault();
       }
 
-      if (e?.pointerId !== undefined) {
+      if (e.pointerId !== undefined) {
         btnRotate.releasePointerCapture(e.pointerId);
       }
       clearTimeout(rotateTimeout);
@@ -573,4 +579,5 @@ export const Tetribus = {
     return true;
   },
 };
+
 

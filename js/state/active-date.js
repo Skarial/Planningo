@@ -1,5 +1,11 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/state/active-date.js
-// État global : date active (ISO yyyy-mm-dd)
+// Ã‰tat global : date active (ISO yyyy-mm-dd)
 
 let activeDateISO = null;
 
@@ -26,3 +32,4 @@ export function subscribeActiveDate(fn) {
     subscribers.add(fn);
   }
 }
+

@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/components/season.js
 
 import { getConfig, setConfig } from "../data/storage.js";
@@ -76,9 +82,9 @@ export async function renderSeasonView() {
   view.appendChild(root);
 
   const entry = await getConfig("saison");
-  const value = entry?.value;
-  if (value?.saisonDebut) inputStart.value = value.saisonDebut;
-  if (value?.saisonFin) inputEnd.value = value.saisonFin;
+  const value = entry?.value || {};
+  if (value.saisonDebut) inputStart.value = value.saisonDebut;
+  if (value.saisonFin) inputEnd.value = value.saisonFin;
 
   saveBtn.addEventListener("click", async () => {
     const start = inputStart.value.trim();
@@ -99,3 +105,4 @@ export async function renderSeasonView() {
     status.show("Saison reinitialisee");
   });
 }
+

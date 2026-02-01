@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // home.js : vue Accueil - calendrier mensuel + jour actif
 
 // VUE CENTRALE - Accueil (jour + calendrier mensuel)
@@ -60,7 +66,7 @@ function formatDuration(minutes) {
 }
 
 function shouldAddExtraMinutes(service) {
-  const code = typeof service?.code === "string" ? service.code.toUpperCase() : "";
+  const code = typeof service.code === "string" ? service.code.toUpperCase() : "";
   if (!code) return false;
   if (code === "DM" || code === "DAM" || code === "FORMATION") return false;
   if (code.startsWith("TAD")) return false;
@@ -68,10 +74,10 @@ function shouldAddExtraMinutes(service) {
 }
 
 function buildServiceTimeLines(service, periodLabel) {
-  if (getFixedServiceMinutes(service?.code) != null) {
+  if (getFixedServiceMinutes(service.code) != null) {
     return {
       lines: [],
-      duration: formatMinutesAsDuration(getFixedServiceMinutes(service?.code)),
+      duration: formatMinutesAsDuration(getFixedServiceMinutes(service.code)),
     };
   }
   if (!service || !Array.isArray(service.periodes)) return null;
@@ -373,12 +379,12 @@ export async function renderHome() {
         return;
       }
 
-      if (entry?.startTime && entry?.endTime) {
+      if (entry.startTime && entry.endTime) {
         time.hidden = false;
         time.textContent = `${entry.startTime} – ${entry.endTime}`;
       }
 
-      if (entry?.duration) {
+      if (entry.duration) {
         duration.hidden = false;
         duration.textContent = entry.duration;
       }
@@ -391,7 +397,7 @@ export async function renderHome() {
         panier.textContent = "";
       }
 
-      if (entry?.startTime && entry?.endTime) return;
+      if (entry.startTime && entry.endTime) return;
 
       getAllServices().then((services) => {
         const serviceCode = entry.serviceCode.toUpperCase();
@@ -458,7 +464,7 @@ export async function renderHome() {
   calendarAnchor.id = "home-calendar-anchor";
   bottom.appendChild(calendarAnchor);
 
-  const monthISO = getActiveDateISO()?.slice(0, 7);
+  const monthISO = getActiveDateISO().slice(0, 7);
   const monthEntries = monthISO ? await getPlanningForMonth(monthISO) : [];
   const monthMap = new Map(
     monthEntries.map((entry) => [entry.date, entry]),
@@ -541,7 +547,7 @@ export async function renderHome() {
     (async () => {
       const servicesCatalog = await getAllServices();
       const prefsEntry = await getConfig("suggestions_prefs");
-      const suggestionsPrefs = prefsEntry?.value ?? null;
+      const suggestionsPrefs = prefsEntry.value ?? null;
 
       const grouped = getServiceSuggestions({
         servicesCatalog,
@@ -609,6 +615,7 @@ export async function renderHome() {
     input.focus();
   }
 }
+
 
 
 

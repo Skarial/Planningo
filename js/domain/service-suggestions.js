@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 /**
  * API metier officielle pour les suggestions de services
  * Implementation V1 - base deterministe
@@ -5,8 +11,8 @@
 
 import { isDateInSeason } from "./periods.js";
 
-const SEASON_LABEL = "Période saisonnière";
-const MAIN_LABEL = "Période principale";
+const SEASON_LABEL = "PÃ©riode saisonniÃ¨re";
+const MAIN_LABEL = "PÃ©riode principale";
 
 export function getServiceSuggestions({
   servicesCatalog,
@@ -15,6 +21,7 @@ export function getServiceSuggestions({
   prefs,
   mode, // inutilise pour l'instant
 }) {
+  const safePrefs = prefs && typeof prefs === "object" ? prefs : {};
   const result = {
     REPOS: ["REPOS"],
     DM: [],
@@ -31,11 +38,11 @@ export function getServiceSuggestions({
   const inSeason = date ? isDateInSeason(saisonConfig, date) : false;
 
   const allow = {
-    tad: prefs?.tad !== false,
-    dm: prefs?.dm !== false,
-    dam: prefs?.dam !== false,
-    formation: prefs?.formation !== false,
-    lignes: prefs?.lignes !== false,
+    tad: safePrefs.tad !== false,
+    dm: safePrefs.dm !== false,
+    dam: safePrefs.dam !== false,
+    formation: safePrefs.formation !== false,
+    lignes: safePrefs.lignes !== false,
   };
 
   if (allow.formation) {
@@ -52,7 +59,7 @@ export function getServiceSuggestions({
       return;
     }
 
-  if (inSeason && !["DM", "DAM", "FORMATION"].includes(upperCode) && !upperCode.startsWith("TAD")) {
+    if (inSeason && !["DM", "DAM", "FORMATION"].includes(upperCode) && !upperCode.startsWith("TAD")) {
       const periodes = Array.isArray(service.periodes) ? service.periodes : [];
       const hasSeason = periodes.some((p) => p && p.libelle === SEASON_LABEL);
       const hasMain = periodes.some((p) => p && p.libelle === MAIN_LABEL);
@@ -131,3 +138,4 @@ export function getServiceSuggestions({
 
   return result;
 }
+

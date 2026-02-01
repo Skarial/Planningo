@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // Storage.js
 
 import { openDB, STORES } from "./db.js";
@@ -44,7 +50,7 @@ export async function deletePlanningEntry(dateISO) {
 export async function savePlanningEntry(entry) {
   const { db } = await openDB();
 
-  // RÈGLE MÉTIER : service vide → suppression
+  // RÃˆGLE MÃ‰TIER : service vide â†’ suppression
   if (!entry.serviceCode) {
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORES.PLANNING, "readwrite");
@@ -195,7 +201,7 @@ export async function getConfig(key) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.CONFIG, "readonly");
     const req = tx.objectStore(STORES.CONFIG).get(key);
-    req.onsuccess = () => resolve(req.result || null);
+    req.onsuccess = () => resolve(req.result || { key, value: null });
     req.onerror = () => reject(req.error);
   });
 }
@@ -209,3 +215,4 @@ export async function setConfig(key, value) {
     tx.onerror = () => reject(tx.error);
   });
 }
+

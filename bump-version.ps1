@@ -43,6 +43,12 @@ git add $swPath
 # Restauration immédiate du placeholder
 Set-Content $swPath $swContent
 git add $swPath
+$swContentRestored = Get-Content $swPath -Raw
+if ($swContentRestored -notmatch $placeholder) {
+    Write-Error "Le placeholder __APP_VERSION__ doit rester dans service-worker.js apres restauration"
+    exit 1
+}
+
 
 Write-Host "CACHE_VERSION synchronisée via placeholder"
 

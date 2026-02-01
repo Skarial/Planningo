@@ -1,12 +1,18 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/data/storage.selector.js
-// Sélection centralisée de l’adaptateur de stockage
+// SÃ©lection centralisÃ©e de lâ€™adaptateur de stockage
 
 import * as memory from "./storage.memory.js";
 import * as file from "./storage.file.js";
 
-// ⚠️ Sélection TEMPORAIRE (pilotée)
+// âš ï¸ SÃ©lection TEMPORAIRE (pilotÃ©e)
 // - "memory" = comportement actuel
-// - "file"   = préparation logiciel
+// - "file"   = prÃ©paration logiciel
 const STORAGE_MODE = "memory";
 
 export function getStorageAdapter() {
@@ -18,3 +24,4 @@ export function getStorageAdapter() {
       return memory;
   }
 }
+

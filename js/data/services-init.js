@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 import { getAllServices, addService } from "./storage.js";
 import { SERVICES_CATALOG } from "./services-catalog.js";
 
@@ -9,3 +15,4 @@ export async function initServicesIfNeeded() {
     await addService(service);
   }
 }
+

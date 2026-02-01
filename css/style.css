@@ -653,6 +653,33 @@ textarea {
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
 }
 
+.legal-card {
+  gap: 12px;
+}
+
+.legal-summary {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.legal-link {
+  font-size: 0.85rem;
+  color: var(--color-ink);
+  text-decoration: underline;
+}
+
+.legal-text {
+  white-space: pre-wrap;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  background: #ededed;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 50vh;
+  overflow: auto;
+}
+
 .settings-periods {
   display: flex;
   flex-direction: column;
@@ -1289,6 +1316,10 @@ textarea {
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20" stroke="black" stroke-width="2" stroke-linecap="round"/><rect x="6" y="10" width="3" height="8" fill="none" stroke="black" stroke-width="2"/><rect x="11" y="6" width="3" height="12" fill="none" stroke="black" stroke-width="2"/><rect x="16" y="3" width="3" height="15" fill="none" stroke="black" stroke-width="2"/></svg>');
 }
 
+.icon-legal {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 6h9" fill="none" stroke="black" stroke-width="2" stroke-linecap="round"/><path d="M9 10h9" fill="none" stroke="black" stroke-width="2" stroke-linecap="round"/><path d="M9 14h5" fill="none" stroke="black" stroke-width="2" stroke-linecap="round"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2" fill="none" stroke="black" stroke-width="2"/><path d="M7 3v18" fill="none" stroke="black" stroke-width="2"/></svg>');
+}
+
 .icon-sliders {
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6" stroke="black" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="6" r="2" fill="none" stroke="black" stroke-width="2"/><line x1="4" y1="12" x2="20" y2="12" stroke="black" stroke-width="2" stroke-linecap="round"/><circle cx="15" cy="12" r="2" fill="none" stroke="black" stroke-width="2"/><line x1="4" y1="18" x2="20" y2="18" stroke="black" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="18" r="2" fill="none" stroke="black" stroke-width="2"/></svg>');
 }
@@ -1476,6 +1507,20 @@ textarea {
   font-size: 0.75rem;
   color: #9c9c9c;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu-legal {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-legal a {
+  color: inherit;
+  text-decoration: underline;
 }
 
 /* ==========================================================
@@ -1538,6 +1583,12 @@ textarea {
 .update-actions .btn-primary {
   background: var(--color-accent);
   color: #fff;
+}
+
+.update-actions .btn-secondary {
+  background: #e5e5e5;
+  color: var(--color-ink);
+  border: 1px solid #d2d2d2;
 }
 
 .update-actions button:active {

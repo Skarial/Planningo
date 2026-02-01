@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/components/suggestions.js
 
 import { getConfig, setConfig } from "../data/storage.js";
@@ -12,11 +18,11 @@ const DEFAULT_PREFS = {
 
 function normalizePrefs(value) {
   return {
-    tad: value?.tad !== false,
-    dm: value?.dm !== false,
-    dam: value?.dam !== false,
-    formation: value?.formation !== false,
-    lignes: value?.lignes !== false,
+    tad: value.tad !== false,
+    dm: value.dm !== false,
+    dam: value.dam !== false,
+    formation: value.formation !== false,
+    lignes: value.lignes !== false,
   };
 }
 
@@ -99,3 +105,4 @@ export async function renderSuggestionsView() {
   root.append(header, card);
   view.appendChild(root);
 }
+

@@ -1,5 +1,11 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/data/storage.abstract.js
-// Point d’entrée UNIQUE pour le stockage abstrait (domain-compatible)
+// Point dâ€™entrÃ©e UNIQUE pour le stockage abstrait (domain-compatible)
 
 import { getStorageAdapter } from "./storage.selector.js";
 
@@ -11,3 +17,4 @@ export const storageDelete = adapter.storageDelete;
 export const storageClear = adapter.storageClear;
 export const storageExportAll = adapter.storageExportAll;
 export const storageImportAll = adapter.storageImportAll;
+

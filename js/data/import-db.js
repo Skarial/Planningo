@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/data/import-db.js
 
 import { openDB, setConfig } from "./db.js";
@@ -178,7 +184,7 @@ export async function importAllData() {
 
     input.onchange = async () => {
       const confirmed = confirm(
-        "L'import remplacera toutes les donnees existantes. Continuer ?",
+        "L'import remplacera toutes les donnees existantes. Continuer ",
       );
       if (!confirmed) return;
 
@@ -199,3 +205,4 @@ export async function importAllData() {
     input.click();
   });
 }
+

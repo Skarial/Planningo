@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/router.js
 
 let currentView = null;
@@ -11,13 +17,24 @@ import { renderSeasonView } from "./components/season.js";
 import { renderPhoneChangeView } from "./components/phone-change.js";
 import { renderSummaryView } from "./components/summary.js";
 import { renderSuggestionsView } from "./components/suggestions.js";
+import { renderLegalView } from "./components/legal.js";
 
 function getView(name) {
   return document.getElementById(`view-${name}`);
 }
 
 function hideAllViews() {
-  ["home", "guided-month", "conges", "season", "suggestions", "phone-change", "summary", "tetribus"].forEach((name) => {
+  [
+    "home",
+    "guided-month",
+    "conges",
+    "season",
+    "suggestions",
+    "phone-change",
+    "summary",
+    "tetribus",
+    "legal",
+  ].forEach((name) => {
     const el = getView(name);
     if (el) el.hidden = true;
   });
@@ -80,6 +97,12 @@ export function showSummaryView() {
   renderSummaryView();
 }
 
+export function showLegalView() {
+  const view = activateView("legal");
+  if (!view) return;
+  renderLegalView();
+}
+
 // =======================
 // ROUTER INTERNE
 // =======================
@@ -120,6 +143,10 @@ export function refreshCurrentView() {
     case "summary":
       showSummaryView();
       break;
+
+    case "legal":
+      showLegalView();
+      break;
   }
 }
 
@@ -138,3 +165,4 @@ function activateView(name) {
 
   return view;
 }
+

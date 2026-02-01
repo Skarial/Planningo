@@ -1,3 +1,9 @@
+ï»¿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/sw/sw-register.js
 let swRegistration = null;
 
@@ -17,15 +23,15 @@ export function registerServiceWorker(onUpdateAvailable) {
       console.log("[SW] enregistre");
 
       const notifyIfWaiting = () => {
-        if (swRegistration?.waiting && typeof onUpdateAvailable === "function") {
+        if (swRegistration.waiting && typeof onUpdateAvailable === "function") {
           onUpdateAvailable(swRegistration);
         }
       };
 
-      // Affichage immediat si une version attend déjà
+      // Affichage immediat si une version attend dÃ©jÃ 
       notifyIfWaiting();
 
-      // Détection fiable d'une nouvelle version
+      // DÃ©tection fiable d'une nouvelle version
       swRegistration.addEventListener("updatefound", () => {
         const newWorker = swRegistration.installing;
         if (!newWorker) return;
@@ -43,12 +49,12 @@ export function registerServiceWorker(onUpdateAvailable) {
       // Check periodique pour une app qui reste ouverte
       const UPDATE_INTERVAL = 15 * 60 * 1000;
       setInterval(() => {
-        swRegistration?.update().catch(() => {});
+        swRegistration.update().catch(() => {});
       }, UPDATE_INTERVAL);
 
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") {
-          swRegistration?.update().catch(() => {});
+          swRegistration.update().catch(() => {});
         }
       });
     } catch (err) {
@@ -60,4 +66,5 @@ export function registerServiceWorker(onUpdateAvailable) {
 export function getServiceWorkerRegistration() {
   return swRegistration;
 }
+
 

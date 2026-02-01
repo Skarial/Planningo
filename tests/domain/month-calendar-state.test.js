@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 import { test, assert } from "../run-tests.js";
 import { initMonthFromDateISO } from "../../js/state/month-navigation.js";
 import { getMonthCalendar } from "../../js/state/month-calendar-state.js";
@@ -18,10 +24,10 @@ test("month-calendar-state - calendrier null sans init", () => {
     isDateInConges: fakeIsDateInConges,
   });
 
-  assert(cal === null, "calendrier doit être null sans initialisation");
+  assert(cal === null, "calendrier doit Ãªtre null sans initialisation");
 });
 
-test("month-calendar-state - calendrier construit après init", () => {
+test("month-calendar-state - calendrier construit aprÃ¨s init", () => {
   setActiveDateISO("2026-03-15");
   initMonthFromDateISO("2026-03-15");
 
@@ -34,7 +40,7 @@ test("month-calendar-state - calendrier construit après init", () => {
   assert(cal.monthIndex === 2, "mois incorrect");
 });
 
-test("month-calendar-state - jour actif propagé", () => {
+test("month-calendar-state - jour actif propagÃ©", () => {
   setActiveDateISO("2026-03-10");
   initMonthFromDateISO("2026-03-10");
 
@@ -47,3 +53,4 @@ test("month-calendar-state - jour actif propagé", () => {
   assert(active, "jour actif attendu");
   assert(active.iso === "2026-03-10", "jour actif incorrect");
 });
+

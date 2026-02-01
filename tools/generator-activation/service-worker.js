@@ -1,3 +1,9 @@
+/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 const GENERATOR_VERSION = "__GENERATOR_VERSION__";
 const CACHE_NAME = `generator-cache-${GENERATOR_VERSION}`;
 
@@ -27,6 +33,8 @@ self.addEventListener("fetch", (event) => {
     fetch(event.request).catch(() => caches.match(event.request)),
   );
 });
+
+
 
 
 

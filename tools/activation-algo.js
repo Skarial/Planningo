@@ -1,12 +1,18 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // tools/activation-algo.js
-// ALGORITHME D’ACTIVATION — SOURCE UNIQUE DE VÉRITÉ
+// ALGORITHME Dâ€™ACTIVATION â€” SOURCE UNIQUE DE VÃ‰RITÃ‰
 
 const SECRET = "PLANNING_PWA_SECRET_V1";
 
 /**
- * Génère un code d’activation à partir d’un deviceId
+ * GÃ©nÃ¨re un code dâ€™activation Ã  partir dâ€™un deviceId
  * @param {string} deviceId
- * @returns {string} code d’activation (12 caractères)
+ * @returns {string} code dâ€™activation (12 caractÃ¨res)
  */
 export function generateActivationCode(deviceId) {
   if (!deviceId || typeof deviceId !== "string") {
@@ -18,7 +24,7 @@ export function generateActivationCode(deviceId) {
 }
 
 /* =======================
-   SHA-256 — implémentation pure
+   SHA-256 â€” implÃ©mentation pure
    ======================= */
 
 function sha256(ascii) {
@@ -104,3 +110,4 @@ function sha256(ascii) {
   }
   return result;
 }
+

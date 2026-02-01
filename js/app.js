@@ -1,8 +1,14 @@
 // js/app.js
 /*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
+/*
   Application Planningo
 */
-export const APP_VERSION = "2.0.0";
+export const APP_VERSION = "2.0.1";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -35,6 +41,9 @@ async function initApp() {
   if (!getActiveDateISO()) {
     setActiveDateISO(toISODateLocal(new Date()));
   }
+
+  // 1b️⃣ Banner version (si changement)
+  notifyVersionChange();
 
   // 2️⃣ UI principale
   initMenu();
@@ -131,10 +140,51 @@ function disableNativeZoom() {
 // BANNIÈRE DE MISE À JOUR
 // =======================
 
+function notifyVersionChange() {
+  const key = "planningo_app_version";
+  const lastVersion = localStorage.getItem(key);
+  localStorage.setItem(key, APP_VERSION);
+
+  if (!lastVersion || lastVersion === APP_VERSION) return;
+  showVersionBanner(lastVersion, APP_VERSION);
+}
+
+function showVersionBanner(prevVersion, nextVersion) {
+  if (document.getElementById("version-banner")) return;
+
+  const banner = document.createElement("div");
+  banner.id = "version-banner";
+  banner.className = "update-banner";
+
+  banner.innerHTML = `
+    <div class="update-content">
+      <div class="update-text">
+        <strong>Mise a jour installee</strong>
+        <span>Version ${prevVersion} -> ${nextVersion}</span>
+      </div>
+      <div class="update-actions">
+        <button class="btn-secondary" id="version-reload">Recharger</button>
+        <button class="btn-primary" id="version-dismiss">OK</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(banner);
+
+  document.getElementById("version-dismiss").addEventListener("click", () => {
+    banner.remove();
+  });
+
+  document.getElementById("version-reload").addEventListener("click", () => {
+    location.reload();
+  });
+}
+
+
 function showUpdateBanner(registration) {
   if (!registration?.waiting) return;
 
-  // Sécurité : ne jamais dupliquer
+  // Securite : ne jamais dupliquer
   if (document.getElementById("update-banner")) return;
 
   const banner = document.createElement("div");
@@ -144,11 +194,12 @@ function showUpdateBanner(registration) {
   banner.innerHTML = `
     <div class="update-content">
       <div class="update-text">
-        <strong>Mise à jour disponible</strong>
-        <span>Une nouvelle version de l’application est prête.</span>
+        <strong>Mise a jour disponible</strong>
+        <span>Une nouvelle version de l'application est prete.</span>
       </div>
       <div class="update-actions">
-        <button class="btn-primary" id="update-reload">Mettre à jour</button>
+        <button class="btn-secondary" id="update-dismiss">Plus tard</button>
+        <button class="btn-primary" id="update-reload">Mettre a jour</button>
       </div>
     </div>
   `;
@@ -162,7 +213,13 @@ function showUpdateBanner(registration) {
       location.reload();
     });
   });
+
+  document.getElementById("update-dismiss").addEventListener("click", () => {
+    banner.remove();
+  });
 }
+
+
 
 
 

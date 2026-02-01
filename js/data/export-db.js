@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/data/export-db.js
 
 import { DB_NAME, DB_VERSION, openDB } from "./db.js";
@@ -37,7 +43,7 @@ export async function exportDatabase() {
 }
 
 // =======================
-// LECTURE D’UN STORE
+// LECTURE Dâ€™UN STORE
 // =======================
 
 function readStore(db, storeName) {
@@ -76,3 +82,4 @@ export async function exportAllData() {
 
   URL.revokeObjectURL(url);
 }
+

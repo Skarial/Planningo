@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/components/summary.js
 
 import { getPlanningEntriesInRange, getAllServices } from "../data/storage.js";
@@ -273,3 +279,4 @@ export async function renderSummaryView() {
 
   runBtn.addEventListener("click", computeAndRender);
 }
+

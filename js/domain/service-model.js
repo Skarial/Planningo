@@ -1,6 +1,12 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // js/domain/service-model.js
 /**
- * Modèle métier d’un service journalier
+ * ModÃ¨le mÃ©tier dâ€™un service journalier
  */
 
 export function createService({
@@ -14,7 +20,8 @@ export function createService({
     code, // ex: "2910"
     periods: [
       { start: start1, end: end1 },
-      ...(start2 && end2 ? [{ start: start2, end: end2 }] : []),
+      ...(start2 && end2  [{ start: start2, end: end2 }] : []),
     ],
   };
 }
+

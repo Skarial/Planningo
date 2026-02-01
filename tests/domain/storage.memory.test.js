@@ -1,3 +1,9 @@
+﻿/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
 // tests/domain/storage.memory.test.js
 import { test, assert } from "../run-tests.js";
 import {
@@ -9,7 +15,7 @@ import {
   storageImportAll,
 } from "../../js/data/storage.memory.js";
 
-// tests…
+// testsâ€¦
 
 test("storageSet / storageGet", async () => {
   await storageClear();
@@ -18,12 +24,12 @@ test("storageSet / storageGet", async () => {
   assert(v === 1, "Valeur incorrecte");
 });
 
-test("storageDelete supprime la clé", async () => {
+test("storageDelete supprime la clÃ©", async () => {
   await storageClear();
   await storageSet("a", 1);
   await storageDelete("a");
   const v = await storageGet("a");
-  assert(v === null, "Clé non supprimée");
+  assert(v === null, "ClÃ© non supprimÃ©e");
 });
 
 test("storageExportAll / storageImportAll", async () => {
@@ -39,3 +45,4 @@ test("storageExportAll / storageImportAll", async () => {
   assert((await storageGet("a")) === 1);
   assert((await storageGet("b")) === 2);
 });
+
