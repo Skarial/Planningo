@@ -23,11 +23,11 @@ export async function renderPhoneChangeView() {
 
   const title = document.createElement("div");
   title.className = "settings-title";
-  title.textContent = "Changement de telephone";
+  title.textContent = "Changement de téléphone";
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
-  subtitle.textContent = "Sauvegarder ou restaurer vos donnees";
+  subtitle.textContent = "Sauvegarder ou restaurer vos données";
 
   header.append(title, subtitle);
 
@@ -36,20 +36,20 @@ export async function renderPhoneChangeView() {
 
   const exportBtn = document.createElement("button");
   exportBtn.className = "settings-btn primary";
-  exportBtn.textContent = "Sauvegarder mes donnees";
+  exportBtn.textContent = "Sauvegarder mes données";
 
   const exportNote = document.createElement("div");
   exportNote.className = "settings-note";
-  exportNote.textContent = "A faire avant de changer de telephone.";
+  exportNote.textContent = "À faire avant de changer de téléphone.";
 
   const importBtn = document.createElement("button");
   importBtn.className = "settings-btn danger";
-  importBtn.textContent = "Restaurer mes donnees";
+  importBtn.textContent = "Restaurer mes données";
 
   const importNote = document.createElement("div");
   importNote.className = "settings-note";
   importNote.textContent =
-    "A utiliser sur un nouveau telephone ou apres reinstallation.";
+    "À utiliser sur un nouveau téléphone ou après réinstallation.";
 
   card.append(exportBtn, exportNote, importBtn, importNote);
 

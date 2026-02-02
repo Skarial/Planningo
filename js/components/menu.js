@@ -8,111 +8,70 @@
 
 import { setUiMode, UI_MODE } from "../state/ui-mode.js";
 import {
-  refreshCurrentView,
   showHome,
   showGuidedMonth,
   showCongesView,
   showSeasonView,
+  showConsultDateView,
+  showResetView,
   showSuggestionsView,
   showSummaryView,
   showPhoneChangeView,
   showLegalView,
 } from "../router.js";
 
-import { clearAllPlanning, clearPlanningMonth } from "../data/storage.js";
-import { APP_VERSION } from "../app.js";
 
 // =======================
 // MENU
 // =======================
 
-function afficherResetEnHaut() {
-  const resetPanel = document.getElementById("reset-panel");
-  if (!resetPanel) return;
-
-  resetPanel.scrollIntoView({
-    block: "start",
-    behavior: "auto",
-  });
-}
-
-function capitalizeFirst(input) {
-  if (typeof input !== "string" || input.length === 0) return input;
-  return input.charAt(0).toUpperCase() + input.slice(1);
-}
-
 export function initMenu() {
-  // =======================
-  // DOM â€” RESET
-  // =======================
-
-  const resetBtn = document.getElementById("menu-reset");
-  const resetPanel = document.getElementById("reset-panel");
-  const resetAllBtn = document.getElementById("reset-all");
-  const resetMonthBtn = document.getElementById("reset-month");
-
-  const resetMonthPicker = document.getElementById("reset-month-picker");
-  const resetMonthLabel = document.getElementById("reset-month-label");
-  const resetPrevMonth = document.getElementById("reset-prev-month");
-  const resetNextMonth = document.getElementById("reset-next-month");
-  const resetConfirmMonth = document.getElementById("reset-confirm-month");
-
   // =======================
   // ETATS
   // =======================
 
   let isOpen = false;
-  let resetState = "closed"; // closed | choice | month
-  let resetDate = new Date();
   let touchStartX = 0;
   let touchStartY = 0;
   let currentTranslateX = 0;
   let isSwiping = false;
+  let swipeLocked = false;
+  let edgeStartX = 0;
+  let edgeStartY = 0;
+  let edgeTracking = false;
+  let edgeLocked = false;
+  let edgeDragging = false;
+  const EDGE_SWIPE_WIDTH = 24;
+  const EDGE_SWIPE_MIN = 32;
 
-  // =======================
-  // RESET TOTAL â€” APPUI LONG (FIABLE)
-  // =======================
-
-  let resetAllTimer = null;
-  const RESET_ALL_DURATION = 1200;
-
-  function startResetAllPress(e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (resetAllTimer) return;
-
-    resetAllBtn.classList.add("holding");
-    menu.classList.add("long-pressing");
-
-    resetAllTimer = setTimeout(async () => {
-      resetAllTimer = null;
-      resetAllBtn.classList.remove("holding");
-      menu.classList.remove("long-pressing");
-
-      await clearAllPlanning();
-      showToast("Planning entierement reinitialise");
-
-      refreshCurrentView();
-
-      resetState = "closed";
-      renderResetPanel();
-      closeMenu();
-    }, RESET_ALL_DURATION);
+  function isScrollableElement(el) {
+    if (!el || el === document.body || el === document.documentElement) {
+      return false;
+    }
+    const style = window.getComputedStyle(el);
+    const overflowY = style.overflowY;
+    if (overflowY !== "auto" && overflowY !== "scroll") return false;
+    return el.scrollHeight > el.clientHeight;
   }
 
-  function cancelResetAllPress() {
-    if (!resetAllTimer) return;
-
-    clearTimeout(resetAllTimer);
-    resetAllTimer = null;
-    resetAllBtn.classList.remove("holding");
-    menu.classList.remove("long-pressing");
+  function isInsideScrollableArea(target) {
+    if (!target || !target.closest) return false;
+    let node = target;
+    while (node && node !== document.body) {
+      if (isScrollableElement(node)) return true;
+      node = node.parentElement;
+    }
+    return false;
   }
 
-  resetAllBtn.addEventListener("pointerdown", startResetAllPress);
-  resetAllBtn.addEventListener("pointerup", cancelResetAllPress);
-  resetAllBtn.addEventListener("pointercancel", cancelResetAllPress);
+  function isInteractiveTarget(target) {
+    if (!target || !target.closest) return false;
+    return Boolean(
+      target.closest(
+        "input, textarea, select, button, a, [contenteditable='true']",
+      ),
+    );
+  }
 
   // =======================
   // MENU â€” DOM
@@ -125,12 +84,6 @@ export function initMenu() {
   const closeBtn = document.getElementById("menu-close");
 
   if (!menu || !overlay || !toggle || !closeBtn) return;
-
-  if (!menu.querySelector(".menu-long-press-bar")) {
-    const bar = document.createElement("div");
-    bar.className = "menu-long-press-bar";
-    menu.appendChild(bar);
-  }
 
   toggle.classList.remove("hidden");
   overlay.classList.remove("hidden");
@@ -151,6 +104,7 @@ export function initMenu() {
   const phoneBtn = document.getElementById("menu-phone-change");
   const alarmBtn = document.getElementById("menu-alarm");
   const legalBtn = document.getElementById("menu-legal");
+  const resetBtn = document.getElementById("menu-reset");
 
   congesBtn.addEventListener("click", () => {
     showCongesView();
@@ -186,30 +140,19 @@ export function initMenu() {
     closeMenu();
   });
 
+  resetBtn.addEventListener("click", () => {
+    showResetView();
+    closeMenu();
+  });
+
   // =======================
   // CONSULTATION DATE
   // =======================
 
   const consultBtn = document.getElementById("menu-consult-date");
-  const consultForm = document.getElementById("consult-date-form");
-  const consultInput = document.getElementById("consult-date-input");
-  const consultSubmit = document.getElementById("consult-date-submit");
 
   consultBtn.addEventListener("click", () => {
-    consultForm.classList.toggle("hidden");
-  });
-
-  consultSubmit.addEventListener("click", () => {
-    if (!consultInput.value) return;
-
-    consultForm.classList.add("hidden");
-
-    // Nouveau comportement : on fixe la date active, puis Home
-    import("../state/active-date.js").then(({ setActiveDateISO }) => {
-      setActiveDateISO(consultInput.value);
-      showHome();
-    });
-
+    showConsultDateView();
     closeMenu();
   });
 
@@ -236,12 +179,10 @@ export function initMenu() {
     }
 
     menu.classList.remove("open");
+    menu.classList.remove("opening-swipe");
     overlay.classList.remove("open");
     menu.inert = true;
     menu.setAttribute("aria-hidden", "true");
-
-    resetState = "closed";
-    renderResetPanel();
 
     isOpen = false;
     toggle.setAttribute("aria-expanded", "false");
@@ -254,11 +195,120 @@ export function initMenu() {
   }
 
   toggle.addEventListener("click", () => {
-    isOpen ? closeMenu() : openMenu();
+    if (isOpen) {
+      closeMenu();
+      return;
+    }
+    menu.classList.remove("opening-swipe");
+    openMenu();
   });
 
   closeBtn.addEventListener("click", closeMenu);
   overlay.addEventListener("click", closeMenu);
+
+  // =======================
+  // SWIPE DROITE â€” OUVERTURE MENU (EDGE)
+  // =======================
+
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      if (isOpen) return;
+      if (!e.touches || e.touches.length === 0) return;
+      if (isInsideScrollableArea(e.target)) return;
+      if (isInteractiveTarget(e.target)) return;
+
+      const touch = e.touches[0];
+      if (touch.clientX > EDGE_SWIPE_WIDTH) return;
+
+      edgeStartX = touch.clientX;
+      edgeStartY = touch.clientY;
+      edgeTracking = true;
+      edgeLocked = false;
+      edgeDragging = false;
+      menu.style.transition = "none";
+    },
+    { passive: true },
+  );
+
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      if (isOpen || !edgeTracking) return;
+      if (!e.touches || e.touches.length === 0) return;
+
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - edgeStartX;
+      const deltaY = touch.clientY - edgeStartY;
+
+      if (!edgeLocked) {
+        if (Math.abs(deltaX) < 6 && Math.abs(deltaY) < 6) return;
+        edgeLocked = true;
+        if (Math.abs(deltaX) <= Math.abs(deltaY)) {
+          edgeTracking = false;
+          return;
+        }
+      }
+
+      const menuWidth = menu.offsetWidth || 1;
+      const clampedX = Math.max(0, Math.min(deltaX, menuWidth));
+      if (clampedX > 0) {
+        edgeDragging = true;
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+        overlay.classList.add("open");
+        const translateX = -menuWidth + clampedX;
+        menu.style.transform = `translateX(${translateX}px)`;
+      }
+    },
+    { passive: false },
+  );
+
+  document.addEventListener(
+    "touchend",
+    () => {
+      if (!edgeTracking) {
+        edgeTracking = false;
+        edgeLocked = false;
+        edgeDragging = false;
+        return;
+      }
+
+      const menuWidth = menu.offsetWidth || 1;
+      const deltaX = edgeDragging ? menuWidth + (menu.getBoundingClientRect().left || 0) : 0;
+      const openedEnough = deltaX > Math.max(EDGE_SWIPE_MIN, menuWidth * 0.35);
+
+      menu.style.transition = "";
+
+      if (openedEnough) {
+        menu.classList.add("opening-swipe");
+        menu.style.transform = "";
+        openMenu();
+      } else {
+        menu.style.transform = "";
+        overlay.classList.remove("open");
+      }
+
+      edgeTracking = false;
+      edgeLocked = false;
+      edgeDragging = false;
+    },
+    { passive: true },
+  );
+
+  document.addEventListener(
+    "touchcancel",
+    () => {
+      menu.style.transition = "";
+      menu.style.transform = "";
+      overlay.classList.remove("open");
+      edgeTracking = false;
+      edgeLocked = false;
+      edgeDragging = false;
+    },
+    { passive: true },
+  );
   // =======================
   // SWIPE GAUCHE â€” FERMETURE MENU
   // =======================
@@ -269,31 +319,40 @@ export function initMenu() {
     const touch = e.touches[0];
     touchStartX = touch.clientX;
     touchStartY = touch.clientY;
-    isSwiping = true;
-
+    isSwiping = false;
+    swipeLocked = false;
     menu.style.transition = "none";
   });
 
-  menu.addEventListener("touchmove", (e) => {
-    if (!isOpen || !isSwiping) return;
+  menu.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!isOpen) return;
 
-    const touch = e.touches[0];
-    const deltaX = touch.clientX - touchStartX;
-    const deltaY = touch.clientY - touchStartY;
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
 
-    // si geste vertical -> abandon swipe
-    if (Math.abs(deltaY) > Math.abs(deltaX)) {
-      isSwiping = false;
-      menu.style.transition = "";
-      return;
-    }
+      if (!swipeLocked) {
+        if (Math.abs(deltaX) < 8 && Math.abs(deltaY) < 8) return;
+        swipeLocked = true;
+        isSwiping = Math.abs(deltaX) > Math.abs(deltaY);
+        if (!isSwiping) {
+          menu.style.transition = "";
+          return;
+        }
+      }
 
-    // swipe gauche uniquement
-    if (deltaX < 0) {
-      currentTranslateX = deltaX;
-      menu.style.transform = `translateX(${deltaX}px)`;
-    }
-  });
+      if (!isSwiping) return;
+
+      if (deltaX < 0) {
+        e.preventDefault();
+        currentTranslateX = deltaX;
+        menu.style.transform = `translateX(${deltaX}px)`;
+      }
+    },
+    { passive: false },
+  );
 
   menu.addEventListener("touchend", () => {
     if (!isOpen) return;
@@ -301,129 +360,24 @@ export function initMenu() {
     menu.style.transition = "transform 0.25s ease";
     const threshold = -menu.offsetWidth * 0.3;
 
-    if (currentTranslateX < threshold) {
+    if (isSwiping && currentTranslateX < threshold) {
       closeMenu();
-    } else {
+    } else if (isSwiping) {
       menu.style.transform = "translateX(0)";
     }
 
     isSwiping = false;
+    swipeLocked = false;
     currentTranslateX = 0;
   });
 
-  // =======================
-  // RESET â€” MOIS
-  // =======================
-
-  function updateResetMonthLabel() {
-    resetMonthLabel.textContent = capitalizeFirst(
-      resetDate.toLocaleDateString("fr-FR", {
-        month: "long",
-        year: "numeric",
-      }),
-    );
-  }
-
-  function renderResetPanel() {
-    resetPanel.classList.add("hidden");
-    resetMonthPicker.classList.add("hidden");
-    resetConfirmMonth.classList.add("hidden");
-
-    if (resetState === "choice") resetPanel.classList.remove("hidden");
-    if (resetState === "month") {
-      resetPanel.classList.remove("hidden");
-      resetMonthPicker.classList.remove("hidden");
-      resetConfirmMonth.classList.remove("hidden");
-    }
-  }
-
-  resetBtn.addEventListener("click", () => {
-    if (resetState === "choice" || resetState === "month") {
-      resetState = "closed";
-      renderResetPanel();
-      return;
-    }
-
-    resetState = "choice";
-    renderResetPanel();
-    afficherResetEnHaut();
-  });
-
-  resetMonthBtn.addEventListener("click", () => {
-    resetDate = new Date();
-    resetState = "month";
-    updateResetMonthLabel();
-    renderResetPanel();
-    afficherResetEnHaut();
-  });
-
-  let holdTimer = null;
-  const HOLD_DURATION = 1200;
-
-  resetConfirmMonth.addEventListener("pointerdown", startHold);
-  resetConfirmMonth.addEventListener("pointerup", cancelHold);
-  resetConfirmMonth.addEventListener("pointercancel", cancelHold);
-
-  function startHold(e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    resetConfirmMonth.setPointerCapture(e.pointerId);
-
-    if (holdTimer) return;
-
-    resetConfirmMonth.classList.add("holding");
-    menu.classList.add("long-pressing");
-
-    holdTimer = setTimeout(async () => {
-      holdTimer = null;
-      resetConfirmMonth.classList.remove("holding");
-      menu.classList.remove("long-pressing");
-
-      const monthISO = `${resetDate.getFullYear()}-${String(
-        resetDate.getMonth() + 1,
-      ).padStart(2, "0")}`;
-
-      await clearPlanningMonth(monthISO);
-      showToast("Planning du mois reinitialise");
-
-      refreshCurrentView();
-
-      resetState = "closed";
-      renderResetPanel();
-      closeMenu();
-    }, HOLD_DURATION);
-  }
-
-  function cancelHold(e) {
-    if (e.pointerId !== undefined) {
-      resetConfirmMonth.releasePointerCapture(e.pointerId);
-    }
-
-    if (!holdTimer) return;
-
-    clearTimeout(holdTimer);
-    holdTimer = null;
-    resetConfirmMonth.classList.remove("holding");
-    menu.classList.remove("long-pressing");
-  }
-
-  // =======================
-  // RESET â€” NAVIGATION MOIS
-  // =======================
-
-  resetPrevMonth.addEventListener("click", (e) => {
-    e.stopPropagation();
-
-    resetDate.setMonth(resetDate.getMonth() - 1);
-    updateResetMonthLabel();
-  });
-
-  resetNextMonth.addEventListener("click", (e) => {
-    e.stopPropagation();
-
-    resetDate.setMonth(resetDate.getMonth() + 1);
-    updateResetMonthLabel();
+  menu.addEventListener("touchcancel", () => {
+    if (!isOpen) return;
+    menu.style.transition = "";
+    menu.style.transform = "translateX(0)";
+    isSwiping = false;
+    swipeLocked = false;
+    currentTranslateX = 0;
   });
 
   function setActiveMenu(action) {
@@ -443,8 +397,6 @@ export function initMenu() {
     const button = e.target.closest("button[data-action]");
     if (!button) return;
     const action = button.dataset.action;
-
-    if (resetState !== "closed") return;
 
     switch (action) {
       case "home":
@@ -478,10 +430,7 @@ export function initMenu() {
   // VERSION
   // =======================
 
-  const versionEl = document.getElementById("app-version");
-  if (versionEl) {
-    versionEl.textContent = `Version ${APP_VERSION}`;
-  }
+  // Version affichée supprimée avec le footer du menu
 }
 
 // =======================

@@ -42,7 +42,7 @@
       <button id="menu-toggle" aria-label="Menu" aria-expanded="false"></button>
       <div id="menu-overlay"></div>
 
-      <!-- MENU LATÉRAL (HORS FLUX) -->
+                  <!-- MENU LATÉRAL (HORS FLUX) -->
       <nav id="side-menu" aria-hidden="true">
         <button id="menu-close" aria-label="Fermer le menu"></button>
         <div id="side-menu-scroll">
@@ -74,12 +74,6 @@
               <span class="menu-icon icon-consult"></span>
               Consulter une date
             </button>
-
-            <div id="consult-date-form" class="menu-form hidden">
-              <label for="consult-date-input">Date</label>
-              <input type="date" id="consult-date-input" />
-              <button id="consult-date-submit">Valider</button>
-            </div>
 
             <button id="menu-conges">
               <span class="menu-icon icon-conges"></span>
@@ -124,47 +118,8 @@
               <span class="menu-icon icon-legal"></span>
               Mentions légales
             </button>
-
-            <div id="reset-panel" class="menu-form hidden">
-              <p class="reset-title">Réinitialisation du planning</p>
-
-              <button
-                id="reset-all"
-                class="danger menu-long-press"
-                type="button"
-              >
-                Maintenir pour tout réinitialiser
-              </button>
-
-              <button id="reset-month">Réinitialiser un mois</button>
-
-              <div id="reset-month-picker" class="hidden">
-                <div class="reset-month-nav">
-                  <button
-                    id="reset-prev-month"
-                    class="today-arrow arrow-left"
-                  ></button>
-                  <span id="reset-month-label"></span>
-                  <button
-                    id="reset-next-month"
-                    class="today-arrow arrow-right"
-                  ></button>
-                </div>
-
-                <button id="reset-confirm-month" class="danger menu-long-press">
-                  Maintenir pour réinitialiser le mois
-                </button>
-              </div>
-            </div>
           </div>
 
-          <div id="menu-footer">
-            <span id="app-version"></span>
-            <div class="menu-legal">
-              <span>© 2026 Jordan. Tous droits réservés.</span>
-              <a href="./LICENSE" aria-label="Licence">Licence</a>
-            </div>
-          </div>
         </div>
       </nav>
 
@@ -174,6 +129,8 @@
         <section id="view-guided-month" hidden></section>
         <section id="view-conges" hidden></section>
         <section id="view-season" hidden></section>
+        <section id="view-consult-date" hidden></section>
+        <section id="view-reset" hidden></section>
         <section id="view-suggestions" hidden></section>
         <section id="view-summary" hidden></section>
         <section id="view-phone-change" hidden></section>

@@ -39,11 +39,11 @@ export async function renderSeasonView() {
 
   const title = document.createElement("div");
   title.className = "settings-title";
-  title.textContent = "Periode saisonniere";
+  title.textContent = "Période saisonnière";
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
-  subtitle.textContent = "Definir une periode pour les services saisonniers";
+  subtitle.textContent = "Définir une période pour les services saisonniers";
 
   header.append(title, subtitle);
 
@@ -51,7 +51,7 @@ export async function renderSeasonView() {
   card.className = "settings-card";
 
   const labelStart = document.createElement("label");
-  labelStart.textContent = "Debut";
+  labelStart.textContent = "Début";
   const inputStart = document.createElement("input");
   inputStart.type = "date";
 
@@ -72,7 +72,7 @@ export async function renderSeasonView() {
   const resetBtn = document.createElement("button");
   resetBtn.className = "settings-btn danger";
   resetBtn.type = "button";
-  resetBtn.textContent = "Reinitialiser la saison";
+  resetBtn.textContent = "Réinitialiser la saison";
 
   actions.append(saveBtn, resetBtn);
 
@@ -94,7 +94,7 @@ export async function renderSeasonView() {
       start && end ? { saisonDebut: start, saisonFin: end } : {},
     );
     window.__homeSaisonConfig = start && end ? { saisonDebut: start, saisonFin: end } : null;
-    status.show("Saison enregistree");
+    status.show("Saison enregistrée");
   });
 
   resetBtn.addEventListener("click", async () => {
@@ -102,7 +102,7 @@ export async function renderSeasonView() {
     inputStart.value = "";
     inputEnd.value = "";
     window.__homeSaisonConfig = null;
-    status.show("Saison reinitialisee");
+    status.show("Saison réinitialisée");
   });
 }
 

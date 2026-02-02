@@ -18,6 +18,8 @@ import { renderPhoneChangeView } from "./components/phone-change.js";
 import { renderSummaryView } from "./components/summary.js";
 import { renderSuggestionsView } from "./components/suggestions.js";
 import { renderLegalView } from "./components/legal.js";
+import { renderConsultDateView } from "./components/consult-date.js";
+import { renderResetView } from "./components/reset.js";
 
 function getView(name) {
   return document.getElementById(`view-${name}`);
@@ -29,11 +31,13 @@ function hideAllViews() {
     "guided-month",
     "conges",
     "season",
+    "consult-date",
     "suggestions",
     "phone-change",
     "summary",
     "tetribus",
     "legal",
+    "reset",
   ].forEach((name) => {
     const el = getView(name);
     if (el) el.hidden = true;
@@ -77,6 +81,18 @@ export function showSeasonView() {
   const view = activateView("season");
   if (!view) return;
   renderSeasonView();
+}
+
+export function showConsultDateView() {
+  const view = activateView("consult-date");
+  if (!view) return;
+  renderConsultDateView();
+}
+
+export function showResetView() {
+  const view = activateView("reset");
+  if (!view) return;
+  renderResetView();
 }
 
 export function showSuggestionsView() {
@@ -130,6 +146,14 @@ export function refreshCurrentView() {
 
     case "season":
       showSeasonView();
+      break;
+
+    case "consult-date":
+      showConsultDateView();
+      break;
+
+    case "reset":
+      showResetView();
       break;
 
     case "suggestions":

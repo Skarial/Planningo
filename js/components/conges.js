@@ -73,7 +73,7 @@ export async function renderCongesView() {
   const addBtn = document.createElement("button");
   addBtn.className = "settings-btn";
   addBtn.type = "button";
-  addBtn.textContent = "Ajouter une periode";
+  addBtn.textContent = "Ajouter une période";
 
   const saveBtn = document.createElement("button");
   saveBtn.className = "settings-btn primary";
@@ -100,7 +100,7 @@ export async function renderCongesView() {
 
     const title = document.createElement("div");
     title.className = "settings-period-title";
-    title.textContent = `Periode ${index + 1}`;
+    title.textContent = `Période ${index + 1}`;
 
     const removeBtn = document.createElement("button");
     removeBtn.className = "settings-period-remove";
@@ -113,7 +113,7 @@ export async function renderCongesView() {
     grid.className = "settings-period-grid";
 
     const labelStart = document.createElement("label");
-    labelStart.textContent = "Debut";
+    labelStart.textContent = "Début";
     const inputStart = document.createElement("input");
     inputStart.type = "date";
 
@@ -140,7 +140,7 @@ export async function renderCongesView() {
     const rows = periodsContainer.querySelectorAll(".settings-period");
     rows.forEach((row, idx) => {
       const title = row.querySelector(".settings-period-title");
-      if (title) title.textContent = `Periode ${idx + 1}`;
+      if (title) title.textContent = `Période ${idx + 1}`;
     });
   }
 

@@ -6,6 +6,6 @@ import { PERIOD_STATE } from "../domain/periods.js";
  */
 export function getPeriodLabel(periodState) {
   return periodState === PERIOD_STATE.SEASONAL
-    ? "Periode saisonniere"
-    : "Periode principale";
+    ? "Période saisonnière"
+    : "Période principale";
 }

@@ -18,7 +18,7 @@ export async function renderLegalView() {
 
   const title = document.createElement("div");
   title.className = "settings-title";
-  title.textContent = "Mentions legales";
+  title.textContent = "Mentions légales";
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
@@ -33,12 +33,12 @@ export async function renderLegalView() {
   const summary = document.createElement("div");
   summary.className = "legal-summary";
   summary.textContent =
-    "Tous droits reserves. Aucune licence n'est accordee sans autorisation ecrite.";
+    "Tous droits réservés. Aucune licence n'est accordée sans autorisation écrite.";
 
   const link = document.createElement("a");
   link.className = "legal-link";
   link.href = "./LICENSE";
-  link.textContent = "Ouvrir la licence complete (LICENSE)";
+  link.textContent = "Ouvrir la licence complète (LICENSE)";
 
   const pre = document.createElement("pre");
   pre.className = "legal-text";
@@ -55,7 +55,6 @@ export async function renderLegalView() {
     pre.textContent = text.trim();
   } catch (err) {
     pre.textContent =
-      "Le texte de licence est disponible a la racine du projet (LICENSE).";
+      "Le texte de licence est disponible à la racine du projet (LICENSE).";
   }
 }
-

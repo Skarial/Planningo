@@ -39,7 +39,7 @@ function render(deviceId) {
       <div class="activation-card">
         <div class="activation-title">Activation requise</div>
         <div class="activation-subtitle">
-          Un code dâ€™activation est nÃ©cessaire pour utiliser lâ€™application.
+          Un code d’activation est nécessaire pour utiliser l’application.
         </div>
 
         <div class="activation-device">
@@ -49,7 +49,7 @@ function render(deviceId) {
             <button id="copy-device-id" class="activation-copy">Copier</button>
           </div>
           <p id="copy-feedback" class="activation-info" hidden>
-            Device ID copiÃ©
+            Device ID copié
           </p>
         </div>
 
@@ -57,7 +57,7 @@ function render(deviceId) {
           type="text"
           id="activation-code"
           class="activation-input"
-          placeholder="Code dâ€™activation"
+          placeholder="Code d’activation"
           autocomplete="off"
         />
 
@@ -66,15 +66,15 @@ function render(deviceId) {
         </button>
 
         <button id="activation-import" class="activation-secondary">
-          Importer mes donnÃ©es
+          Importer mes données
         </button>
 
         <p id="activation-error" class="activation-error" hidden>
-          Code invalide. VÃ©rifiez la saisie ou le Device ID transmis.
+          Code invalide. Vérifiez la saisie ou le Device ID transmis.
         </p>
 
         <p id="activation-success" class="activation-success" hidden>
-          Activation rÃ©ussie. RedÃ©marrageâ€¦
+          Activation réussie. Redémarrage…
         </p>
       </div>
     </div>
@@ -93,11 +93,11 @@ function bindEvents(root, deviceId) {
   const importBtn = root.querySelector("#activation-import");
 
   importBtn.addEventListener("click", async () => {
-    root.innerHTML = "<p>Restauration des donnÃ©esâ€¦</p>";
+    root.innerHTML = "<p>Restauration des données…</p>";
     try {
       await importAllData();
     } catch (e) {
-      alert("Import des donnÃ©es impossible");
+      alert("Import des données impossible");
       location.reload();
     }
   });
@@ -136,7 +136,7 @@ function bindEvents(root, deviceId) {
 
     await setConfig("activation_ok", "true");
 
-    // âœ… version courante considÃ©rÃ©e comme dÃ©jÃ  vue
+    // ✅ version courante considérée comme déjà vue
     localStorage.setItem("lastSeenAppVersion", APP_VERSION);
 
     success.hidden = false;
@@ -145,7 +145,7 @@ function bindEvents(root, deviceId) {
 
   button.addEventListener("click", validate);
 
-  // Touche EntrÃ©e
+  // Touche Entrée
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       validate();

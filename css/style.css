@@ -1139,6 +1139,10 @@ textarea {
   transform: translateX(0);
 }
 
+#side-menu.open.opening-swipe {
+  transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
 #menu-close {
   position: absolute;
   top: calc(0.75rem + var(--safe-top));
@@ -1190,6 +1194,8 @@ textarea {
     calc(24px + var(--safe-bottom))
     calc(22px + var(--safe-left));
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
 .menu-title {
@@ -1409,6 +1415,31 @@ textarea {
   background: transparent;
   color: #9b4b4b;
   border-color: rgba(155, 75, 75, 0.4);
+}
+
+.settings-btn.holdable {
+  position: relative;
+  overflow: hidden;
+}
+
+.settings-btn.holdable .hold-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 0%;
+  background: #b25a5a;
+  pointer-events: none;
+}
+
+.settings-btn.holdable.holding .hold-progress {
+  animation: longPressFill var(--long-press-duration, 1.2s) linear forwards;
+}
+
+.settings-btn.holding {
+  background: #b25a5a;
+  color: #fff;
+  border-color: #b25a5a;
 }
 
 .settings-btn.danger:active {

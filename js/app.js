@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.1";
+export const APP_VERSION = "2.0.2";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -85,6 +85,26 @@ function showToast(message) {
 function disablePullToRefresh() {
   let startY = 0;
 
+  function isScrollableElement(el) {
+    if (!el || el === document.body || el === document.documentElement) {
+      return false;
+    }
+    const style = window.getComputedStyle(el);
+    const overflowY = style.overflowY;
+    if (overflowY !== "auto" && overflowY !== "scroll") return false;
+    return el.scrollHeight > el.clientHeight;
+  }
+
+  function isInsideScrollableArea(target) {
+    if (!target || !target.closest) return false;
+    let node = target;
+    while (node && node !== document.body) {
+      if (isScrollableElement(node)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
   document.addEventListener(
     "touchstart",
     (e) => {
@@ -100,6 +120,7 @@ function disablePullToRefresh() {
     (e) => {
       if (!e.touches || e.touches.length === 0) return;
       if (!e.cancelable) return;
+      if (isInsideScrollableArea(e.target)) return;
       const currentY = e.touches[0].clientY;
       const pullingDown = currentY > startY;
 
@@ -159,7 +180,7 @@ function showVersionBanner(prevVersion, nextVersion) {
   banner.innerHTML = `
     <div class="update-content">
       <div class="update-text">
-        <strong>Mise a jour installee</strong>
+        <strong>Mise à jour installée</strong>
         <span>Version ${prevVersion} -> ${nextVersion}</span>
       </div>
       <div class="update-actions">
@@ -194,12 +215,12 @@ function showUpdateBanner(registration) {
   banner.innerHTML = `
     <div class="update-content">
       <div class="update-text">
-        <strong>Mise a jour disponible</strong>
-        <span>Une nouvelle version de l'application est prete.</span>
+        <strong>Mise à jour disponible</strong>
+        <span>Une nouvelle version de l'application est prête.</span>
       </div>
       <div class="update-actions">
         <button class="btn-secondary" id="update-dismiss">Plus tard</button>
-        <button class="btn-primary" id="update-reload">Mettre a jour</button>
+        <button class="btn-primary" id="update-reload">Mettre à jour</button>
       </div>
     </div>
   `;
@@ -218,6 +239,7 @@ function showUpdateBanner(registration) {
     banner.remove();
   });
 }
+
 
 
 
