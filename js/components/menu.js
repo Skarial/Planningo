@@ -257,6 +257,8 @@ export function initMenu() {
         if (e.cancelable) {
           e.preventDefault();
         }
+        document.body.classList.add("menu-open");
+        menu.classList.add("opening");
         overlay.classList.add("open");
         const translateX = -menuWidth + clampedX;
         menu.style.transform = `translateX(${translateX}px)`;
@@ -282,12 +284,15 @@ export function initMenu() {
       menu.style.transition = "";
 
       if (openedEnough) {
+        menu.classList.remove("opening");
         menu.classList.add("opening-swipe");
         menu.style.transform = "";
         openMenu();
       } else {
         menu.style.transform = "";
         overlay.classList.remove("open");
+        menu.classList.remove("opening");
+        document.body.classList.remove("menu-open");
       }
 
       edgeTracking = false;
@@ -303,6 +308,8 @@ export function initMenu() {
       menu.style.transition = "";
       menu.style.transform = "";
       overlay.classList.remove("open");
+      menu.classList.remove("opening");
+      document.body.classList.remove("menu-open");
       edgeTracking = false;
       edgeLocked = false;
       edgeDragging = false;

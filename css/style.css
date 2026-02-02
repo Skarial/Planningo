@@ -1198,7 +1198,8 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18" stroke="black" stroke-width="3" stroke-linecap="round"/><line x1="18" y1="6" x2="6" y2="18" stroke="black" stroke-width="3" stroke-linecap="round"/></svg>');
 }
 
-#side-menu.open #menu-close {
+#side-menu.open #menu-close,
+#side-menu.opening #menu-close {
   opacity: 1;
   pointer-events: auto;
 }
@@ -1643,6 +1644,19 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   background: #e5e5e5;
   color: var(--color-ink);
   border: 1px solid #d2d2d2;
+}
+
+.update-actions #version-reload,
+.update-actions #update-reload {
+  background: #cf885f;
+  color: #ffffff;
+  border: 1px solid #cf885f;
+}
+
+.update-actions #version-dismiss {
+  background: #3a3a3a;
+  color: #ffffff;
+  border: 1px solid #3a3a3a;
 }
 
 .update-actions button:active {
