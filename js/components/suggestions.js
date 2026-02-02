@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.

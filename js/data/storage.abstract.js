@@ -1,11 +1,11 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
 */
 
 // js/data/storage.abstract.js
-// Point dâ€™entrÃ©e UNIQUE pour le stockage abstrait (domain-compatible)
+// Point dentre UNIQUE pour le stockage abstrait (domain-compatible)
 
 import { getStorageAdapter } from "./storage.selector.js";
 

@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -28,10 +28,10 @@ export function registerServiceWorker(onUpdateAvailable) {
         }
       };
 
-      // Affichage immediat si une version attend déjà
+      // Affichage immediat si une version attend dj
       notifyIfWaiting();
 
-      // Détection fiable d'une nouvelle version
+      // Dtection fiable d'une nouvelle version
       swRegistration.addEventListener("updatefound", () => {
         const newWorker = swRegistration.installing;
         if (!newWorker) return;

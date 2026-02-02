@@ -109,7 +109,7 @@ export function formatServiceLabel(serviceCode) {
   if (serviceCode === "DM") return "DM";
   if (serviceCode === "DAM") return "DAM";
 
-  // 🔁 Affichage TDx → TAD x
+  //  Affichage TDx  TAD x
   if (/^TD\d+$/i.test(serviceCode)) {
     return serviceCode.replace(/^TD/i, "TAD ");
   }

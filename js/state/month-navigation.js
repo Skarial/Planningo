@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -8,7 +8,7 @@ let currentYear = null;
 let currentMonthIndex = null;
 
 /**
- * Initialise le mois courant Ã  partir dâ€™une date ISO
+ * Initialise le mois courant  partir dune date ISO
  */
 export function initMonthFromDateISO(dateISO) {
   if (!dateISO) return;
@@ -29,7 +29,7 @@ export function getCurrentMonth() {
 }
 
 /**
- * Mois prÃ©cÃ©dent
+ * Mois prcdent
  */
 export function goToPreviousMonth() {
   if (currentMonthIndex === null) return;

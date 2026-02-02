@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -136,7 +136,7 @@ function bindEvents(root, deviceId) {
 
     await setConfig("activation_ok", "true");
 
-    // ✅ version courante considérée comme déjà vue
+    //  version courante considre comme dj vue
     localStorage.setItem("lastSeenAppVersion", APP_VERSION);
 
     success.hidden = false;
@@ -145,7 +145,7 @@ function bindEvents(root, deviceId) {
 
   button.addEventListener("click", validate);
 
-  // Touche Entrée
+  // Touche Entre
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       validate();

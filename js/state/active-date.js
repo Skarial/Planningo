@@ -1,11 +1,11 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
 */
 
 // js/state/active-date.js
-// Ã‰tat global : date active (ISO yyyy-mm-dd)
+// tat global : date active (ISO yyyy-mm-dd)
 
 let activeDateISO = null;
 

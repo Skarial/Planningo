@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.2";
+export const APP_VERSION = "2.0.3";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -29,7 +29,9 @@ import { initMenu } from "./components/menu.js";
 window.addEventListener("DOMContentLoaded", initApp);
 
 async function initApp() {
-  // 0️⃣ Activation (bloquante)
+  resetScrollState();
+
+  // 0 Activation (bloquante)
   const activation = await getConfig("activation_ok");
   const imported = await getConfig("imported_ok");
   if (activation?.value !== "true" && imported?.value !== "true") {
@@ -37,37 +39,45 @@ async function initApp() {
     return;
   }
 
-  // 1️⃣ Date active (source unique)
+  // 1 Date active (source unique)
   if (!getActiveDateISO()) {
     setActiveDateISO(toISODateLocal(new Date()));
   }
 
-  // 1b️⃣ Banner version (si changement)
+  // 1b Banner version (si changement)
   notifyVersionChange();
 
-  // 2️⃣ UI principale
+  // 2 UI principale
   initMenu();
   showHome();
 
-  // 3️⃣ Services non bloquants
+  // 3 Services non bloquants
   initServicesIfNeeded();
 
-  // 4️⃣ Service Worker + bannière
+  // 4 Service Worker + bannire
   await registerServiceWorker(showUpdateBanner);
 
-  // 4b️⃣ Debug : version DB (console uniquement)
+  // 4b Debug : version DB (console uniquement)
   console.info(`[DB] version ${DB_VERSION}`);
 
-  // 5️⃣ Bloquer le "pull-to-refresh" mobile
+  // 5 Bloquer le "pull-to-refresh" mobile
   disablePullToRefresh();
 
-  // 6️⃣ Bloquer zoom natif (double tap / pinch)
+  // 6 Bloquer zoom natif (double tap / pinch)
   disableNativeZoom();
 
   // Toast migration (si necessaire)
   window.addEventListener("db:migrated", () => {
     showToast("Migration terminée");
   });
+}
+
+function resetScrollState() {
+  document.body.classList.remove("menu-open");
+  document.body.style.overflow = "";
+  document.documentElement.style.overflow = "";
+  window.scrollTo(0, 0);
+  requestAnimationFrame(() => window.scrollTo(0, 0));
 }
 
 function showToast(message) {
@@ -158,7 +168,7 @@ function disableNativeZoom() {
 }
 
 // =======================
-// BANNIÈRE DE MISE À JOUR
+// BANNIRE DE MISE  JOUR
 // =======================
 
 function notifyVersionChange() {
@@ -184,8 +194,8 @@ function showVersionBanner(prevVersion, nextVersion) {
         <span>Version ${prevVersion} -> ${nextVersion}</span>
       </div>
       <div class="update-actions">
-        <button class="btn-secondary" id="version-reload">Recharger</button>
-        <button class="btn-primary" id="version-dismiss">OK</button>
+        <button class="btn-primary" id="version-reload">Recharger</button>
+        <button class="btn-secondary" id="version-dismiss">OK</button>
       </div>
     </div>
   `;
@@ -239,6 +249,7 @@ function showUpdateBanner(registration) {
     banner.remove();
   });
 }
+
 
 
 

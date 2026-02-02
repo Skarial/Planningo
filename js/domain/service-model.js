@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -6,7 +6,7 @@
 
 // js/domain/service-model.js
 /**
- * ModÃ¨le mÃ©tier dâ€™un service journalier
+ * Modle mtier dun service journalier
  */
 
 export function createService({

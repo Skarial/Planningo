@@ -1,28 +1,28 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
 */
 
 // services-availability.js
-// DÃ©termine si un service est autorisÃ© selon le contexte (saison, rÃ¨gles mÃ©tier)
+// Dtermine si un service est autoris selon le contexte (saison, rgles mtier)
 
 export function isServiceAllowed(service, seasonConfigured) {
-  // Services toujours autorisÃ©s
+  // Services toujours autoriss
   if (!service) return false;
   if (service.code === "REPOS") return true;
   if (service.code === "DM") return true;
   if (service.code === "DAM") return true;
   if (service.code === "TAD") return true;
 
-  // Si aucune saison nâ€™est configurÃ©e â†’ tout autorisÃ©
+  // Si aucune saison nest configure  tout autoris
   if (!seasonConfigured) return true;
 
-  // Sinon, appliquer les rÃ¨gles saisonniÃ¨res
+  // Sinon, appliquer les rgles saisonnires
   if (service.saisonnier === true) return true;
   if (service.saisonnier === false) return false;
 
-  // Par dÃ©faut : autorisÃ©
+  // Par dfaut : autoris
   return true;
 }
 

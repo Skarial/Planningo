@@ -1,12 +1,12 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
 */
 
 // js/domain/conges.js
-// Gestion centrale des congÃ©s (logique mÃ©tier pure, sans UI)
-// Supporte plusieurs pÃ©riodes, avec compatibilitÃ© ancien format.
+// Gestion centrale des congs (logique mtier pure, sans UI)
+// Supporte plusieurs priodes, avec compatibilit ancien format.
 
 import { toISODateLocal } from "../utils.js";
 
@@ -27,7 +27,7 @@ export function parseFRDate(input) {
 
   const date = new Date(year, month, day);
 
-  // validation rÃ©elle de la date
+  // validation relle de la date
   if (
     date.getFullYear() !== year ||
     date.getMonth() !== month ||
@@ -40,7 +40,7 @@ export function parseFRDate(input) {
 }
 
 // =======================
-// LECTURE CONGÃ‰S CONFIG
+// LECTURE CONGS CONFIG
 // =======================
 
 function cloneDate(d) {
@@ -105,7 +105,7 @@ export function getCongesPeriod(congesConfig) {
 }
 
 // =======================
-// TEST DATE EN CONGÃ‰S
+// TEST DATE EN CONGS
 // =======================
 
 export function isDateInConges(date, congesConfig) {
@@ -125,23 +125,23 @@ export function isDateInConges(date, congesConfig) {
 }
 
 // =======================
-// LOGIQUE SAISIE GUIDÃ‰E
+// LOGIQUE SAISIE GUIDE
 // =======================
 
 /**
  * Calcule le premier jour saisissable du mois
- * selon la pÃ©riode de congÃ©s.
+ * selon la priode de congs.
  *
- * CAS GÃ‰RÃ‰S (CERTAIN) :
- * - pas de congÃ©s â†’ jour 1
- * - congÃ©s hors mois â†’ jour 1
- * - congÃ©s dÃ©but mois â†’ lendemain de fin congÃ©s
- * - congÃ©s milieu mois â†’ jour 1
+ * CAS GRS (CERTAIN) :
+ * - pas de congs  jour 1
+ * - congs hors mois  jour 1
+ * - congs dbut mois  lendemain de fin congs
+ * - congs milieu mois  jour 1
  */
-// âš ï¸ IMPORTANT
-// Les congÃ©s en milieu de mois sont gÃ©rÃ©s dynamiquement
+//  IMPORTANT
+// Les congs en milieu de mois sont grs dynamiquement
 // par renderDay() via isDateInConges()
-// Cette fonction ne gÃ¨re QUE le point de dÃ©part initial
+// Cette fonction ne gre QUE le point de dpart initial
 
 export function getGuidedStartDay(year, monthIndex, congesConfig) {
   const periods = getCongesPeriods(congesConfig);
@@ -150,7 +150,7 @@ export function getGuidedStartDay(year, monthIndex, congesConfig) {
   const monthStart = new Date(year, monthIndex, 1);
   const monthEnd = new Date(year, monthIndex + 1, 0);
 
-  // Cherche une pÃ©riode qui couvre le dÃ©but du mois
+  // Cherche une priode qui couvre le dbut du mois
   const covering = periods.filter(
     (p) => p.start <= monthStart && p.end >= monthStart,
   );
@@ -161,7 +161,7 @@ export function getGuidedStartDay(year, monthIndex, congesConfig) {
   const nextDay = addDays(maxEnd, 1);
 
   if (nextDay > monthEnd) {
-    // mois entiÃ¨rement en congÃ©s
+    // mois entirement en congs
     return null;
   }
 
@@ -169,7 +169,7 @@ export function getGuidedStartDay(year, monthIndex, congesConfig) {
 }
 
 // =======================
-// UTILITAIRE : LISTE JOURS BLOQUÃ‰S
+// UTILITAIRE : LISTE JOURS BLOQUS
 // =======================
 
 export function getCongesDaysISOForMonth(year, monthIndex, congesConfig) {

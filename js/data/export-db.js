@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -43,7 +43,7 @@ export async function exportDatabase() {
 }
 
 // =======================
-// LECTURE Dâ€™UN STORE
+// LECTURE DUN STORE
 // =======================
 
 function readStore(db, storeName) {

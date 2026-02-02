@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -74,7 +74,7 @@ export function initMenu() {
   }
 
   // =======================
-  // MENU â€” DOM
+  // MENU  DOM
   // =======================
 
   const menu = document.getElementById("side-menu");
@@ -207,7 +207,7 @@ export function initMenu() {
   overlay.addEventListener("click", closeMenu);
 
   // =======================
-  // SWIPE DROITE â€” OUVERTURE MENU (EDGE)
+  // SWIPE DROITE  OUVERTURE MENU (EDGE)
   // =======================
 
   document.addEventListener(
@@ -310,7 +310,7 @@ export function initMenu() {
     { passive: true },
   );
   // =======================
-  // SWIPE GAUCHE â€” FERMETURE MENU
+  // SWIPE GAUCHE  FERMETURE MENU
   // =======================
 
   menu.addEventListener("touchstart", (e) => {
@@ -430,7 +430,7 @@ export function initMenu() {
   // VERSION
   // =======================
 
-  // Version affichée supprimée avec le footer du menu
+  // Version affiche supprime avec le footer du menu
 }
 
 // =======================

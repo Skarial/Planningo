@@ -76,6 +76,28 @@ textarea {
   appearance: none;
 }
 
+input[type="date"],
+input[type="month"] {
+  -webkit-appearance: auto;
+  appearance: auto;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
+
+@supports (-webkit-touch-callout: none) {
+  input[type="date"],
+  input[type="month"] {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" ry="2" fill="none" stroke="black" stroke-width="2"/><line x1="3" y1="9" x2="21" y2="9" stroke="black" stroke-width="2"/><line x1="8" y1="2.5" x2="8" y2="6" stroke="black" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="2.5" x2="16" y2="6" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 18px;
+    padding-right: 36px;
+  }
+}
+
 /* ==========================================================================
    2. SCROLL AUTORISÉ
    ========================================================================== */
@@ -1718,16 +1740,20 @@ body.menu-open #menu-toggle {
   flex: 1 1 0;
   min-height: 0;
   display: flex;
+  overflow: hidden;
 }
 
 #app-main > section {
   flex: 1 1 auto;
   display: none;
+  overflow: hidden;
 }
 
 #app-main > section:not([hidden]) {
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .home-day-summary {

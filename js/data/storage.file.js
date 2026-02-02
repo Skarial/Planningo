@@ -1,11 +1,11 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
 */
 
 // js/data/storage.file.js
-// Adaptateur stockage "fichier" â€” MOCK (en mÃ©moire)
+// Adaptateur stockage "fichier"  MOCK (en mmoire)
 // Respecte strictement storage.interface.js
 
 let fileData = {};

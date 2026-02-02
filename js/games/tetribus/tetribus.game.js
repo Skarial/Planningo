@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -15,10 +15,10 @@ export const Tetribus = {
   FAST_DROP_SPEED: 50,
   pieceBag: [],
   refillBag: function () {
-    // crÃ©er une copie des piÃ¨ces
+    // crer une copie des pices
     this.pieceBag = [...this.pieces];
 
-    // mÃ©lange Fisher-Yates
+    // mlange Fisher-Yates
     for (let i = this.pieceBag.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.pieceBag[i], this.pieceBag[j]] = [
@@ -217,7 +217,7 @@ export const Tetribus = {
   },
 
   start: function () {
-    // ðŸ”¹ Charger le meilleur score sauvegardÃ©
+    //  Charger le meilleur score sauvegard
     const savedHighScore = localStorage.getItem("tetribus_high_score");
     this.highScore = savedHighScore ? Number(savedHighScore) : 0;
     this.refillBag();
@@ -479,7 +479,7 @@ export const Tetribus = {
     // Bouton GAUCHE / DROITE (pointer events only to avoid double trigger)
     bindMoveButton(btnLeft, () => this.moveLeft());
     bindMoveButton(btnRight, () => this.moveRight());
-    // Bouton ROTATION (pointer events uniquement pour éviter les doubles triggers)
+    // Bouton ROTATION (pointer events uniquement pour viter les doubles triggers)
     let rotateTimeout = null;
     let isLongPress = false;
 

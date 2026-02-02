@@ -1,11 +1,11 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
 */
 
 // js/state/home-mode.js
-// Ã‰tat UI local Ã  HOME (vue centrale)
+// tat UI local  HOME (vue centrale)
 
 export const HOME_MODE = {
   VIEW: "VIEW",

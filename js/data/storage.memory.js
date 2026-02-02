@@ -1,11 +1,11 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
 */
 
 // js/data/storage.memory.js
-// ImplÃ©mentation mÃ©moire du contrat storage.interface
+// Implmentation mmoire du contrat storage.interface
 
 const memory = new Map();
 

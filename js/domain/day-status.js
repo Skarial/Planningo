@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -6,19 +6,19 @@
 
 // js/domain/day-status.js
 /**
- * Statuts mÃ©tier possibles pour un jour
- * Source unique de vÃ©ritÃ©
+ * Statuts mtier possibles pour un jour
+ * Source unique de vrit
  */
 
 export const DAY_STATUS = {
-  WORKED: "worked", // jour travaillÃ© (1 service)
+  WORKED: "worked", // jour travaill (1 service)
   REST: "rest", // jour de repos
   EMPTY: "empty", // jamais saisi
   FUTURE_EMPTY: "future_empty", // futur sans saisie
 };
 
 /**
- * DÃ©termine le statut mÃ©tier dâ€™un jour
+ * Dtermine le statut mtier dun jour
  * @param {Object|null} service - service du jour ou null
  * @param {Date} date
  * @param {Date} today

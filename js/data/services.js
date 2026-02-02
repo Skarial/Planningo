@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -21,7 +21,7 @@ const SCORE_WEIGHTS = {
 
 const SUGGESTION_LIMIT = 8;
 
-// Services toujours disponibles (pas de pÃ©riodes)
+// Services toujours disponibles (pas de priodes)
 const ALWAYS_AVAILABLE_CODES = ["REPOS", "DM", "DAM", "TAD", "FORMATION"];
 
 // =======================
@@ -67,10 +67,10 @@ function sortByScore(scoredServices) {
 /**
  * Suggestions clavier pour la saisie du planning
  *
- * RÃˆGLES :
- * - filtrage texte dâ€™abord
- * - REPOS / DM / DAM / TAD toujours autorisÃ©s
- * - autres services filtrÃ©s par pÃ©riode active
+ * RGLES :
+ * - filtrage texte dabord
+ * - REPOS / DM / DAM / TAD toujours autoriss
+ * - autres services filtrs par priode active
  */
 export async function suggestServices({
   input,
@@ -87,7 +87,7 @@ export async function suggestServices({
   const eligible = [...virtualServices, ...services].filter((service) => {
     const code = service.code.toUpperCase();
 
-    // 1ï¸âƒ£ FILTRAGE PAR TEXTE (RÃˆGLE CLAVIER)
+    // 1 FILTRAGE PAR TEXTE (RGLE CLAVIER)
     // - lettres : startsWith UNIQUEMENT
     // - chiffres : startsWith OU includes
     const isNumericQuery = /^[0-9]+$/.test(query);
@@ -102,12 +102,12 @@ export async function suggestServices({
       }
     }
 
-    // 2ï¸âƒ£ SERVICES TOUJOURS DISPONIBLES
+    // 2 SERVICES TOUJOURS DISPONIBLES
     if (ALWAYS_AVAILABLE_CODES.includes(code)) {
       return true;
     }
 
-    // 3ï¸âƒ£ SERVICES DÃ‰PENDANTS DE LA PÃ‰RIODE ACTIVE
+    // 3 SERVICES DPENDANTS DE LA PRIODE ACTIVE
     return serviceHasActivePeriode(service, activePeriode);
   });
 

@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -85,7 +85,7 @@ export function showTetribus() {
   document.getElementById("side-menu").classList.add("hidden");
   document.getElementById("menu-overlay").classList.add("hidden");
 
-  // Si on revient trop vite et que le canvas est detachÃ©, on reconstruit
+  // Si on revient trop vite et que le canvas est detach, on reconstruit
   const canvasMissing = !document.getElementById("game-canvas");
   if (started && canvasMissing) {
     started = false;
@@ -96,7 +96,7 @@ export function showTetribus() {
     started = true;
     Tetribus.init(); // 2) le jeu demarre
 
-    // 3) ICI â€” PAS AILLEURS
+    // 3) ICI  PAS AILLEURS
     document.getElementById("tetribus-back").addEventListener("click", () => {
       // 1) pause du jeu (etat conserve)
       Tetribus.pause();

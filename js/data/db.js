@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -276,7 +276,7 @@ window.savePlanningEntry = async function (entry) {
     });
   });
 
-  // nettoyage aprÃ¨s Ã©criture
+  // nettoyage aprs criture
   await enforceMaxMonthsRetention(36);
 };
 
@@ -325,7 +325,7 @@ function sortPlanningResults(results) {
 }
 
 // =======================
-// VERROUILLAGE MOIS PASSÃ‰S
+// VERROUILLAGE MOIS PASSS
 // =======================
 
 window.lockPastMonths = async function () {

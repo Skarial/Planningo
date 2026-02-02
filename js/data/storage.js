@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -50,7 +50,7 @@ export async function deletePlanningEntry(dateISO) {
 export async function savePlanningEntry(entry) {
   const { db } = await openDB();
 
-  // RÃˆGLE MÃ‰TIER : service vide â†’ suppression
+  // RGLE MTIER : service vide  suppression
   if (!entry.serviceCode) {
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORES.PLANNING, "readwrite");

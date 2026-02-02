@@ -21,7 +21,7 @@ function capitalizeFirst(input) {
 }
 
 // =======================
-// VUE : PRÉPARER MOIS SUIVANT
+// VUE : PRPARER MOIS SUIVANT
 // =======================
 async function findFirstIncompleteMonth(startDate) {
   const base = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
@@ -43,7 +43,7 @@ async function findFirstIncompleteMonth(startDate) {
     }
   }
 
-  return base; // fallback de sécurité
+  return base; // fallback de scurit
 }
 
 let guidedMonthDate = null;
@@ -84,7 +84,7 @@ export async function showGuidedMonth(forcedDate = null) {
 
       const entry = await getPlanningEntry(iso);
 
-      // ✅ JOUR CONSIDÉRÉ COMME REMPLI MÊME SI REPOS
+      //  JOUR CONSIDR COMME REMPLI MME SI REPOS
       if (entry && typeof entry.serviceCode === "string") {
         currentDay = d + 1;
         return;
@@ -249,16 +249,16 @@ export async function showGuidedMonth(forcedDate = null) {
 
   await resumeCurrentDayFromDB();
   // =======================
-  // CONGÉS — AJUSTEMENT DÉMARRAGE
+  // CONGS  AJUSTEMENT DMARRAGE
   // =======================
 
   const guidedStartDay = await getGuidedStartDay(year, monthIndex);
 
-  // mois entièrement en congés
+  // mois entirement en congs
   if (guidedStartDay === null) {
     currentDay = daysInMonth + 1;
   } else {
-    // si aucun jour encore saisi, forcer le départ
+    // si aucun jour encore saisi, forcer le dpart
     if (currentDay === 1 && guidedStartDay > 1) {
       currentDay = guidedStartDay;
     }
@@ -272,7 +272,7 @@ export async function showGuidedMonth(forcedDate = null) {
 
   async function renderDay() {
     // =======================
-    // CONGÉS — SAUT AUTOMATIQUE
+    // CONGS  SAUT AUTOMATIQUE
     // =======================
 
     while (currentDay <= daysInMonth) {
@@ -355,14 +355,14 @@ export async function showGuidedMonth(forcedDate = null) {
         otherGrid.appendChild(btn);
       });
 
-    // Bouton annuler jour précédent
+    // Bouton annuler jour prcdent
     if (currentDay > 1) {
       const cancelBtn = document.createElement("button");
       cancelBtn.textContent = "← Annuler le jour précédent";
       cancelBtn.className = "guided-cancel-btn";
 
       cancelBtn.onclick = async () => {
-        // Jour à annuler = jour précédent
+        // Jour  annuler = jour prcdent
         const dayToUndo = currentDay - 1;
 
         if (dayToUndo < 1) return;
@@ -370,7 +370,7 @@ export async function showGuidedMonth(forcedDate = null) {
         const date = new Date(year, monthIndex, dayToUndo);
         const iso = toISODateLocal(date);
 
-        // 🔁 ROLLBACK DB : retour à REPOS
+        //  ROLLBACK DB : retour  REPOS
         await savePlanningEntry({
           date: iso,
           serviceCode: "REPOS",
@@ -439,7 +439,7 @@ export async function showGuidedMonth(forcedDate = null) {
       const date = new Date(year, monthIndex, currentDay);
       const iso = toISODateLocal(date);
 
-      // 🔁 Conversion TADx → TDx pour l’enregistrement
+      //  Conversion TADx  TDx pour lenregistrement
       const serviceCodeToSave = code.startsWith("TAD")
         ? code.replace(/^TAD/, "TD")
         : code;

@@ -1,11 +1,11 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
 */
 
 /**
- * Ã‰tats mÃ©tier possibles pour la pÃ©riode globale
+ * tats mtier possibles pour la priode globale
  */
 export const PERIOD_STATE = {
   DEFAULT: "default",
@@ -33,7 +33,7 @@ function parseISODate(input) {
 }
 
 /**
- * Indique si une saison est rÃ©ellement configurÃ©e
+ * Indique si une saison est rellement configure
  */
 export function isSeasonConfigured(saisonConfig) {
   const s = saisonConfig;
@@ -48,11 +48,11 @@ export function isSeasonConfigured(saisonConfig) {
 }
 
 /**
- * Retourne lâ€™Ã©tat mÃ©tier de la pÃ©riode globale
+ * Retourne ltat mtier de la priode globale
  *
- * RÃˆGLE MÃ‰TIER (inchangÃ©e) :
- * - saison NON configurÃ©e â†’ DEFAULT
- * - saison configurÃ©e     â†’ SEASONAL
+ * RGLE MTIER (inchange) :
+ * - saison NON configure  DEFAULT
+ * - saison configure      SEASONAL
  */
 export function getPeriodState(saisonConfig) {
   return isSeasonConfigured(saisonConfig)

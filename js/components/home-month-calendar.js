@@ -1,4 +1,4 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -13,11 +13,11 @@ export function renderHomeMonthCalendar(container, deps) {
   const calendar = getMonthCalendar(deps);
   if (!calendar) return;
 
-  // âœ… 1. WRAPPER DÃ‰CLARÃ‰ EN PREMIER
+  //  1. WRAPPER DCLAR EN PREMIER
   const wrapper = document.createElement("div");
   wrapper.className = "home-month";
 
-  // âœ… 2. EN-TÃŠTE JOURS (FR, ALIGNÃ‰)
+  //  2. EN-TTE JOURS (FR, ALIGN)
   const weekdays = ["L", "M", "M", "J", "V", "S", "D"];
   const header = document.createElement("div");
   header.className = "home-weekdays";
@@ -30,7 +30,7 @@ export function renderHomeMonthCalendar(container, deps) {
 
   wrapper.appendChild(header);
 
-  // âœ… 3. GRILLE UNIQUE (ALIGNEMENT GARANTI)
+  //  3. GRILLE UNIQUE (ALIGNEMENT GARANTI)
   const grid = document.createElement("div");
   grid.className = "home-month-grid";
 
