@@ -57,6 +57,7 @@ body {
   -webkit-text-size-adjust: 100%;
   overscroll-behavior: none;
   touch-action: manipulation;
+  overflow: hidden;
 }
 
 body {
@@ -1683,6 +1684,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 
 #app-root {
   min-height: 100dvh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   padding:
