@@ -197,8 +197,15 @@ function bindMonthSwipe(container) {
   let startY = 0;
   let isSwiping = false;
 
+  function isMenuBlocking() {
+    if (document.body.classList.contains("menu-open")) return true;
+    const menu = document.getElementById("side-menu");
+    return Boolean(menu && (menu.classList.contains("open") || menu.classList.contains("opening")));
+  }
+
   container.addEventListener("touchstart", (e) => {
     if (getHomeMode() === HOME_MODE.EDIT_DAY) return;
+    if (isMenuBlocking()) return;
     const touch = e.touches[0];
     startX = touch.clientX;
     startY = touch.clientY;
@@ -207,6 +214,10 @@ function bindMonthSwipe(container) {
 
   container.addEventListener("touchmove", (e) => {
     if (!isSwiping) return;
+    if (isMenuBlocking()) {
+      isSwiping = false;
+      return;
+    }
     const touch = e.touches[0];
     const deltaX = touch.clientX - startX;
     const deltaY = touch.clientY - startY;
@@ -217,6 +228,10 @@ function bindMonthSwipe(container) {
 
   container.addEventListener("touchend", (e) => {
     if (!isSwiping) return;
+    if (isMenuBlocking()) {
+      isSwiping = false;
+      return;
+    }
     isSwiping = false;
 
     const touch = e.changedTouches[0];
@@ -615,7 +630,6 @@ export async function renderHome() {
     input.focus();
   }
 }
-
 
 
 
