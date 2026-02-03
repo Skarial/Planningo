@@ -54,6 +54,7 @@ const CORE_ASSETS = [
   "./js/domain/activation.js",
   "./js/domain/conges.js",
   "./js/domain/day-status.js",
+  "./js/domain/holidays-fr.js",
   "./js/domain/periods.js",
   "./js/domain/service-model.js",
   "./js/domain/service-panier.js",
@@ -72,6 +73,7 @@ const CORE_ASSETS = [
   "./js/utils/period-label.js",
   "./manifest.webmanifest",
   "./service-worker.js",
+  "./assets/images/breakfast.png",
 ];
 
 // =======================
@@ -159,6 +161,7 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
+
 
 
 
