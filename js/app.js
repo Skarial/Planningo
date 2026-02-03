@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.6";
+export const APP_VERSION = "2.0.7";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -27,6 +27,7 @@ import { initMenu } from "./components/menu.js";
 // =======================
 
 window.addEventListener("DOMContentLoaded", initApp);
+window.addEventListener("pageshow", resetScrollState);
 
 async function initApp() {
   resetScrollState();
@@ -65,6 +66,7 @@ async function initApp() {
 
   // 6 Bloquer zoom natif (double tap / pinch)
   disableNativeZoom();
+  disableFullscreen();
 
   // Toast migration (si necessaire)
   window.addEventListener("db:migrated", () => {
@@ -167,6 +169,35 @@ function disableNativeZoom() {
   );
 }
 
+function disableFullscreen() {
+  function exitIfFullscreen() {
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+  }
+
+  document.addEventListener("fullscreenchange", exitIfFullscreen);
+  document.addEventListener("webkitfullscreenchange", exitIfFullscreen);
+
+  const proto = HTMLElement.prototype;
+  if (proto.requestFullscreen) {
+    const original = proto.requestFullscreen;
+    proto.requestFullscreen = function (...args) {
+      return original.call(this, ...args).catch(() => {});
+    };
+  }
+  if (proto.webkitRequestFullscreen) {
+    const originalWebkit = proto.webkitRequestFullscreen;
+    proto.webkitRequestFullscreen = function (...args) {
+      return originalWebkit.call(this, ...args);
+    };
+  }
+}
+
 // =======================
 // BANNIRE DE MISE  JOUR
 // =======================
@@ -249,6 +280,7 @@ function showUpdateBanner(registration) {
     banner.remove();
   });
 }
+
 
 
 
