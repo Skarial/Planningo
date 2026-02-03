@@ -49,6 +49,12 @@ export function renderHomeMonthCalendar(container, deps) {
       if (day.status === DAY_STATUS.EMPTY || day.status === DAY_STATUS.FUTURE_EMPTY) {
         el.classList.add("empty");
       }
+      if (day.isHoliday) {
+        el.classList.add("holiday");
+        if (day.holidayName) {
+          el.setAttribute("title", day.holidayName);
+        }
+      }
       if (day.isActive) el.classList.add("active");
 
       el.onclick = () => deps.onDaySelected(day.iso);

@@ -5,6 +5,7 @@
 */
 
 import { DAY_STATUS, getDayStatus } from "../domain/day-status.js";
+import { getHolidayNameForDate } from "../domain/holidays-fr.js";
 import { getCurrentMonth } from "./month-navigation.js";
 import { getActiveDateISO } from "./active-date.js";
 
@@ -46,6 +47,8 @@ function buildMonthCalendar({
 
     const service = getServiceForDateISO(iso);
     const isConges = isDateInConges(date);
+    const holidayName = getHolidayNameForDate(date);
+    const isHoliday = Boolean(holidayName);
 
     let status;
 
@@ -68,6 +71,8 @@ function buildMonthCalendar({
       day: d,
       status,
       isActive: iso === activeDateISO,
+      isHoliday,
+      holidayName,
     });
   }
 
@@ -93,4 +98,3 @@ export function getMonthCalendar(deps) {
     activeDateISO: getActiveDateISO(),
   });
 }
-

@@ -1,4 +1,4 @@
-/*
+﻿/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -13,6 +13,7 @@ import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
 import { hasPanier } from "../domain/service-panier.js";
 import { getFixedServiceMinutes } from "../utils.js";
+import { getHolidayNameForDate } from "../domain/holidays-fr.js";
 
 function formatDuration(totalMinutes) {
   if (typeof totalMinutes !== "number" || totalMinutes < 0) return "00:00";
@@ -74,6 +75,33 @@ function getServiceMinutes(service, periodLabel) {
   return total;
 }
 
+function getServicePlageCount(service, periodLabel) {
+  if (!service || !Array.isArray(service.periodes)) return 0;
+
+  const matchingPeriod =
+    service.periodes.find(
+      (periode) =>
+        periode &&
+        periode.libelle === periodLabel &&
+        Array.isArray(periode.plages) &&
+        periode.plages.length > 0,
+    ) ||
+    service.periodes.find(
+      (periode) =>
+        periode &&
+        Array.isArray(periode.plages) &&
+        periode.plages.length > 0,
+    );
+
+  if (!matchingPeriod || !Array.isArray(matchingPeriod.plages)) {
+    return 0;
+  }
+
+  return matchingPeriod.plages.filter(
+    (plage) => plage && plage.debut && plage.fin,
+  ).length;
+}
+
 function parseISO(input) {
   if (!input) return null;
   const parts = input.split("-");
@@ -123,11 +151,11 @@ export async function renderSummaryView() {
 
   const title = document.createElement("div");
   title.className = "settings-title";
-  title.textContent = "Récapitulatif";
+  title.textContent = "R\u00e9capitulatif";
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
-  subtitle.textContent = "Choisir une période pour résumer l’activité";
+  subtitle.textContent = "Choisir une p\u00e9riode pour r\u00e9sumer l\u2019activit\u00e9";
 
   header.append(title, subtitle);
 
@@ -135,7 +163,7 @@ export async function renderSummaryView() {
   formCard.className = "settings-card";
 
   const labelStart = document.createElement("label");
-  labelStart.textContent = "Début";
+  labelStart.textContent = "D\u00e9but";
   const inputStart = document.createElement("input");
   inputStart.type = "date";
 
@@ -162,7 +190,7 @@ export async function renderSummaryView() {
 
   const resultTitle = document.createElement("div");
   resultTitle.className = "summary-card-title";
-  resultTitle.textContent = "Résultats";
+  resultTitle.textContent = "R\u00e9sultats";
 
   const resultGrid = document.createElement("div");
   resultGrid.className = "summary-grid";
@@ -212,9 +240,13 @@ export async function renderSummaryView() {
     const entryMap = new Map(entries.map((e) => [e.date, e]));
 
     let workedDays = 0;
+    let workedHolidayDays = 0;
+    let halfSundayDays = 0;
+    let fullSundayDays = 0;
     let reposDays = 0;
     let congesDays = 0;
     let totalMinutes = 0;
+    let extraMinutes = 0;
     let panierCount = 0;
 
     const cursor = new Date(start.getTime());
@@ -234,15 +266,44 @@ export async function renderSummaryView() {
             reposDays++;
           } else {
             workedDays++;
+            if (getHolidayNameForDate(cursor)) {
+              workedHolidayDays++;
+            }
+
+            if (cursor.getDay() === 0) {
+              if (entry.startTime && entry.endTime) {
+                halfSundayDays++;
+              } else {
+                const service =
+                  serviceMap.get(entry.serviceCode.toUpperCase()) || null;
+                const label = getPeriodLabel(
+                  getPeriodStateForDate(saisonConfig, cursor),
+                );
+                const plageCount = getServicePlageCount(service, label);
+                if (plageCount >= 2) {
+                  fullSundayDays++;
+                } else if (plageCount === 1) {
+                  halfSundayDays++;
+                }
+              }
+            }
+
             const fixedMinutes = getFixedServiceMinutes(entry.serviceCode);
             if (fixedMinutes != null) {
               totalMinutes += fixedMinutes;
+              if (entry.extra) {
+                extraMinutes += fixedMinutes;
+              }
             } else {
               const service = serviceMap.get(entry.serviceCode.toUpperCase()) || null;
               const label = getPeriodLabel(
                 getPeriodStateForDate(saisonConfig, cursor),
               );
-              totalMinutes += getServiceMinutes(service, label);
+              const minutes = getServiceMinutes(service, label);
+              totalMinutes += minutes;
+              if (entry.extra) {
+                extraMinutes += minutes;
+              }
             }
 
             if (hasPanier(entry.serviceCode)) {
@@ -258,18 +319,41 @@ export async function renderSummaryView() {
     resultGrid.innerHTML = "";
 
     const totalDuration = formatDuration(totalMinutes).replace(":", " : ");
-    const rows = [
-      ["Jours travaillés", workedDays],
-      ["Nombre de paniers", panierCount],
-      ["Jours de repos", reposDays],
-      ["Jours de congés", congesDays],
-      ["Total heures travaillées", totalDuration],
-    ];
+    const extraDuration = formatDuration(extraMinutes).replace(":", " : ");
+const rows = [
+  ["Demi dimanche travaill\u00e9", halfSundayDays],
+  ["Dimanche complet travaill\u00e9", fullSundayDays],
+  ["Jours f\u00e9ri\u00e9s travaill\u00e9s", workedHolidayDays],
+  ["Nombre de paniers", panierCount],
+  ["Jours de repos", reposDays],
+  ["Jours de cong\u00e9s", congesDays],
+];
 
-    rows.forEach(([label, value], idx) => {
+if (extraMinutes > 0) {
+  rows.push(["Heures suppl\u00e9mentaires", extraDuration]);
+}
+
+rows.push(["Total jours travaill\u00e9s", workedDays]);
+rows.push(["Total heures travaill\u00e9es", totalDuration]);
+
+const filteredRows = rows.filter(([label, value]) => {
+  if (label === "Total jours travaill\u00e9s") return true;
+  if (label === "Total heures travaill\u00e9es") return true;
+  if (typeof value === "number") return value !== 0;
+  if (typeof value === "string") {
+    const normalized = value.replace(/\s/g, "");
+    return normalized !== "00:00";
+  }
+  return true;
+});
+
+    filteredRows.forEach(([label, value], idx) => {
       const row = document.createElement("div");
       row.className = "summary-row";
-      if (idx === rows.length - 1) {
+      if (
+        label === "Total jours travaill\u00e9s" ||
+        label === "Total heures travaill\u00e9es"
+      ) {
         row.classList.add("summary-total");
       }
       row.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
@@ -279,4 +363,7 @@ export async function renderSummaryView() {
 
   runBtn.addEventListener("click", computeAndRender);
 }
+
+
+
 

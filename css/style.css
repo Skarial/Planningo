@@ -14,6 +14,7 @@
   --color-time: #7a8298;
   --color-duration: #5b8c5a;
   --color-weekday: #d7854b;
+  --color-home-info: #8fb3ff;
 
   --bg-body: #d7d7d7;
   --border-color: #c2c2c2;
@@ -313,21 +314,45 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 .day-header-service.repos {
-  color: #cf885f;
+  color: #3a3a3a;
   font-weight: 700;
 }
 
 .day-header-service.conges {
-  color: #e08a54;
+  color: #3a3a3a;
   font-weight: 700;
 }
 
 .day-header-time {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-time);
+  color: var(--color-home-info);
   font-variant-numeric: tabular-nums;
   line-height: 1.3;
+}
+
+.day-header-time-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.day-extra-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #3a3a3a;
+  white-space: nowrap;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.day-holiday-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #b25a5a;
+  text-align: right;
+  margin-top: 4px;
 }
 
 .day-time-row {
@@ -353,15 +378,32 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 .day-header-duration {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-time);
+  color: var(--color-home-info);
   margin-top: 2px;
 }
 
 .day-header-panier {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--color-time);
+  color: var(--color-home-info);
   margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-header-panier[hidden] {
+  display: none !important;
+}
+
+.panier-icon {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+  background-image: url("../assets/images/breakfast.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 
@@ -1086,6 +1128,10 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 
   cursor: pointer;
   transform: scaleY(0.86);
+}
+
+.day-circle.holiday {
+  box-shadow: 0 0 0 2px #b25a5a;
 }
 
 .day-circle.empty {

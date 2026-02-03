@@ -28,6 +28,7 @@ import { getPeriodLabel } from "../utils/period-label.js";
 import { getServiceSuggestions } from "../domain/service-suggestions.js";
 import { getUiMode } from "../state/ui-mode.js";
 import { hasPanier } from "../domain/service-panier.js";
+import { getHolidayNameForDate } from "../domain/holidays-fr.js";
 
 function parseISODateLocal(dateISO) {
   const [year, month, day] = dateISO.split("-").map(Number);
@@ -345,18 +346,45 @@ export async function renderHome() {
     time.className = "day-header-time";
     time.hidden = true;
 
+    const timeRow = document.createElement("div");
+    timeRow.className = "day-header-time-row";
+    timeRow.hidden = true;
+
+    const extraLabel = document.createElement("div");
+    extraLabel.className = "day-extra-label";
+    extraLabel.textContent = "Heures supplémentaires";
+    extraLabel.hidden = true;
+
+    timeRow.append(time);
+
     const duration = document.createElement("div");
     duration.className = "day-header-duration";
     duration.hidden = true;
 
+    const holidayLabel = document.createElement("div");
+    holidayLabel.className = "day-holiday-label";
+    holidayLabel.hidden = true;
+
     const panier = document.createElement("div");
     panier.className = "day-header-panier";
     panier.hidden = true;
+    panier.setAttribute("aria-label", "Repas");
+    panier.setAttribute("title", "Repas");
+    const panierIcon = document.createElement("span");
+    panierIcon.className = "panier-icon";
+    panierIcon.setAttribute("aria-hidden", "true");
+    panier.appendChild(panierIcon);
 
-    right.append(service, time, duration, panier);
+    right.append(service, timeRow, duration, holidayLabel, extraLabel, panier);
 
     section.append(left, right);
     daySummary.appendChild(section);
+
+    const holidayName = getHolidayNameForDate(date);
+    if (holidayName) {
+      holidayLabel.textContent = `Jour f\u00e9ri\u00e9 : ${holidayName}`;
+      holidayLabel.hidden = false;
+    }
 
     // chargement service reel
     getPlanningEntry(iso).then((entry) => {
@@ -374,27 +402,28 @@ export async function renderHome() {
 
       if (entry.serviceCode === "REPOS") {
         service.classList.add("repos");
-        time.hidden = true;
+        timeRow.hidden = true;
         time.textContent = "";
         duration.hidden = true;
         duration.textContent = "";
         panier.hidden = true;
-        panier.textContent = "";
+        extraLabel.hidden = true;
         return;
       }
 
       const fixedMinutes = getFixedServiceMinutes(entry.serviceCode);
       if (fixedMinutes != null) {
-        time.hidden = true;
+        timeRow.hidden = true;
         time.textContent = "";
         duration.hidden = false;
         duration.textContent = formatMinutesAsDuration(fixedMinutes);
         panier.hidden = true;
-        panier.textContent = "";
+        extraLabel.hidden = true;
         return;
       }
 
       if (entry.startTime && entry.endTime) {
+        timeRow.hidden = false;
         time.hidden = false;
         time.textContent = `${entry.startTime} – ${entry.endTime}`;
       }
@@ -404,12 +433,16 @@ export async function renderHome() {
         duration.textContent = entry.duration;
       }
 
+      if (entry.extra) {
+        extraLabel.hidden = false;
+      } else {
+        extraLabel.hidden = true;
+      }
+
       if (hasPanier(entry.serviceCode)) {
         panier.hidden = false;
-        panier.textContent = "Panier";
       } else {
         panier.hidden = true;
-        panier.textContent = "";
       }
 
       if (entry.startTime && entry.endTime) return;
@@ -429,6 +462,7 @@ export async function renderHome() {
         const timeInfo = buildServiceTimeLines(matchedService, periodLabel);
 
         if (timeInfo) {
+          timeRow.hidden = false;
           time.hidden = false;
           time.innerHTML = "";
           timeInfo.lines.forEach((line) => {
@@ -457,12 +491,16 @@ export async function renderHome() {
           }
         }
 
+        if (entry.extra) {
+          extraLabel.hidden = false;
+        } else {
+          extraLabel.hidden = true;
+        }
+
         if (hasPanier(entry.serviceCode)) {
           panier.hidden = false;
-          panier.textContent = "Panier";
         } else {
           panier.hidden = true;
-          panier.textContent = "";
         }
       });
     });
@@ -541,6 +579,11 @@ export async function renderHome() {
     backBtn.className = "guided-btn ghost guided-back-btn";
     backBtn.textContent = "← Retour";
     backBtn.onclick = () => {
+      const value = input.value.trim();
+      if (!value) {
+        persistEdit("", true);
+        return;
+      }
       setHomeMode(HOME_MODE.VIEW);
       renderHome();
     };
@@ -549,6 +592,26 @@ export async function renderHome() {
 
     panel.append(label, input, suggestContainer);
     top.appendChild(panel);
+
+    async function persistEdit(rawCode, closeAfter = true) {
+      const code = rawCode.trim().toUpperCase();
+      const prevEntry = await getPlanningEntry(iso);
+      const wasRepos = prevEntry?.serviceCode === "REPOS";
+      const wasExtra = prevEntry?.extra === true;
+      const isRepos = code === "REPOS";
+
+      await savePlanningEntry({
+        date: iso,
+        serviceCode: code,
+        locked: false,
+        extra: code ? (isRepos ? false : wasExtra || wasRepos) : false,
+      });
+
+      if (closeAfter) {
+        setHomeMode(HOME_MODE.VIEW);
+      }
+      renderHome();
+    }
 
     // Preremplissage asynchrone du service existant
     (async () => {
@@ -592,15 +655,7 @@ export async function renderHome() {
         btn.textContent = getServiceDisplayName(code, { short: true });
 
         btn.onclick = async () => {
-          await savePlanningEntry({
-            date: iso,
-            serviceCode: code,
-            locked: false,
-            extra: false,
-          });
-
-          setHomeMode(HOME_MODE.VIEW);
-          renderHome();
+          persistEdit(code, true);
         };
 
         target.appendChild(btn);
@@ -627,9 +682,14 @@ export async function renderHome() {
       });
     })();
 
+    input.addEventListener("input", () => {
+      const value = input.value.trim();
+      if (!value) {
+        suggestContainer.innerHTML = "";
+        persistEdit("", false);
+      }
+    });
+
     input.focus();
   }
 }
-
-
-
