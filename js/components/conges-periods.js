@@ -24,20 +24,11 @@ export async function renderCongesPeriodsView() {
   const header = document.createElement("div");
   header.className = "tabs-header";
 
-  const backBtn = document.createElement("button");
-  backBtn.type = "button";
-  backBtn.className = "tabs-back";
-  backBtn.setAttribute("aria-label", "Retour");
-  backBtn.textContent = "\u2190";
-  backBtn.addEventListener("click", () => {
-    showHome();
-  });
-
   const title = document.createElement("div");
   title.className = "tabs-title";
   title.textContent = "Cong\u00e9s & p\u00e9riodes";
 
-  header.append(backBtn, title);
+  header.append(title);
 
   const tabs = document.createElement("div");
   tabs.className = "tabs-bar";
