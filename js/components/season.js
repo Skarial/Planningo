@@ -25,14 +25,15 @@ function createStatus() {
   };
 }
 
-export async function renderSeasonView() {
-  const view = document.getElementById("view-season");
+export async function renderSeasonView(options = {}) {
+  const { container = null, showHeader = true } = options;
+  const view = container || document.getElementById("view-season");
   if (!view) return;
 
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view";
+  root.className = showHeader ? "settings-view" : "settings-view compact";
 
   const header = document.createElement("div");
   header.className = "settings-header";
@@ -78,7 +79,10 @@ export async function renderSeasonView() {
 
   card.append(labelStart, inputStart, labelEnd, inputEnd, actions, status.node);
 
-  root.append(header, card);
+  if (showHeader) {
+    root.append(header);
+  }
+  root.append(card);
   view.appendChild(root);
 
   const entry = await getConfig("saison");
@@ -105,4 +109,3 @@ export async function renderSeasonView() {
     status.show("Saison réinitialisée");
   });
 }
-

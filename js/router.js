@@ -14,6 +14,7 @@ import { showGuidedMonth as renderGuidedMonth } from "./components/guided-month.
 import { showTetribus, stopTetribus } from "./components/tetribus.js";
 import { renderCongesView } from "./components/conges.js";
 import { renderSeasonView } from "./components/season.js";
+import { renderCongesPeriodsView } from "./components/conges-periods.js";
 import { renderPhoneChangeView } from "./components/phone-change.js";
 import { renderSummaryView } from "./components/summary.js";
 import { renderSuggestionsView } from "./components/suggestions.js";
@@ -31,6 +32,7 @@ function hideAllViews() {
     "guided-month",
     "conges",
     "season",
+    "conges-periods",
     "consult-date",
     "suggestions",
     "phone-change",
@@ -81,6 +83,12 @@ export function showSeasonView() {
   const view = activateView("season");
   if (!view) return;
   renderSeasonView();
+}
+
+export function showCongesPeriodsView() {
+  const view = activateView("conges-periods");
+  if (!view) return;
+  renderCongesPeriodsView();
 }
 
 export function showConsultDateView() {
@@ -147,6 +155,9 @@ export function refreshCurrentView() {
     case "season":
       showSeasonView();
       break;
+    case "conges-periods":
+      showCongesPeriodsView();
+      break;
 
     case "consult-date":
       showConsultDateView();
@@ -187,6 +198,10 @@ function activateView(name) {
   view.hidden = false;
   view.innerHTML = "";
 
+  const consultToggle = document.getElementById("consult-toggle");
+  if (consultToggle) {
+    consultToggle.classList.toggle("hidden", name !== "home");
+  }
+
   return view;
 }
-

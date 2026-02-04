@@ -1,4 +1,4 @@
-// js/components/guided-month.js
+﻿// js/components/guided-month.js
 
 import { getServiceSuggestions } from "../domain/service-suggestions.js";
 import { getUiMode } from "../state/ui-mode.js";
@@ -192,7 +192,7 @@ export async function showGuidedMonth(forcedDate = null) {
     const stats = await computeMonthStats();
 
     servicesContainer.innerHTML = "";
-    dayNumber.textContent = "✓";
+    dayNumber.textContent = "\u2713";
     dayNumber.classList.add("guided-day-complete");
     weekdayLabel.textContent = "";
 
@@ -230,21 +230,13 @@ export async function showGuidedMonth(forcedDate = null) {
 
     const btnMonth = document.createElement("button");
     btnMonth.className = "guided-action";
-    btnMonth.textContent = "Voir le planning du mois";
+    btnMonth.textContent = "Voir mon planning";
     btnMonth.onclick = () => {
       guidedMonthDate = null;
       showHome();
     };
 
-    const btnHome = document.createElement("button");
-    btnHome.className = "guided-action ghost";
-    btnHome.textContent = "Retour à l’accueil";
-    btnHome.onclick = () => {
-      guidedMonthDate = null;
-      showHome();
-    };
-
-    servicesContainer.append(title, subtitle, statsList, btnNextGuided, btnMonth, btnHome);
+    servicesContainer.append(title, subtitle, statsList, btnNextGuided, btnMonth);
   }
 
   await resumeCurrentDayFromDB();
@@ -358,7 +350,7 @@ export async function showGuidedMonth(forcedDate = null) {
     // Bouton annuler jour prcdent
     if (currentDay > 1) {
       const cancelBtn = document.createElement("button");
-      cancelBtn.textContent = "← Annuler le jour précédent";
+      cancelBtn.textContent = "â† Annuler le jour prÃ©cÃ©dent";
       cancelBtn.className = "guided-cancel-btn";
 
       cancelBtn.onclick = async () => {
@@ -392,7 +384,7 @@ export async function showGuidedMonth(forcedDate = null) {
     selectedLine = line;
 
     const back = document.createElement("button");
-    back.textContent = "← Retour";
+    back.textContent = "â† Retour";
     back.className = "guided-btn ghost guided-back-btn";
     back.onclick = renderDay;
     servicesContainer.appendChild(back);
@@ -412,7 +404,7 @@ export async function showGuidedMonth(forcedDate = null) {
     servicesContainer.innerHTML = "";
 
     const back = document.createElement("button");
-    back.textContent = "← Retour";
+    back.textContent = "â† Retour";
     back.className = "guided-btn ghost guided-back-btn";
     back.onclick = renderDay;
     servicesContainer.appendChild(back);
@@ -458,5 +450,7 @@ export async function showGuidedMonth(forcedDate = null) {
     target.appendChild(btn);
   }
 }
+
+
 
 

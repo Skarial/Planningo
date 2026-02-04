@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -37,6 +37,11 @@
     <div id="app-root">
       <!-- BOUTON MENU (HORS FLUX) -->
       <button id="menu-toggle" aria-label="Menu" aria-expanded="false"></button>
+      <button
+        id="consult-toggle"
+        aria-label="Consulter une date"
+        title="Consulter une date"
+      ></button>
       <div id="menu-overlay"></div>
 
                   <!-- MENU LATÉRAL (HORS FLUX) -->
@@ -50,36 +55,27 @@
 
             <button data-action="home">
               <span class="menu-icon icon-day"></span>
-              Accueil
+              Mon planning
             </button>
 
             <button data-action="guided-month">
               <span class="menu-icon icon-guided"></span>
-              Saisie du planning
+              Saisie guidée
             </button>
 
-            <button data-action="tetribus">
-              <span class="menu-icon icon-game"></span>
-              Tetribus
+            <button id="menu-summary">
+              <span class="menu-icon icon-summary"></span>
+              Statistiques
             </button>
+
           </div>
 
           <div class="menu-section">
-            <h3>Outils</h3>
+            <h3>Organisation</h3>
 
-            <button id="menu-consult-date">
-              <span class="menu-icon icon-consult"></span>
-              Consulter une date
-            </button>
-
-            <button id="menu-conges">
+            <button id="menu-conges-periods">
               <span class="menu-icon icon-conges"></span>
-              Congés
-            </button>
-
-            <button id="menu-season">
-              <span class="menu-icon icon-season"></span>
-              Période saisonnière
+              Congés & périodes
             </button>
 
             <button id="menu-suggestions">
@@ -91,15 +87,23 @@
               <span class="menu-icon icon-alarm"></span>
               Réveil intelligent <span class="menu-badge">Bientôt</span>
             </button>
+          </div>
 
-            <button id="menu-summary">
-              <span class="menu-icon icon-summary"></span>
-              Récapitulatif
-            </button>
+          <div class="menu-section">
+            <h3>Données</h3>
 
             <button id="menu-phone-change">
               <span class="menu-icon icon-phone"></span>
               Changement de téléphone
+            </button>
+          </div>
+
+          <div class="menu-section">
+            <h3>Extra</h3>
+
+            <button data-action="tetribus">
+              <span class="menu-icon icon-game"></span>
+              Tetribus
             </button>
           </div>
 
@@ -124,6 +128,7 @@
       <main id="app-main">
         <section id="view-home"></section>
         <section id="view-guided-month" hidden></section>
+        <section id="view-conges-periods" hidden></section>
         <section id="view-conges" hidden></section>
         <section id="view-season" hidden></section>
         <section id="view-consult-date" hidden></section>
@@ -175,3 +180,5 @@
     </script>
   </body>
 </html>
+
+

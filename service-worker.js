@@ -28,6 +28,7 @@ const CORE_ASSETS = [
   "./js/app.js",
   "./js/components/activationScreen.js",
   "./js/components/conges.js",
+  "./js/components/conges-periods.js",
   "./js/components/guided-month.js",
   "./js/components/home-month-calendar.js",
   "./js/components/home.js",
@@ -161,6 +162,7 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
+
 
 
 

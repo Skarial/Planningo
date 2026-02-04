@@ -1,4 +1,4 @@
-/*
+﻿/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -92,7 +92,7 @@ export async function renderResetView() {
   const warning = document.createElement("div");
   warning.className = "settings-note";
   warning.textContent =
-    "Les réinitialisations sont définitives. Maintenez pour confirmer.";
+    "Les Réinitialisations sont dÃ©finitives. Maintenez pour confirmer.";
 
   const labelMonth = document.createElement("label");
   labelMonth.textContent = "Mois à réinitialiser";
@@ -106,12 +106,14 @@ export async function renderResetView() {
   const resetMonthBtn = document.createElement("button");
   resetMonthBtn.className = "settings-btn danger holdable";
   resetMonthBtn.type = "button";
+  resetMonthBtn.id = "reset-confirm-month";
   resetMonthBtn.innerHTML =
     "<span>Maintenir pour réinitialiser le mois</span><div class=\"hold-progress\"></div>";
 
   const resetAllBtn = document.createElement("button");
   resetAllBtn.className = "settings-btn danger holdable";
   resetAllBtn.type = "button";
+  resetAllBtn.id = "reset-all";
   resetAllBtn.innerHTML =
     "<span>Maintenir pour tout réinitialiser</span><div class=\"hold-progress\"></div>";
 
@@ -147,3 +149,4 @@ export async function renderResetView() {
     null,
   );
 }
+

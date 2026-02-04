@@ -10,8 +10,7 @@ import { setUiMode, UI_MODE } from "../state/ui-mode.js";
 import {
   showHome,
   showGuidedMonth,
-  showCongesView,
-  showSeasonView,
+  showCongesPeriodsView,
   showConsultDateView,
   showResetView,
   showSuggestionsView,
@@ -97,8 +96,7 @@ export function initMenu() {
   // OUTILS (VUES DEDIEES)
   // =======================
 
-  const congesBtn = document.getElementById("menu-conges");
-  const seasonBtn = document.getElementById("menu-season");
+  const congesPeriodsBtn = document.getElementById("menu-conges-periods");
   const suggestionsBtn = document.getElementById("menu-suggestions");
   const summaryBtn = document.getElementById("menu-summary");
   const phoneBtn = document.getElementById("menu-phone-change");
@@ -106,42 +104,44 @@ export function initMenu() {
   const legalBtn = document.getElementById("menu-legal");
   const resetBtn = document.getElementById("menu-reset");
 
-  congesBtn.addEventListener("click", () => {
-    showCongesView();
-    closeMenu();
-  });
-
-  seasonBtn.addEventListener("click", () => {
-    showSeasonView();
+  congesPeriodsBtn.addEventListener("click", () => {
+    showCongesPeriodsView();
+    setActiveMenu("menu-conges-periods");
     closeMenu();
   });
 
   suggestionsBtn.addEventListener("click", () => {
     showSuggestionsView();
+    setActiveMenu("menu-suggestions");
     closeMenu();
   });
 
   summaryBtn.addEventListener("click", () => {
     showSummaryView();
+    setActiveMenu("menu-summary");
     closeMenu();
   });
 
   alarmBtn.addEventListener("click", () => {
     showToast("Bient\u00f4t disponible");
+    setActiveMenu("menu-alarm");
   });
 
   phoneBtn.addEventListener("click", () => {
     showPhoneChangeView();
+    setActiveMenu("menu-phone-change");
     closeMenu();
   });
 
   legalBtn.addEventListener("click", () => {
     showLegalView();
+    setActiveMenu("menu-legal");
     closeMenu();
   });
 
   resetBtn.addEventListener("click", () => {
     showResetView();
+    setActiveMenu("menu-reset");
     closeMenu();
   });
 
@@ -150,11 +150,19 @@ export function initMenu() {
   // =======================
 
   const consultBtn = document.getElementById("menu-consult-date");
+  if (consultBtn) {
+    consultBtn.addEventListener("click", () => {
+      showConsultDateView();
+      closeMenu();
+    });
+  }
 
-  consultBtn.addEventListener("click", () => {
-    showConsultDateView();
-    closeMenu();
-  });
+  const consultToggle = document.getElementById("consult-toggle");
+  if (consultToggle) {
+    consultToggle.addEventListener("click", () => {
+      showConsultDateView();
+    });
+  }
 
   // =======================
   // OUVERTURE / FERMETURE
@@ -387,10 +395,11 @@ export function initMenu() {
     currentTranslateX = 0;
   });
 
-  function setActiveMenu(action) {
-    const buttons = menu.querySelectorAll("button[data-action]");
+  function setActiveMenu(key) {
+    const buttons = menu.querySelectorAll(".menu-section button");
     buttons.forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.action === action);
+      const action = btn.dataset.action || btn.id || "";
+      btn.classList.toggle("active", action === key);
     });
   }
 
