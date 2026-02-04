@@ -15,13 +15,13 @@ const today = d("2025-12-01");
 console.assert(
   getDayStatus({ service: { code: "2910" }, date: d("2025-12-02"), today }) ===
     DAY_STATUS.WORKED,
-  "Jour travaillÃ© incorrect",
+  "Jour travaillé incorrect",
 );
 
 console.assert(
   getDayStatus({ service: null, date: d("2025-11-30"), today }) ===
     DAY_STATUS.EMPTY,
-  "Jour passÃ© vide incorrect",
+  "Jour passé vide incorrect",
 );
 
 console.assert(

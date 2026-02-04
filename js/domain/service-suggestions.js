@@ -11,8 +11,8 @@
 
 import { isDateInSeason } from "./periods.js";
 
-const SEASON_LABEL = "PÃ©riode saisonniÃ¨re";
-const MAIN_LABEL = "PÃ©riode principale";
+const SEASON_LABEL = "Période saisonnière";
+const MAIN_LABEL = "Période principale";
 
 export function getServiceSuggestions({
   servicesCatalog,

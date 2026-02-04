@@ -19,11 +19,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:45", fin: "13:00" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "05:45", fin: "13:00" }],
       },
     ],
@@ -33,11 +33,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:30", fin: "20:00" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:30", fin: "20:00" }],
       },
     ],
@@ -47,11 +47,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:45", fin: "13:15" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:45", fin: "13:15" }],
       },
     ],
@@ -61,11 +61,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:00", fin: "20:15" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:00", fin: "20:15" }],
       },
     ],
@@ -75,11 +75,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:45", fin: "13:15" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:45", fin: "13:15" }],
       },
     ],
@@ -89,11 +89,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:00", fin: "20:15" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:00", fin: "20:15" }],
       },
     ],
@@ -103,11 +103,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:45", fin: "13:15" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:45", fin: "13:15" }],
       },
     ],
@@ -117,11 +117,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:00", fin: "20:15" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:00", fin: "20:15" }],
       },
     ],
@@ -131,7 +131,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:25", fin: "13:05" }],
       },
     ],
@@ -141,7 +141,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:08", fin: "19:38" }],
       },
     ],
@@ -151,7 +151,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:06", fin: "19:52" }],
       },
     ],
@@ -161,7 +161,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:07", fin: "13:08" }],
       },
     ],
@@ -171,7 +171,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:10", fin: "19:57" }],
       },
     ],
@@ -181,7 +181,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:14", fin: "19:43" }],
       },
     ],
@@ -191,7 +191,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:13", fin: "13:08" }],
       },
     ],
@@ -201,7 +201,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:10", fin: "19:29" }],
       },
     ],
@@ -211,7 +211,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:14", fin: "13:19" }],
       },
     ],
@@ -221,7 +221,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:19", fin: "19:45" }],
       },
     ],
@@ -234,7 +234,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "07:37", fin: "12:48" }],
       },
     ],
@@ -244,7 +244,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:13", fin: "19:38" }],
       },
     ],
@@ -254,7 +254,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:09", fin: "19:52" }],
       },
     ],
@@ -264,7 +264,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "07:23", fin: "13:04" }],
       },
     ],
@@ -274,7 +274,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:13", fin: "19:38" }],
       },
     ],
@@ -284,7 +284,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "07:37", fin: "12:48" }],
       },
     ],
@@ -294,7 +294,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:09", fin: "19:52" }],
       },
     ],
@@ -304,7 +304,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [
           { debut: "06:43", fin: "09:50" },
           { debut: "11:45", fin: "13:57" },
@@ -317,7 +317,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:40", fin: "20:40" }],
       },
     ],
@@ -327,7 +327,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:25", fin: "13:08" }],
       },
     ],
@@ -337,7 +337,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:01", fin: "20:37" }],
       },
     ],
@@ -347,7 +347,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:38", fin: "13:29" }],
       },
     ],
@@ -357,7 +357,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:18", fin: "20:22" }],
       },
     ],
@@ -367,7 +367,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:53", fin: "13:46" }],
       },
     ],
@@ -377,7 +377,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [
           { debut: "12:15", fin: "14:43" },
           { debut: "15:30", fin: "18:55" },
@@ -390,7 +390,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:28", fin: "13:16" }],
       },
     ],
@@ -400,7 +400,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:48", fin: "20:42" }],
       },
     ],
@@ -410,7 +410,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:38", fin: "13:53" }],
       },
     ],
@@ -420,7 +420,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:25", fin: "20:41" }],
       },
     ],
@@ -433,7 +433,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:28", fin: "13:21" }],
       },
     ],
@@ -443,7 +443,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:53", fin: "20:42" }],
       },
     ],
@@ -453,7 +453,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:38", fin: "13:56" }],
       },
     ],
@@ -463,7 +463,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:28", fin: "20:41" }],
       },
     ],
@@ -473,7 +473,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:55", fin: "13:07" }],
       },
     ],
@@ -483,7 +483,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:16", fin: "20:13" }],
       },
     ],
@@ -493,7 +493,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:08", fin: "13:00" }],
       },
     ],
@@ -503,7 +503,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:39", fin: "20:21" }],
       },
     ],
@@ -513,7 +513,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:23", fin: "13:06" }],
       },
     ],
@@ -523,7 +523,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:23", fin: "19:54" }],
       },
     ],
@@ -533,7 +533,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:36", fin: "13:50" }],
       },
     ],
@@ -543,7 +543,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:12", fin: "20:32" }],
       },
     ],
@@ -553,7 +553,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:38", fin: "13:49" }],
       },
     ],
@@ -563,7 +563,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:46", fin: "20:38" }],
       },
     ],
@@ -573,7 +573,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:50", fin: "13:10" }],
       },
     ],
@@ -583,7 +583,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:32", fin: "19:54" }],
       },
     ],
@@ -593,7 +593,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:04", fin: "13:52" }],
       },
     ],
@@ -603,7 +603,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:24", fin: "20:07" }],
       },
     ],
@@ -613,7 +613,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:18", fin: "13:34" }],
       },
     ],
@@ -623,7 +623,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:51", fin: "20:18" }],
       },
     ],
@@ -633,7 +633,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:06", fin: "13:59" }],
       },
     ],
@@ -643,7 +643,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:16", fin: "20:34" }],
       },
     ],
@@ -653,7 +653,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:12", fin: "13:40" }],
       },
     ],
@@ -663,7 +663,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:12", fin: "20:37" }],
       },
     ],
@@ -673,7 +673,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:23", fin: "13:03" }],
       },
     ],
@@ -683,7 +683,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:35", fin: "20:03" }],
       },
     ],
@@ -693,7 +693,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:31", fin: "13:25" }],
       },
     ],
@@ -703,7 +703,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:42", fin: "19:58" }],
       },
     ],
@@ -713,7 +713,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:41", fin: "13:44" }],
       },
     ],
@@ -723,7 +723,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:06", fin: "20:17" }],
       },
     ],
@@ -733,11 +733,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:43", fin: "13:05" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:12", fin: "13:41" }],
       },
     ],
@@ -747,11 +747,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:41", fin: "20:19" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:13", fin: "20:37" }],
       },
     ],
@@ -761,7 +761,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:06", fin: "13:14" }],
       },
     ],
@@ -771,7 +771,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:36", fin: "20:34" }],
       },
     ],
@@ -781,7 +781,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:31", fin: "13:28" }],
       },
     ],
@@ -791,7 +791,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:45", fin: "19:58" }],
       },
     ],
@@ -801,7 +801,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:23", fin: "13:04" }],
       },
     ],
@@ -811,7 +811,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:36", fin: "20:03" }],
       },
     ],
@@ -821,7 +821,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:43", fin: "13:44" }],
       },
     ],
@@ -831,7 +831,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:01", fin: "20:19" }],
       },
     ],
@@ -841,7 +841,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:41", fin: "13:46" }],
       },
     ],
@@ -851,7 +851,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:08", fin: "20:17" }],
       },
     ],
@@ -861,7 +861,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:11", fin: "13:33" }],
       },
     ],
@@ -871,7 +871,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:55", fin: "20:22" }],
       },
     ],
@@ -881,7 +881,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:18", fin: "13:30" }],
       },
     ],
@@ -891,7 +891,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:47", fin: "20:20" }],
       },
     ],
@@ -901,7 +901,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:41", fin: "14:01" }],
       },
     ],
@@ -911,7 +911,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:23", fin: "20:46" }],
       },
     ],
@@ -921,7 +921,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:43", fin: "13:58" }],
       },
     ],
@@ -931,7 +931,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:15", fin: "20:48" }],
       },
     ],
@@ -941,7 +941,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:33", fin: "12:28" }],
       },
     ],
@@ -951,7 +951,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:00", fin: "19:42" }],
       },
     ],
@@ -961,7 +961,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [
           { debut: "06:13", fin: "09:55" },
           { debut: "11:45", fin: "14:30" },
@@ -974,7 +974,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:30", fin: "19:54" }],
       },
     ],
@@ -984,7 +984,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:28", fin: "12:27" }],
       },
     ],
@@ -994,7 +994,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [
           { debut: "12:09", fin: "14:40" },
           { debut: "15:30", fin: "19:51" },
@@ -1007,7 +1007,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:33", fin: "12:41" }],
       },
     ],
@@ -1017,7 +1017,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:38", fin: "20:12" }],
       },
     ],
@@ -1027,7 +1027,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "05:33", fin: "12:11" }],
       },
     ],
@@ -1037,7 +1037,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:16", fin: "19:42" }],
       },
     ],
@@ -1047,7 +1047,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:42", fin: "12:27" }],
       },
     ],
@@ -1057,7 +1057,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:30", fin: "19:54" }],
       },
     ],
@@ -1067,7 +1067,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "05:33", fin: "12:36" }],
       },
     ],
@@ -1077,7 +1077,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:38", fin: "20:12" }],
       },
     ],
@@ -1087,7 +1087,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:58", fin: "13:35" }],
       },
     ],
@@ -1097,7 +1097,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:07", fin: "19:56" }],
       },
     ],
@@ -1107,7 +1107,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:43", fin: "13:10" }],
       },
     ],
@@ -1117,7 +1117,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:42", fin: "20:16" }],
       },
     ],
@@ -1127,7 +1127,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:36", fin: "13:58" }],
       },
     ],
@@ -1137,7 +1137,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:30", fin: "20:10" }],
       },
     ],
@@ -1147,7 +1147,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:56", fin: "13:42" }],
       },
     ],
@@ -1157,7 +1157,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:04", fin: "20:26" }],
       },
     ],
@@ -1167,7 +1167,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:06", fin: "13:39" }],
       },
     ],
@@ -1177,7 +1177,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:01", fin: "20:21" }],
       },
     ],
@@ -1187,7 +1187,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:41", fin: "13:49" }],
       },
     ],
@@ -1197,7 +1197,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:21", fin: "20:05" }],
       },
     ],
@@ -1207,7 +1207,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:48", fin: "13:11" }],
       },
     ],
@@ -1217,7 +1217,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:43", fin: "20:13" }],
       },
     ],
@@ -1230,7 +1230,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:41", fin: "13:52" }],
       },
     ],
@@ -1240,7 +1240,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:24", fin: "20:05" }],
       },
     ],
@@ -1250,7 +1250,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:48", fin: "13:19" }],
       },
     ],
@@ -1260,7 +1260,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:51", fin: "20:13" }],
       },
     ],
@@ -1270,7 +1270,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "07:06", fin: "13:42" }],
       },
     ],
@@ -1280,7 +1280,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:04", fin: "20:21" }],
       },
     ],
@@ -1290,7 +1290,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:23", fin: "13:12" }],
       },
     ],
@@ -1300,7 +1300,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:48", fin: "20:07" }],
       },
     ],
@@ -1310,7 +1310,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:42", fin: "12:16" }],
       },
     ],
@@ -1320,7 +1320,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:37", fin: "20:45" }],
       },
     ],
@@ -1330,7 +1330,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:40", fin: "14:04" }],
       },
     ],
@@ -1340,7 +1340,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:23", fin: "21:10" }],
       },
     ],
@@ -1350,7 +1350,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:22", fin: "13:19" }],
       },
     ],
@@ -1360,7 +1360,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [
           { debut: "05:51", fin: "09:42" },
           { debut: "10:19", fin: "12:42" },
@@ -1373,7 +1373,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:43", fin: "13:37" }],
       },
     ],
@@ -1383,7 +1383,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:45", fin: "18:53" }],
       },
     ],
@@ -1393,7 +1393,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:40", fin: "13:30" }],
       },
     ],
@@ -1403,7 +1403,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:42", fin: "20:48" }],
       },
     ],
@@ -1413,7 +1413,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "08:45", fin: "14:16" }],
       },
     ],
@@ -1423,7 +1423,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:44", fin: "19:48" }],
       },
     ],
@@ -1433,11 +1433,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:23", fin: "13:21" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "05:23", fin: "13:04" }],
       },
     ],
@@ -1447,11 +1447,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "14:07", fin: "21:10" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:37", fin: "20:56" }],
       },
     ],
@@ -1464,7 +1464,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "14:07", fin: "21:10" }],
       },
     ],
@@ -1474,7 +1474,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "05:42", fin: "12:17" }],
       },
     ],
@@ -1484,7 +1484,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:48", fin: "20:08" }],
       },
     ],
@@ -1494,7 +1494,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:22", fin: "13:15" }],
       },
     ],
@@ -1504,7 +1504,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:40", fin: "13:54" }],
       },
     ],
@@ -1514,7 +1514,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "05:43", fin: "13:37" }],
       },
     ],
@@ -1524,7 +1524,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:43", fin: "20:48" }],
       },
     ],
@@ -1534,7 +1534,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:40", fin: "13:31" }],
       },
     ],
@@ -1544,7 +1544,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:45", fin: "18:51" }],
       },
     ],
@@ -1554,7 +1554,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "08:45", fin: "14:16" }],
       },
     ],
@@ -1564,7 +1564,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:44", fin: "19:48" }],
       },
     ],
@@ -1574,7 +1574,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:43", fin: "13:36" }],
       },
     ],
@@ -1584,7 +1584,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:08", fin: "20:18" }],
       },
     ],
@@ -1594,7 +1594,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:53", fin: "13:17" }],
       },
     ],
@@ -1604,7 +1604,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:49", fin: "20:04" }],
       },
     ],
@@ -1614,7 +1614,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:34", fin: "13:32" }],
       },
     ],
@@ -1624,7 +1624,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:04", fin: "20:14" }],
       },
     ],
@@ -1634,7 +1634,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:43", fin: "13:44" }],
       },
     ],
@@ -1644,7 +1644,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:16", fin: "20:22" }],
       },
     ],
@@ -1654,7 +1654,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:43", fin: "13:55" }],
       },
     ],
@@ -1664,7 +1664,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:27", fin: "20:15" }],
       },
     ],
@@ -1677,7 +1677,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:43", fin: "13:49" }],
       },
     ],
@@ -1687,7 +1687,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:21", fin: "20:22" }],
       },
     ],
@@ -1697,7 +1697,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:56", fin: "20:15" }],
       },
     ],
@@ -1707,7 +1707,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:48", fin: "13:47" }],
       },
     ],
@@ -1717,7 +1717,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:19", fin: "19:57" }],
       },
     ],
@@ -1727,7 +1727,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:53", fin: "13:12" }],
       },
     ],
@@ -1737,7 +1737,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:44", fin: "19:58" }],
       },
     ],
@@ -1747,7 +1747,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:30", fin: "12:59" }],
       },
     ],
@@ -1757,7 +1757,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [
           { debut: "11:58", fin: "14:10" },
           { debut: "15:30", fin: "18:52" },
@@ -1770,7 +1770,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:03", fin: "13:42" }],
       },
     ],
@@ -1780,7 +1780,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:14", fin: "20:10" }],
       },
     ],
@@ -1790,7 +1790,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:28", fin: "13:14" }],
       },
     ],
@@ -1800,7 +1800,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:46", fin: "19:45" }],
       },
     ],
@@ -1813,7 +1813,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:48", fin: "13:52" }],
       },
     ],
@@ -1823,7 +1823,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:24", fin: "20:03" }],
       },
     ],
@@ -1833,7 +1833,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:53", fin: "13:17" }],
       },
     ],
@@ -1843,7 +1843,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:49", fin: "19:58" }],
       },
     ],
@@ -1853,7 +1853,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "07:03", fin: "13:47" }],
       },
     ],
@@ -1863,7 +1863,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:19", fin: "20:11" }],
       },
     ],
@@ -1873,7 +1873,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "07:28", fin: "13:21" }],
       },
     ],
@@ -1883,7 +1883,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:53", fin: "19:46" }],
       },
     ],
@@ -1893,7 +1893,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:16", fin: "12:16" }],
       },
     ],
@@ -1903,7 +1903,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "14:15", fin: "19:24" }],
       },
     ],
@@ -1913,7 +1913,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:48", fin: "13:43" }],
       },
     ],
@@ -1923,7 +1923,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:50", fin: "20:57" }],
       },
     ],
@@ -1933,7 +1933,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:48", fin: "12:41" }],
       },
     ],
@@ -1943,7 +1943,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:44", fin: "19:57" }],
       },
     ],
@@ -1953,7 +1953,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:13", fin: "13:11" }],
       },
     ],
@@ -1963,7 +1963,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:12", fin: "20:12" }],
       },
     ],
@@ -1973,7 +1973,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:30", fin: "20:43" }],
       },
     ],
@@ -1983,7 +1983,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "05:58", fin: "13:07" }],
       },
     ],
@@ -1993,7 +1993,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:39", fin: "20:01" }],
       },
     ],
@@ -2003,7 +2003,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:12", fin: "13:39" }],
       },
     ],
@@ -2013,7 +2013,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:51", fin: "20:39" }],
       },
     ],
@@ -2023,7 +2023,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:42", fin: "13:51" }],
       },
     ],
@@ -2033,7 +2033,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:23", fin: "20:47" }],
       },
     ],
@@ -2046,7 +2046,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "05:58", fin: "13:10" }],
       },
     ],
@@ -2056,7 +2056,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:42", fin: "20:01" }],
       },
     ],
@@ -2066,7 +2066,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:12", fin: "13:43" }],
       },
     ],
@@ -2076,7 +2076,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:55", fin: "20:38" }],
       },
     ],
@@ -2086,7 +2086,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:42", fin: "13:55" }],
       },
     ],
@@ -2096,7 +2096,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:27", fin: "20:47" }],
       },
     ],
@@ -2106,7 +2106,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:43", fin: "12:57" }],
       },
     ],
@@ -2116,7 +2116,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "12:29", fin: "20:27" }],
       },
     ],
@@ -2126,7 +2126,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:13", fin: "13:39" }],
       },
     ],
@@ -2136,7 +2136,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:11", fin: "20:02" }],
       },
     ],
@@ -2149,7 +2149,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:43", fin: "12:55" }],
       },
     ],
@@ -2159,7 +2159,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "12:27", fin: "20:27" }],
       },
     ],
@@ -2169,7 +2169,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "07:13", fin: "13:42" }],
       },
     ],
@@ -2179,7 +2179,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:14", fin: "20:02" }],
       },
     ],
@@ -2189,7 +2189,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [
           { debut: "13:13", fin: "15:37" },
           { debut: "17:40", fin: "20:27" },
@@ -2202,7 +2202,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:53", fin: "13:22" }],
       },
     ],
@@ -2212,7 +2212,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:16", fin: "19:49" }],
       },
     ],
@@ -2222,7 +2222,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "06:58", fin: "13:31" }],
       },
     ],
@@ -2232,7 +2232,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:03", fin: "20:09" }],
       },
     ],
@@ -2245,7 +2245,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "06:58", fin: "13:34" }],
       },
     ],
@@ -2255,7 +2255,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:06", fin: "20:09" }],
       },
     ],
@@ -2265,7 +2265,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "07:06", fin: "13:37" }],
       },
     ],
@@ -2275,7 +2275,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "13:38", fin: "20:02" }],
       },
     ],
@@ -2288,7 +2288,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "07:06", fin: "13:35" }],
       },
     ],
@@ -2298,7 +2298,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "13:07", fin: "19:45" }],
       },
     ],
@@ -2308,11 +2308,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "08:14", fin: "12:45" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [
           { debut: "08:14", fin: "12:38" },
           { debut: "13:46", fin: "18:38" },
@@ -2325,14 +2325,14 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [
           { debut: "08:17", fin: "12:36" },
           { debut: "13:46", fin: "18:33" },
         ],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [
           { debut: "08:17", fin: "12:36" },
           { debut: "13:46", fin: "18:33" },
@@ -2345,11 +2345,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "08:04", fin: "13:00" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "08:04", fin: "13:00" }],
       },
     ],
@@ -2359,14 +2359,14 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [
           { debut: "08:09", fin: "12:42" },
           { debut: "13:46", fin: "18:39" },
         ],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [
           { debut: "08:09", fin: "12:42" },
           { debut: "13:46", fin: "18:39" },
@@ -2379,11 +2379,11 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [{ debut: "08:05", fin: "12:59" }],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [{ debut: "08:05", fin: "13:00" }],
       },
     ],
@@ -2393,14 +2393,14 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [
           { debut: "08:25", fin: "12:31" },
           { debut: "13:45", fin: "18:38" },
         ],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [
           { debut: "08:25", fin: "12:32" },
           { debut: "13:45", fin: "18:38" },
@@ -2413,14 +2413,14 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode principale",
+        libelle: "Période principale",
         plages: [
           { debut: "08:08", fin: "12:51" },
           { debut: "13:46", fin: "18:35" },
         ],
       },
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [
           { debut: "08:08", fin: "12:51" },
           { debut: "13:46", fin: "18:35" },
@@ -2436,7 +2436,7 @@ export const SERVICES_CATALOG = [
     type: "STANDARD",
     periodes: [
       {
-        libelle: "PÃ©riode saisonniÃ¨re",
+        libelle: "Période saisonnière",
         plages: [
           { debut: "09:31", fin: "12:56" },
           { debut: "13:46", fin: "18:38" },

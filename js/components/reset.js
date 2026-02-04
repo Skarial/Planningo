@@ -92,7 +92,7 @@ export async function renderResetView() {
   const warning = document.createElement("div");
   warning.className = "settings-note";
   warning.textContent =
-    "Les Réinitialisations sont dÃ©finitives. Maintenez pour confirmer.";
+    "Les Réinitialisations sont définitives. Maintenez pour confirmer.";
 
   const labelMonth = document.createElement("label");
   labelMonth.textContent = "Mois à réinitialiser";
@@ -149,4 +149,4 @@ export async function renderResetView() {
     null,
   );
 }
-
+
