@@ -6,7 +6,12 @@
 
 // js/components/alarm.js
 
-import { getAllServices, getConfig, getPlanningEntriesInRange, setConfig } from "../data/storage.js";
+import {
+  getAllServices,
+  getConfig,
+  getPlanningEntriesInRange,
+  setConfig,
+} from "../data/storage.js";
 import { SERVICES_CATALOG } from "../data/services-catalog.js";
 import { buildAlarmPlan } from "../domain/alarm-plan.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
@@ -149,7 +154,9 @@ async function buildPlan(rules) {
   ]);
 
   const servicesList =
-    Array.isArray(services) && services.length > 0 ? services : SERVICES_CATALOG;
+    Array.isArray(services) && services.length > 0
+      ? services
+      : SERVICES_CATALOG;
   const saisonConfig = saisonEntry?.value || {};
 
   const periodLabelForDate = (dateISO) => {
@@ -188,12 +195,17 @@ async function sharePlan(plan) {
     navigator.canShare &&
     navigator.canShare({ files: [file] })
   ) {
-    await navigator.share({
-      files: [file],
-      title: "Plan de reveil",
-      text: "Plan d'alarmes Planningo",
-    });
-    return "share";
+    try {
+      await navigator.share({
+        files: [file],
+        title: "Plan de reveil",
+        text: "Plan d'alarmes Planningo",
+      });
+      return "share";
+    } catch (err) {
+      // Fallback si le partage est refusé par le navigateur/OS.
+      // On laisse le download gérer la sortie.
+    }
   }
 
   const url = URL.createObjectURL(blob);
@@ -232,7 +244,8 @@ export async function renderAlarmView() {
 
   const rules = document.createElement("div");
   rules.className = "settings-note";
-  rules.textContent = "Regle active : service avant 10:00 => reveil 1h30 avant.";
+  rules.textContent =
+    "Regle active : service avant 10:00 => reveil 1h30 avant.";
 
   const horizon = document.createElement("div");
   horizon.className = "settings-note";
@@ -342,7 +355,10 @@ export async function renderAlarmView() {
         `Plan ${suffix} (${count} alarme${count > 1 ? "s" : ""}) - ${startISO} a ${endISO}.`,
       );
     } catch (err) {
-      const msg = err && err.name === "AbortError" ? "Partage annule." : "Erreur de generation.";
+      const msg =
+        err && err.name === "AbortError"
+          ? "Partage annule."
+          : "Erreur de generation.";
       status.show(msg);
     } finally {
       actionBtn.textContent = prevText;

@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.13";
+export const APP_VERSION = "2.0.14";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -280,6 +280,7 @@ function showUpdateBanner(registration) {
     banner.remove();
   });
 }
+
 
 
 
