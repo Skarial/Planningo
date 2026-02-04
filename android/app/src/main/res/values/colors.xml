@@ -1,0 +1,7 @@
+﻿<resources>
+  <color name="primary">#0B3D91</color>
+  <color name="primary_dark">#082B63</color>
+  <color name="accent">#FFB020</color>
+  <color name="alarm_background">#0A0F1F</color>
+  <color name="alarm_text">#FFFFFF</color>
+</resources>

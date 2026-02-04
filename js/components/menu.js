@@ -17,8 +17,11 @@ import {
   showSummaryView,
   showPhoneChangeView,
   showLegalView,
+  showAlarmView,
 } from "../router.js";
 
+const ALARM_ACCESS_CODE = "486091";
+const ALARM_ACCESS_KEY = "planningo_alarm_access_ok";
 
 // =======================
 // MENU
@@ -123,8 +126,12 @@ export function initMenu() {
   });
 
   alarmBtn.addEventListener("click", () => {
-    showToast("Bient\u00f4t disponible");
+    if (!ensureAlarmAccess()) {
+      return;
+    }
+    showAlarmView();
     setActiveMenu("menu-alarm");
+    closeMenu();
   });
 
   phoneBtn.addEventListener("click", () => {
@@ -449,9 +456,19 @@ export function initMenu() {
   // Version affiche supprime avec le footer du menu
 }
 
-// =======================
-// TOAST
-// =======================
+function ensureAlarmAccess() {
+  if (localStorage.getItem(ALARM_ACCESS_KEY) === "true") {
+    return true;
+  }
+  const code = window.prompt("Code d'acces reveil intelligent");
+  if (!code) return false;
+  if (code.trim() !== ALARM_ACCESS_CODE) {
+    showToast("Code incorrect.");
+    return false;
+  }
+  localStorage.setItem(ALARM_ACCESS_KEY, "true");
+  return true;
+}
 
 function showToast(message) {
   const toast = document.createElement("div");
@@ -466,4 +483,5 @@ function showToast(message) {
     setTimeout(() => toast.remove(), 300);
   }, 2200);
 }
+
 

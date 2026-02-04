@@ -1,0 +1,115 @@
+/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
+import { buildAlarmPlan } from "../../js/domain/alarm-plan.js";
+import { test, assert } from "../run-tests.js";
+
+test("alarm-plan genere une alarme avant 10:00", () => {
+  const services = [
+    {
+      code: "SVC",
+      periodes: [
+        {
+          libelle: "P",
+          plages: [{ debut: "09:12", fin: "12:00" }],
+        },
+      ],
+    },
+  ];
+
+  const entries = [{ date: "2026-02-10", serviceCode: "SVC" }];
+
+  const plan = buildAlarmPlan({
+    entries,
+    services,
+    periodLabelForDate: () => "P",
+    rules: { startBefore: "10:00", offsetMinutes: 90 },
+    now: new Date("2026-02-01T00:00:00"),
+  });
+
+  assert(plan.alarms.length === 1, "Alarme attendue");
+  assert(plan.alarms[0].serviceStart === "09:12", "Heure service incorrecte");
+  assert(
+    plan.alarms[0].alarmAt.includes("T07:42"),
+    "Heure alarme incorrecte",
+  );
+});
+
+test("alarm-plan ignore les services a 10:00 ou plus", () => {
+  const services = [
+    {
+      code: "SVC",
+      periodes: [
+        {
+          libelle: "P",
+          plages: [{ debut: "10:00", fin: "13:00" }],
+        },
+      ],
+    },
+  ];
+
+  const plan = buildAlarmPlan({
+    entries: [{ date: "2026-02-10", serviceCode: "SVC" }],
+    services,
+    periodLabelForDate: () => "P",
+    rules: { startBefore: "10:00", offsetMinutes: 90 },
+    now: new Date("2026-02-01T00:00:00"),
+  });
+
+  assert(plan.alarms.length === 0, "Aucune alarme attendue");
+});
+
+test("alarm-plan prend la premiere plage du service", () => {
+  const services = [
+    {
+      code: "SVC",
+      periodes: [
+        {
+          libelle: "P",
+          plages: [
+            { debut: "13:00", fin: "15:00" },
+            { debut: "05:30", fin: "08:00" },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const plan = buildAlarmPlan({
+    entries: [{ date: "2026-02-10", serviceCode: "SVC" }],
+    services,
+    periodLabelForDate: () => "P",
+    rules: { startBefore: "10:00", offsetMinutes: 90 },
+    now: new Date("2026-02-01T00:00:00"),
+  });
+
+  assert(plan.alarms.length === 1, "Alarme attendue");
+  assert(plan.alarms[0].serviceStart === "05:30", "Plage choisie incorrecte");
+});
+
+test("alarm-plan ignore une alarme deja passee", () => {
+  const services = [
+    {
+      code: "SVC",
+      periodes: [
+        {
+          libelle: "P",
+          plages: [{ debut: "08:30", fin: "12:00" }],
+        },
+      ],
+    },
+  ];
+
+  const plan = buildAlarmPlan({
+    entries: [{ date: "2026-02-10", serviceCode: "SVC" }],
+    services,
+    periodLabelForDate: () => "P",
+    rules: { startBefore: "10:00", offsetMinutes: 90 },
+    now: new Date("2026-02-10T08:00:00"),
+  });
+
+  assert(plan.alarms.length === 0, "Alarme passee ignoree");
+});

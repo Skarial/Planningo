@@ -1,0 +1,13 @@
+﻿<resources>
+  <string name="app_name">Réveil Planningo</string>
+  <string name="main_title">Réveil Planningo</string>
+  <string name="main_subtitle">Importez un plan d'alarmes depuis Planningo.</string>
+  <string name="main_note">Sonnerie conforme aux réglages système (DND/silencieux).</string>
+  <string name="status_waiting">En attente d'import.</string>
+  <string name="btn_check_permission">Autorisation alarmes exactes</string>
+  <string name="btn_open_settings">Ouvrir paramètres</string>
+  <string name="alarm_title">Réveil</string>
+  <string name="alarm_stop">Arrêter</string>
+  <string name="alarm_snooze">Répéter 10 min</string>
+  <string name="alarm_service">Service</string>
+</resources>

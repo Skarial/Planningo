@@ -21,6 +21,7 @@ import { renderSuggestionsView } from "./components/suggestions.js";
 import { renderLegalView } from "./components/legal.js";
 import { renderConsultDateView } from "./components/consult-date.js";
 import { renderResetView } from "./components/reset.js";
+import { renderAlarmView } from "./components/alarm.js";
 
 function getView(name) {
   return document.getElementById(`view-${name}`);
@@ -38,6 +39,7 @@ function hideAllViews() {
     "phone-change",
     "summary",
     "tetribus",
+    "alarm",
     "legal",
     "reset",
   ].forEach((name) => {
@@ -127,6 +129,12 @@ export function showLegalView() {
   renderLegalView();
 }
 
+export function showAlarmView() {
+  const view = activateView("alarm");
+  if (!view) return;
+  renderAlarmView();
+}
+
 // =======================
 // ROUTER INTERNE
 // =======================
@@ -181,6 +189,10 @@ export function refreshCurrentView() {
 
     case "legal":
       showLegalView();
+      break;
+
+    case "alarm":
+      showAlarmView();
       break;
   }
 }

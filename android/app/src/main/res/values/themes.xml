@@ -1,0 +1,16 @@
+﻿<resources xmlns:tools="http://schemas.android.com/tools">
+  <style name="Theme.ReveilPlanninngo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="colorPrimary">@color/primary</item>
+    <item name="colorPrimaryVariant">@color/primary_dark</item>
+    <item name="colorAccent">@color/accent</item>
+  </style>
+
+  <style name="Theme.ReveilPlanninngo.Alarm" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="colorPrimary">@color/primary</item>
+    <item name="colorPrimaryVariant">@color/primary_dark</item>
+    <item name="colorAccent">@color/accent</item>
+    <item name="android:windowBackground">@color/alarm_background</item>
+    <item name="android:windowFullscreen">true</item>
+    <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="28">shortEdges</item>
+  </style>
+</resources>

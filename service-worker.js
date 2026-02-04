@@ -27,6 +27,7 @@ const CORE_ASSETS = [
   "./js/adapters/activation.web.js",
   "./js/app.js",
   "./js/components/activationScreen.js",
+  "./js/components/alarm.js",
   "./js/components/conges.js",
   "./js/components/conges-periods.js",
   "./js/components/guided-month.js",
@@ -53,6 +54,7 @@ const CORE_ASSETS = [
   "./js/data/storage.memory.js",
   "./js/data/storage.selector.js",
   "./js/domain/activation.js",
+  "./js/domain/alarm-plan.js",
   "./js/domain/conges.js",
   "./js/domain/day-status.js",
   "./js/domain/holidays-fr.js",
@@ -162,6 +164,7 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
+
 
 
 

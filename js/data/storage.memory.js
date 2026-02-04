@@ -10,7 +10,7 @@
 const memory = new Map();
 
 export async function storageGet(key) {
-  return memory.has(key)  memory.get(key) : null;
+  return memory.has(key) ? memory.get(key) : null;
 }
 
 export async function storageSet(key, value) {
