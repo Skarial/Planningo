@@ -1,21 +1,14 @@
-﻿package com.planning.reveil
+package com.planning.reveil
 
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.media.RingtoneManager
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.view.WindowManager
 import android.widget.TextView
-import com.google.android.material.button.MaterialButton
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.button.MaterialButton
 
 class AlarmActivity : AppCompatActivity() {
-  private var player: MediaPlayer? = null
-  private var vibrator: Vibrator? = null
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_alarm)
@@ -50,83 +43,28 @@ class AlarmActivity : AppCompatActivity() {
 
     stopBtn.setOnClickListener { stopAndFinish() }
     snoozeBtn.setOnClickListener {
-      AlarmScheduler.scheduleSnooze(
-        this,
-        alarmId = intent.getStringExtra("alarm_id") ?: "alarm",
-        label = label,
-        serviceDate = serviceDate,
-        serviceStart = serviceStart,
-      )
-      stopAndFinish()
+      dispatchServiceAction(AlarmRingService.ACTION_SNOOZE)
+      finish()
     }
-
-    startSound()
-    startVibration()
   }
 
   override fun onBackPressed() {
     // Ignore back to force user action
   }
 
-  override fun onDestroy() {
-    stopSound()
-    stopVibration()
-    super.onDestroy()
-  }
-
-  private fun startSound() {
-    val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-      ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-      ?: return
-
-    val audioAttrs = AudioAttributes.Builder()
-      .setUsage(AudioAttributes.USAGE_ALARM)
-      .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-      .build()
-
-    try {
-      player = MediaPlayer().apply {
-        setAudioAttributes(audioAttrs)
-        setDataSource(this@AlarmActivity, uri)
-        isLooping = true
-        prepare()
-        start()
-      }
-    } catch (_: Exception) {
-      player = null
-    }
-  }
-
-  private fun stopSound() {
-    try {
-      player?.stop()
-    } catch (_: Exception) {
-      // ignore
-    }
-    player?.release()
-    player = null
-  }
-
-  private fun startVibration() {
-    val vib = getSystemService(VIBRATOR_SERVICE) as Vibrator
-    vibrator = vib
-
-    val pattern = longArrayOf(0, 800, 500)
-    if (Build.VERSION.SDK_INT >= 26) {
-      vib.vibrate(VibrationEffect.createWaveform(pattern, 0))
-    } else {
-      @Suppress("DEPRECATION")
-      vib.vibrate(pattern, 0)
-    }
-  }
-
-  private fun stopVibration() {
-    vibrator?.cancel()
-  }
-
   private fun stopAndFinish() {
-    stopSound()
-    stopVibration()
+    dispatchServiceAction(AlarmRingService.ACTION_STOP)
     finish()
+  }
+
+  private fun dispatchServiceAction(action: String) {
+    val serviceIntent = Intent(this, AlarmRingService::class.java).apply {
+      this.action = action
+      putExtra(AlarmRingService.EXTRA_ALARM_ID, intent.getStringExtra("alarm_id"))
+      putExtra(AlarmRingService.EXTRA_LABEL, intent.getStringExtra("label"))
+      putExtra(AlarmRingService.EXTRA_SERVICE_DATE, intent.getStringExtra("service_date"))
+      putExtra(AlarmRingService.EXTRA_SERVICE_START, intent.getStringExtra("service_start"))
+    }
+    startService(serviceIntent)
   }
 }

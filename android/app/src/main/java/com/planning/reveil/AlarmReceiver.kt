@@ -3,16 +3,17 @@
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.core.content.ContextCompat
 
 class AlarmReceiver : BroadcastReceiver() {
   override fun onReceive(context: Context, intent: Intent) {
-    val alarmIntent = Intent(context, AlarmActivity::class.java).apply {
-      addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-      putExtra("alarm_id", intent.getStringExtra("alarm_id"))
-      putExtra("label", intent.getStringExtra("label"))
-      putExtra("service_date", intent.getStringExtra("service_date"))
-      putExtra("service_start", intent.getStringExtra("service_start"))
+    val serviceIntent = Intent(context, AlarmRingService::class.java).apply {
+      action = AlarmRingService.ACTION_START
+      putExtra(AlarmRingService.EXTRA_ALARM_ID, intent.getStringExtra("alarm_id"))
+      putExtra(AlarmRingService.EXTRA_LABEL, intent.getStringExtra("label"))
+      putExtra(AlarmRingService.EXTRA_SERVICE_DATE, intent.getStringExtra("service_date"))
+      putExtra(AlarmRingService.EXTRA_SERVICE_START, intent.getStringExtra("service_start"))
     }
-    context.startActivity(alarmIntent)
+    ContextCompat.startForegroundService(context, serviceIntent)
   }
 }
