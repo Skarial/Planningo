@@ -9,10 +9,16 @@ import { SERVICES_CATALOG } from "./services-catalog.js";
 
 export async function initServicesIfNeeded() {
   const existing = await getAllServices();
-  if (existing.length > 0) return;
+  const existingCodes = new Set(
+    existing
+      .filter((service) => service && typeof service.code === "string")
+      .map((service) => service.code.toUpperCase()),
+  );
 
   for (const service of SERVICES_CATALOG) {
+    if (!service || typeof service.code !== "string") continue;
+    const code = service.code.toUpperCase();
+    if (existingCodes.has(code)) continue;
     await addService(service);
   }
 }
-
