@@ -18,6 +18,10 @@ export async function initServicesIfNeeded() {
   for (const service of SERVICES_CATALOG) {
     if (!service || typeof service.code !== "string") continue;
     const code = service.code.toUpperCase();
+    if (code === "TEST-ALARM") {
+      await addService(service);
+      continue;
+    }
     if (existingCodes.has(code)) continue;
     await addService(service);
   }
