@@ -6,6 +6,7 @@
   <string name="status_waiting">En attente d\'import.</string>
   <string name="btn_check_permission">Autorisation alarmes exactes</string>
   <string name="btn_open_settings">Ouvrir paramètres</string>
+  <string name="btn_test_alarm">Tester alarme +2 min</string>
   <string name="alarm_title">Réveil</string>
   <string name="alarm_stop">Arrêter</string>
   <string name="alarm_snooze">Répéter 10 min</string>

@@ -46,6 +46,13 @@
       android:layout_marginTop="8dp"
       android:text="@string/btn_open_settings" />
 
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/btn_test_alarm"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:text="@string/btn_test_alarm" />
+
     <TextView
       android:id="@+id/note"
       android:layout_width="match_parent"

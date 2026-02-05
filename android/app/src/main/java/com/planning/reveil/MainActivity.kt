@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
   private lateinit var statusView: TextView
   private lateinit var permissionBtn: MaterialButton
   private lateinit var settingsBtn: MaterialButton
+  private lateinit var testAlarmBtn: MaterialButton
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -26,9 +27,11 @@ class MainActivity : AppCompatActivity() {
     statusView = findViewById(R.id.status)
     permissionBtn = findViewById(R.id.btn_permission)
     settingsBtn = findViewById(R.id.btn_settings)
+    testAlarmBtn = findViewById(R.id.btn_test_alarm)
 
     permissionBtn.setOnClickListener { requestExactAlarmPermission() }
     settingsBtn.setOnClickListener { openAppSettings() }
+    testAlarmBtn.setOnClickListener { scheduleTestAlarm() }
 
     updatePermissionUi()
     handleIntent(intent)
@@ -113,6 +116,23 @@ class MainActivity : AppCompatActivity() {
     } else {
       "Autoriser alarmes exactes"
     }
+  }
+
+  private fun scheduleTestAlarm() {
+    val now = System.currentTimeMillis()
+    val alarmInTwoMin = now + 2 * 60 * 1000L
+    val alarm = AlarmEntry(
+      id = "debug_alarm_$alarmInTwoMin",
+      serviceDate = null,
+      serviceCode = null,
+      serviceStart = null,
+      alarmAt = "",
+      label = "Test alarme +2 min",
+      requiresUserActionToStop = true,
+      alarmAtEpochMillis = alarmInTwoMin,
+    )
+    AlarmScheduler.scheduleAll(this, listOf(alarm))
+    setStatus("Test programmé : alarme dans 2 minutes.")
   }
 
   private fun findNextAlarm(alarms: List<AlarmEntry>): AlarmEntry? {
