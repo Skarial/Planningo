@@ -20,11 +20,11 @@ export const SERVICES_CATALOG = [
     periodes: [
       {
         libelle: "Période principale",
-        plages: [{ debut: "16:00", fin: "16:15" }],
+        plages: [{ debut: "16:15", fin: "16:30" }],
       },
       {
         libelle: "Période saisonnière",
-        plages: [{ debut: "16:00", fin: "16:15" }],
+        plages: [{ debut: "16:15", fin: "16:30" }],
       },
     ],
   },

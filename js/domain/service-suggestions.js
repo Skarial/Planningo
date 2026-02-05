@@ -85,6 +85,15 @@ export function getServiceSuggestions({
       return;
     }
 
+    if (upperCode === "TEST-ALARM") {
+      if (!allow.lignes) return;
+      if (!result.LIGNES.TEST) {
+        result.LIGNES.TEST = [];
+      }
+      result.LIGNES.TEST.push(code);
+      return;
+    }
+
     // TADxxx
     if (upperCode.startsWith("TAD")) {
       if (!allow.tad) return;
