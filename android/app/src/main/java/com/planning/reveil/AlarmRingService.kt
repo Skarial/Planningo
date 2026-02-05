@@ -49,6 +49,7 @@ class AlarmRingService : Service() {
 
     startForeground(NOTIFICATION_ID, buildNotification(alarmId, label, serviceDate, serviceStart))
     startAlarm()
+    openAlarmScreen(alarmId, label, serviceDate, serviceStart)
     return START_STICKY
   }
 
@@ -68,9 +69,7 @@ class AlarmRingService : Service() {
   }
 
   private fun startSound() {
-    val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-      ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-      ?: return
+    val uri = AlarmRingtoneStore.resolveUri(this) ?: return
 
     val audioAttrs = AudioAttributes.Builder()
       .setUsage(AudioAttributes.USAGE_ALARM)
@@ -126,13 +125,7 @@ class AlarmRingService : Service() {
     ensureChannel()
 
     val contentText = listOfNotNull(serviceDate, serviceStart).joinToString(" ").ifBlank { label }
-    val activityIntent = Intent(this, AlarmActivity::class.java).apply {
-      putExtra(EXTRA_ALARM_ID, alarmId)
-      putExtra(EXTRA_LABEL, label)
-      putExtra(EXTRA_SERVICE_DATE, serviceDate)
-      putExtra(EXTRA_SERVICE_START, serviceStart)
-      addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-    }
+    val activityIntent = buildAlarmActivityIntent(alarmId, label, serviceDate, serviceStart)
 
     val openPendingIntent = PendingIntent.getActivity(
       this,
@@ -171,6 +164,7 @@ class AlarmRingService : Service() {
       .setContentTitle(getString(R.string.alarm_title))
       .setContentText(contentText)
       .setOngoing(true)
+      .setOnlyAlertOnce(true)
       .setPriority(NotificationCompat.PRIORITY_MAX)
       .setCategory(NotificationCompat.CATEGORY_ALARM)
       .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -181,19 +175,40 @@ class AlarmRingService : Service() {
       .build()
   }
 
+  private fun openAlarmScreen(
+    alarmId: String,
+    label: String,
+    serviceDate: String?,
+    serviceStart: String?,
+  ) {
+    val activityIntent = buildAlarmActivityIntent(alarmId, label, serviceDate, serviceStart)
+    try {
+      startActivity(activityIntent)
+    } catch (_: Exception) {
+      // ignore: notification still offers stop/snooze
+    }
+  }
+
+  private fun buildAlarmActivityIntent(
+    alarmId: String,
+    label: String,
+    serviceDate: String?,
+    serviceStart: String?,
+  ): Intent {
+    return Intent(this, AlarmActivity::class.java).apply {
+      putExtra(EXTRA_ALARM_ID, alarmId)
+      putExtra(EXTRA_LABEL, label)
+      putExtra(EXTRA_SERVICE_DATE, serviceDate)
+      putExtra(EXTRA_SERVICE_START, serviceStart)
+      addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+    }
+  }
+
   private fun ensureChannel() {
     if (Build.VERSION.SDK_INT < 26) return
     val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
     val existing = notificationManager.getNotificationChannel(CHANNEL_ID)
     if (existing != null) return
-
-    val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-      ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
-    val attrs = AudioAttributes.Builder()
-      .setUsage(AudioAttributes.USAGE_ALARM)
-      .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-      .build()
 
     val channel = NotificationChannel(
       CHANNEL_ID,
@@ -203,7 +218,7 @@ class AlarmRingService : Service() {
       description = "Alarmes reveil"
       enableVibration(true)
       setBypassDnd(false)
-      if (soundUri != null) setSound(soundUri, attrs)
+      setSound(null, null)
       lockscreenVisibility = Notification.VISIBILITY_PUBLIC
     }
     notificationManager.createNotificationChannel(channel)
@@ -219,7 +234,8 @@ class AlarmRingService : Service() {
     const val EXTRA_SERVICE_DATE = "service_date"
     const val EXTRA_SERVICE_START = "service_start"
 
-    private const val CHANNEL_ID = "alarm_ring_channel"
+    // New id to avoid legacy channel settings kept by Android.
+    private const val CHANNEL_ID = "alarm_ring_channel_silent_v3"
     private const val NOTIFICATION_ID = 42001
   }
 }

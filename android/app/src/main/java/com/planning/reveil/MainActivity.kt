@@ -1,13 +1,19 @@
 ﻿package com.planning.reveil
 
 import android.app.AlarmManager
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
 import android.content.Intent
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import java.time.Instant
 import java.time.ZoneId
@@ -16,24 +22,47 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
   private lateinit var statusView: TextView
+  private lateinit var ringtoneValueView: TextView
   private lateinit var permissionBtn: MaterialButton
   private lateinit var settingsBtn: MaterialButton
   private lateinit var testAlarmBtn: MaterialButton
+  private lateinit var ringtoneBtn: MaterialButton
+  private val notificationPermissionLauncher = registerForActivityResult(
+    ActivityResultContracts.RequestPermission(),
+  ) { granted ->
+    if (!granted) {
+      setStatus("Autorise les notifications pour afficher Arreter/Repeter sur l'alarme.")
+    }
+  }
+  private val ringtonePickerLauncher = registerForActivityResult(
+    ActivityResultContracts.StartActivityForResult(),
+  ) { result ->
+    if (result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
+    val uri = result.data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) ?: return@registerForActivityResult
+    AlarmRingtoneStore.save(this, uri)
+    updateRingtoneSummary()
+    setStatus("Sonnerie du reveil mise a jour.")
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
     statusView = findViewById(R.id.status)
+    ringtoneValueView = findViewById(R.id.ringtone_value)
     permissionBtn = findViewById(R.id.btn_permission)
     settingsBtn = findViewById(R.id.btn_settings)
     testAlarmBtn = findViewById(R.id.btn_test_alarm)
+    ringtoneBtn = findViewById(R.id.btn_ringtone)
 
     permissionBtn.setOnClickListener { requestExactAlarmPermission() }
     settingsBtn.setOnClickListener { openAppSettings() }
     testAlarmBtn.setOnClickListener { scheduleTestAlarm() }
+    ringtoneBtn.setOnClickListener { openRingtonePicker() }
 
+    ensureNotificationPermission()
     updatePermissionUi()
+    updateRingtoneSummary()
     refreshStatusFromSystemAlarm()
     handleIntent(intent)
   }
@@ -47,6 +76,7 @@ class MainActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     updatePermissionUi()
+    updateRingtoneSummary()
     refreshStatusFromSystemAlarm()
   }
 
@@ -118,6 +148,39 @@ class MainActivity : AppCompatActivity() {
     } else {
       "Autoriser alarmes exactes"
     }
+  }
+
+  private fun ensureNotificationPermission() {
+    if (Build.VERSION.SDK_INT < 33) return
+    val granted = ContextCompat.checkSelfPermission(
+      this,
+      Manifest.permission.POST_NOTIFICATIONS,
+    ) == PackageManager.PERMISSION_GRANTED
+    if (!granted) {
+      notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+  }
+
+  private fun openRingtonePicker() {
+    val existingUri = AlarmRingtoneStore.resolveUri(this)
+    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+      putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+      putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+      putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+      putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, existingUri)
+      putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.ringtone_picker_title))
+    }
+    ringtonePickerLauncher.launch(intent)
+  }
+
+  private fun updateRingtoneSummary() {
+    val uri = AlarmRingtoneStore.resolveUri(this)
+    val title = if (uri != null) {
+      RingtoneManager.getRingtone(this, uri)?.getTitle(this)
+    } else {
+      null
+    } ?: getString(R.string.ringtone_default_label)
+    ringtoneValueView.text = getString(R.string.ringtone_current_value, title)
   }
 
   private fun scheduleTestAlarm() {

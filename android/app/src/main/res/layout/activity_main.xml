@@ -47,6 +47,21 @@
       android:text="@string/btn_open_settings" />
 
     <com.google.android.material.button.MaterialButton
+      android:id="@+id/btn_ringtone"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:text="@string/btn_choose_ringtone" />
+
+    <TextView
+      android:id="@+id/ringtone_value"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="6dp"
+      android:text="@string/ringtone_default_label"
+      android:textSize="13sp" />
+
+    <com.google.android.material.button.MaterialButton
       android:id="@+id/btn_test_alarm"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"

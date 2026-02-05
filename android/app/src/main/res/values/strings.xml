@@ -6,7 +6,11 @@
   <string name="status_waiting">En attente d\'import.</string>
   <string name="btn_check_permission">Autorisation alarmes exactes</string>
   <string name="btn_open_settings">Ouvrir paramètres</string>
+  <string name="btn_choose_ringtone">Choisir la sonnerie</string>
   <string name="btn_test_alarm">Tester alarme +2 min</string>
+  <string name="ringtone_picker_title">Choisir la sonnerie du réveil</string>
+  <string name="ringtone_default_label">Sonnerie d\'alarme système</string>
+  <string name="ringtone_current_value">Sonnerie actuelle : %1$s</string>
   <string name="alarm_title">Réveil</string>
   <string name="alarm_stop">Arrêter</string>
   <string name="alarm_snooze">Répéter 10 min</string>
