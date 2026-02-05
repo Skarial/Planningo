@@ -28,20 +28,30 @@ function createStatus() {
 function bindHoldAction(button, onHold, status, holdText) {
   let timer = null;
   const HOLD_DURATION = 4000;
+  let startAt = 0;
+  let didTrigger = false;
+
+  async function trigger() {
+    if (didTrigger) return;
+    didTrigger = true;
+    button.classList.remove("holding");
+    try {
+      await onHold();
+    } catch (err) {
+      status.show("Une erreur est survenue.");
+    }
+  }
 
   function start(e) {
     e.preventDefault();
     e.stopPropagation();
     if (timer) return;
     button.classList.add("holding");
+    didTrigger = false;
+    startAt = Date.now();
     timer = setTimeout(async () => {
       timer = null;
-      button.classList.remove("holding");
-      try {
-        await onHold();
-      } catch (err) {
-        status.show("Une erreur est survenue.");
-      }
+      await trigger();
     }, HOLD_DURATION);
   }
 
@@ -49,19 +59,36 @@ function bindHoldAction(button, onHold, status, holdText) {
     if (e?.pointerId !== undefined) {
       button.releasePointerCapture?.(e.pointerId);
     }
+    if (didTrigger) return;
+    const elapsed = startAt ? Date.now() - startAt : 0;
     if (!timer) return;
     clearTimeout(timer);
     timer = null;
     button.classList.remove("holding");
+    if (elapsed >= HOLD_DURATION) {
+      void trigger();
+      return;
+    }
     if (holdText) status.show(holdText);
   }
 
-  button.addEventListener("pointerdown", (e) => {
-    button.setPointerCapture?.(e.pointerId);
-    start(e);
-  });
-  button.addEventListener("pointerup", cancel);
-  button.addEventListener("pointercancel", cancel);
+  button.addEventListener("contextmenu", (e) => e.preventDefault());
+
+  if ("PointerEvent" in window) {
+    button.addEventListener("pointerdown", (e) => {
+      button.setPointerCapture?.(e.pointerId);
+      start(e);
+    });
+    button.addEventListener("pointerup", cancel);
+    button.addEventListener("pointercancel", cancel);
+  } else {
+    button.addEventListener("touchstart", start, { passive: false });
+    button.addEventListener("touchend", cancel);
+    button.addEventListener("touchcancel", cancel);
+    button.addEventListener("mousedown", start);
+    button.addEventListener("mouseup", cancel);
+    button.addEventListener("mouseleave", cancel);
+  }
 }
 
 export async function renderResetView() {
