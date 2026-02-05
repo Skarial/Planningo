@@ -262,7 +262,8 @@ export async function showGuidedMonth(forcedDate = null) {
   // RENDER JOUR
   // =======================
 
-  async function renderDay() {
+  async function renderDay() {
+    selectedLine = null;
     // =======================
     // CONGS  SAUT AUTOMATIQUE
     // =======================
@@ -436,16 +437,17 @@ export async function showGuidedMonth(forcedDate = null) {
         ? code.replace(/^TAD/, "TD")
         : code;
 
-      await savePlanningEntry({
-        date: iso,
-        serviceCode: serviceCodeToSave,
-        locked: false,
-        extra: false,
-      });
-
-      currentDay++;
-      await renderDay();
-    };
+      await savePlanningEntry({
+        date: iso,
+        serviceCode: serviceCodeToSave,
+        locked: false,
+        extra: false,
+      });
+
+      selectedLine = null;
+      currentDay++;
+      await renderDay();
+    };
 
     target.appendChild(btn);
   }

@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.22";
+export const APP_VERSION = "2.0.23";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -31,6 +31,9 @@ window.addEventListener("pageshow", resetScrollState);
 
 async function initApp() {
   resetScrollState();
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
 
   // 0 Activation (bloquante)
   const activation = await getConfig("activation_ok");
@@ -79,7 +82,22 @@ function resetScrollState() {
   document.body.style.overflow = "";
   document.documentElement.style.overflow = "";
   window.scrollTo(0, 0);
-  requestAnimationFrame(() => window.scrollTo(0, 0));
+  const appMain = document.getElementById("app-main");
+  if (appMain) {
+    appMain.scrollTop = 0;
+  }
+  document.querySelectorAll("#app-main > section").forEach((section) => {
+    section.scrollTop = 0;
+  });
+  requestAnimationFrame(() => {
+    window.scrollTo(0, 0);
+    if (appMain) {
+      appMain.scrollTop = 0;
+    }
+    document.querySelectorAll("#app-main > section").forEach((section) => {
+      section.scrollTop = 0;
+    });
+  });
 }
 
 function showToast(message) {
@@ -280,6 +298,7 @@ function showUpdateBanner(registration) {
     banner.remove();
   });
 }
+
 
 
 

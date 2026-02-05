@@ -22,13 +22,17 @@ export async function renderCongesPeriodsView() {
   root.className = "tabs-view";
 
   const header = document.createElement("div");
-  header.className = "tabs-header";
+  header.className = "settings-header";
 
   const title = document.createElement("div");
-  title.className = "tabs-title";
+  title.className = "settings-title";
   title.textContent = "Cong\u00e9s & p\u00e9riodes";
 
-  header.append(title);
+  const subtitle = document.createElement("div");
+  subtitle.className = "settings-subtitle";
+  subtitle.textContent = "G\u00e9rer vos cong\u00e9s et la p\u00e9riode saisonni\u00e8re";
+
+  header.append(title, subtitle);
 
   const tabs = document.createElement("div");
   tabs.className = "tabs-bar";

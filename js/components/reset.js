@@ -27,7 +27,7 @@ function createStatus() {
 
 function bindHoldAction(button, onHold, status, holdText) {
   let timer = null;
-  const HOLD_DURATION = 4000;
+  const HOLD_DURATION = 1200;
   let startAt = 0;
   let didTrigger = false;
 

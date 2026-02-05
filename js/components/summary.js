@@ -151,7 +151,7 @@ export async function renderSummaryView() {
 
   const title = document.createElement("div");
   title.className = "settings-title";
-  title.textContent = "R\u00e9capitulatif";
+  title.textContent = "Statistiques";
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";

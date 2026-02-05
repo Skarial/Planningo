@@ -788,6 +788,10 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 .tab-page .settings-card {
+  margin-top: 12px;
+}
+
+.tab-page .settings-card {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
