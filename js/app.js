@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.23";
+export const APP_VERSION = "2.0.24";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -81,6 +81,8 @@ function resetScrollState() {
   document.body.classList.remove("menu-open");
   document.body.style.overflow = "";
   document.documentElement.style.overflow = "";
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
   window.scrollTo(0, 0);
   const appMain = document.getElementById("app-main");
   if (appMain) {
@@ -89,7 +91,9 @@ function resetScrollState() {
   document.querySelectorAll("#app-main > section").forEach((section) => {
     section.scrollTop = 0;
   });
-  requestAnimationFrame(() => {
+  const resetLater = () => {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
     window.scrollTo(0, 0);
     if (appMain) {
       appMain.scrollTop = 0;
@@ -97,7 +101,9 @@ function resetScrollState() {
     document.querySelectorAll("#app-main > section").forEach((section) => {
       section.scrollTop = 0;
     });
-  });
+  };
+  requestAnimationFrame(resetLater);
+  setTimeout(resetLater, 250);
 }
 
 function showToast(message) {
@@ -298,6 +304,7 @@ function showUpdateBanner(registration) {
     banner.remove();
   });
 }
+
 
 
 

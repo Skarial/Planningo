@@ -84,11 +84,24 @@ object AlarmScheduler {
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
-    alarmManager.setExactAndAllowWhileIdle(
-      AlarmManager.RTC_WAKEUP,
-      alarm.alarmAtEpochMillis,
-      pendingIntent,
-    )
+    if (android.os.Build.VERSION.SDK_INT >= 21) {
+      val showIntent = PendingIntent.getActivity(
+        context,
+        requestCodeFor("${alarm.id}__show"),
+        Intent(context, MainActivity::class.java),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+      )
+      alarmManager.setAlarmClock(
+        AlarmManager.AlarmClockInfo(alarm.alarmAtEpochMillis, showIntent),
+        pendingIntent,
+      )
+    } else {
+      alarmManager.setExactAndAllowWhileIdle(
+        AlarmManager.RTC_WAKEUP,
+        alarm.alarmAtEpochMillis,
+        pendingIntent,
+      )
+    }
   }
 
   private fun cancelAlarm(context: Context, alarmId: String) {

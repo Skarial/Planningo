@@ -15,20 +15,6 @@ export const SERVICES_CATALOG = [
     periodes: [],
   },
   {
-    code: "TEST-ALARM",
-    type: "STANDARD",
-    periodes: [
-      {
-        libelle: "Période principale",
-        plages: [{ debut: "17:30", fin: "17:45" }],
-      },
-      {
-        libelle: "Période saisonnière",
-        plages: [{ debut: "17:30", fin: "17:45" }],
-      },
-    ],
-  },
-  {
     code: "DM",
     type: "STANDARD",
     periodes: [

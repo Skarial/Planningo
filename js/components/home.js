@@ -664,15 +664,7 @@ export async function renderHome() {
       function renderSuggestionsFiltered(filter) {
         suggestContainer.innerHTML = "";
         const f = filter.trim().toUpperCase();
-        if (!f) {
-          if (allCodes.includes("TEST-ALARM")) {
-            const grid = document.createElement("div");
-            grid.className = "guided-lines-grid";
-            suggestContainer.appendChild(grid);
-            createSuggestionButton("TEST-ALARM", grid);
-          }
-          return;
-        }
+        if (!f) return;
 
         const matches = allCodes.filter((code) => code.startsWith(f));
         if (matches.length === 0) return;
