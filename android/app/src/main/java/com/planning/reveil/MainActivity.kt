@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     testAlarmBtn.setOnClickListener { scheduleTestAlarm() }
 
     updatePermissionUi()
+    refreshStatusFromSystemAlarm()
     handleIntent(intent)
   }
 
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     updatePermissionUi()
+    refreshStatusFromSystemAlarm()
   }
 
   private fun handleIntent(intent: Intent) {
@@ -133,6 +135,15 @@ class MainActivity : AppCompatActivity() {
     )
     AlarmScheduler.scheduleAll(this, listOf(alarm))
     setStatus("Test programmé : alarme dans 2 minutes.")
+  }
+
+  private fun refreshStatusFromSystemAlarm() {
+    if (Build.VERSION.SDK_INT < 21) return
+    val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+    val next = alarmManager.nextAlarmClock ?: return
+    val triggerAt = next.triggerTime
+    if (triggerAt <= System.currentTimeMillis()) return
+    setStatus("Alarme active : ${formatDateTime(triggerAt)}.")
   }
 
   private fun findNextAlarm(alarms: List<AlarmEntry>): AlarmEntry? {
