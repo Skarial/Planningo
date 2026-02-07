@@ -260,6 +260,9 @@ export async function renderHome() {
   container.innerHTML = "";
   const card = document.createElement("div");
   card.className = "home-main-card";
+  if (getHomeMode() === HOME_MODE.EDIT_DAY) {
+    card.classList.add("home-edit-active");
+  }
 
   const top = document.createElement("div");
   top.className = "home-top";

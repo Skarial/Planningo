@@ -1516,6 +1516,16 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   padding-top: clamp(16px, 5vh, 56px);
 }
 
+.home-main-card.home-edit-active {
+  flex: 0 0 auto;
+  min-height: auto;
+  gap: 10px;
+}
+
+.home-main-card.home-edit-active .home-top {
+  padding-top: 10px;
+}
+
 .home-bottom {
   flex: 1 1 auto;
   min-height: 0;
@@ -1524,6 +1534,10 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   justify-content: flex-start;
   gap: 6px;
   padding: 0 18px 16px;
+}
+
+.home-main-card.home-edit-active #home-calendar-anchor {
+  margin-top: 18px;
 }
 /* ==========================================================================
    MENU LATÉRAL — ISOLATION STRICTE (CORRECTION)
