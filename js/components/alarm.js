@@ -37,6 +37,7 @@ const LIMITS = {
 
 function mergeServicesWithCatalog(userServices) {
   const mergedByCode = new Map();
+  const fixedCatalogCodes = new Set(["REPOS", "DM", "DAM"]);
   const addService = (service) => {
     if (!service || !service.code) return;
     const code = String(service.code).trim().toUpperCase();
@@ -44,10 +45,23 @@ function mergeServicesWithCatalog(userServices) {
     mergedByCode.set(code, service);
   };
 
-  SERVICES_CATALOG.forEach(addService);
   if (Array.isArray(userServices)) {
     userServices.forEach(addService);
   }
+
+  SERVICES_CATALOG.forEach((service) => {
+    const code = String(service?.code || "")
+      .trim()
+      .toUpperCase();
+    if (!code) return;
+    if (fixedCatalogCodes.has(code)) {
+      mergedByCode.set(code, service);
+      return;
+    }
+    if (!mergedByCode.has(code)) {
+      mergedByCode.set(code, service);
+    }
+  });
 
   return Array.from(mergedByCode.values());
 }
@@ -214,13 +228,17 @@ async function tryDirectImportInAlarmApp(plan) {
     return false;
   }
 
-  const json = JSON.stringify(plan, null, 2);
+  const prettyJson = JSON.stringify(plan, null, 2);
+  const compactJson = JSON.stringify(plan);
 
   try {
-    await navigator.clipboard.writeText(json);
+    await navigator.clipboard.writeText(prettyJson);
   } catch {
     return false;
   }
+
+  const directUrl = `${ALARM_APP_IMPORT_URI}?source=planningo&plan=${encodeURIComponent(compactJson)}`;
+  const fallbackUrl = `${ALARM_APP_IMPORT_URI}?source=planningo`;
 
   return new Promise((resolve) => {
     let settled = false;
@@ -238,7 +256,7 @@ async function tryDirectImportInAlarmApp(plan) {
     const timeoutId = setTimeout(() => finish(false), 1200);
 
     try {
-      window.location.href = `${ALARM_APP_IMPORT_URI}?source=planningo`;
+      window.location.href = directUrl.length <= 12000 ? directUrl : fallbackUrl;
     } catch {
       finish(false);
     }

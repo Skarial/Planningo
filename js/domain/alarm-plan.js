@@ -189,9 +189,11 @@ export function buildAlarmPlan(options = {}) {
     const serviceStartMinutes =
       explicitStart != null
         ? explicitStart
-        : getServiceStartMinutes(service, periodLabel) ??
-          FALLBACK_START_MINUTES_BY_CODE[serviceCode] ??
-          null;
+        : serviceCode === "DM"
+          ? FALLBACK_START_MINUTES_BY_CODE.DM
+          : getServiceStartMinutes(service, periodLabel) ??
+            FALLBACK_START_MINUTES_BY_CODE[serviceCode] ??
+            null;
     if (serviceStartMinutes == null) continue;
 
     const serviceDate = parseISODate(entry.date);

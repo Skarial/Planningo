@@ -114,14 +114,15 @@ class MainActivity : AppCompatActivity() {
       uri.scheme.equals("planningoreveil", ignoreCase = true) &&
       uri.host.equals("import", ignoreCase = true)
     ) {
-      if (importFromClipboard()) return
-
       val payload = uri.getQueryParameter("plan")
       if (!payload.isNullOrBlank()) {
         importFromText(payload)
-      } else {
-        setStatus("Import direct impossible : aucun plan trouve.")
+        return
       }
+
+      if (importFromClipboard()) return
+
+      setStatus("Import direct impossible : aucun plan trouve.")
       return
     }
 
