@@ -303,16 +303,16 @@ export async function renderAlarmView() {
 
   const noticeTitle = document.createElement("h3");
   noticeTitle.className = "alarm-notice-title";
-  noticeTitle.textContent = "Notice - Reveil intelligent";
+  noticeTitle.textContent = "Notice - Réveil intelligent";
 
   const noticeBody = document.createElement("div");
   noticeBody.className = "alarm-notice-body";
   noticeBody.innerHTML = `
-    <p><strong>Important</strong> : le reveil intelligent s'occupe uniquement des <strong>services du matin</strong>.</p>
-    <p><strong>Regle utilisee</strong> : codes service numeriques impairs (ex: 2001, 2101).</p>
-    <p><strong>Avance (minutes)</strong> : nombre de minutes avant le debut du service.</p>
-    <p><strong>Horizon (jours)</strong> : periode couverte pour generer le plan.</p>
-    <p>Ensuite, utilisez <strong>Importer dans Reveil</strong> pour envoyer le fichier vers l'application Reveil.</p>
+    <p><strong>Important</strong> : le réveil intelligent s'occupe uniquement des <strong>services du matin</strong>.</p>
+    <p><strong>Règle utilisée</strong> : codes service numériques impairs (ex : 2001, 2101).</p>
+    <p><strong>Avance (minutes)</strong> : nombre de minutes avant le début du service.</p>
+    <p><strong>Horizon (jours)</strong> : période couverte pour générer le plan.</p>
+    <p>Ensuite, utilisez <strong>Importer dans Réveil</strong> pour envoyer le fichier vers l'application Réveil.</p>
   `;
 
   const noticeRememberLabel = document.createElement("label");
