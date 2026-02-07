@@ -10,7 +10,7 @@ import { test, assert } from "../run-tests.js";
 test("alarm-plan genere une alarme pour un service impair", () => {
   const services = [
     {
-      code: "21",
+      code: "2001",
       periodes: [
         {
           libelle: "P",
@@ -20,7 +20,7 @@ test("alarm-plan genere une alarme pour un service impair", () => {
     },
   ];
 
-  const entries = [{ date: "2026-02-10", serviceCode: "21" }];
+  const entries = [{ date: "2026-02-10", serviceCode: "2001" }];
 
   const plan = buildAlarmPlan({
     entries,
@@ -41,7 +41,7 @@ test("alarm-plan genere une alarme pour un service impair", () => {
 test("alarm-plan ignore les services pairs", () => {
   const services = [
     {
-      code: "22",
+      code: "2002",
       periodes: [
         {
           libelle: "P",
@@ -52,7 +52,7 @@ test("alarm-plan ignore les services pairs", () => {
   ];
 
   const plan = buildAlarmPlan({
-    entries: [{ date: "2026-02-10", serviceCode: "22" }],
+    entries: [{ date: "2026-02-10", serviceCode: "2002" }],
     services,
     periodLabelForDate: () => "P",
     rules: { offsetMinutes: 90 },
@@ -65,7 +65,7 @@ test("alarm-plan ignore les services pairs", () => {
 test("alarm-plan prend la premiere plage du service", () => {
   const services = [
     {
-      code: "23",
+      code: "2101",
       periodes: [
         {
           libelle: "P",
@@ -79,7 +79,7 @@ test("alarm-plan prend la premiere plage du service", () => {
   ];
 
   const plan = buildAlarmPlan({
-    entries: [{ date: "2026-02-10", serviceCode: "23" }],
+    entries: [{ date: "2026-02-10", serviceCode: "2101" }],
     services,
     periodLabelForDate: () => "P",
     rules: { offsetMinutes: 90 },
@@ -93,7 +93,7 @@ test("alarm-plan prend la premiere plage du service", () => {
 test("alarm-plan ignore une alarme deja passee", () => {
   const services = [
     {
-      code: "25",
+      code: "2111",
       periodes: [
         {
           libelle: "P",
@@ -104,7 +104,7 @@ test("alarm-plan ignore une alarme deja passee", () => {
   ];
 
   const plan = buildAlarmPlan({
-    entries: [{ date: "2026-02-10", serviceCode: "25" }],
+    entries: [{ date: "2026-02-10", serviceCode: "2111" }],
     services,
     periodLabelForDate: () => "P",
     rules: { offsetMinutes: 90 },
@@ -112,4 +112,28 @@ test("alarm-plan ignore une alarme deja passee", () => {
   });
 
   assert(plan.alarms.length === 0, "Alarme passee ignoree");
+});
+
+test("alarm-plan ignore un numero de ligne (2 chiffres)", () => {
+  const services = [
+    {
+      code: "21",
+      periodes: [
+        {
+          libelle: "P",
+          plages: [{ debut: "06:00", fin: "12:00" }],
+        },
+      ],
+    },
+  ];
+
+  const plan = buildAlarmPlan({
+    entries: [{ date: "2026-02-10", serviceCode: "21" }],
+    services,
+    periodLabelForDate: () => "P",
+    rules: { offsetMinutes: 90 },
+    now: new Date("2026-02-01T00:00:00"),
+  });
+
+  assert(plan.alarms.length === 0, "Une ligne ne doit pas etre traitee comme service");
 });

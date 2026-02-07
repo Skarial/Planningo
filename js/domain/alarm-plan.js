@@ -113,7 +113,8 @@ function isMorningServiceCode(serviceCode) {
     return false;
   }
   const normalized = String(serviceCode).trim();
-  if (!/^\d+$/.test(normalized)) return false;
+  // Ignore line-only values like "21"/"23": we only accept real service codes.
+  if (!/^\d{3,}$/.test(normalized)) return false;
   const value = Number(normalized);
   if (!Number.isInteger(value)) return false;
   return value % 2 === 1;

@@ -308,7 +308,7 @@ export async function renderAlarmView() {
   const noticeBody = document.createElement("div");
   noticeBody.className = "alarm-notice-body";
   noticeBody.innerHTML = `
-    <p><strong>Services pris en compte</strong> : uniquement les services du matin, identifies par un numero <strong>impair</strong>.</p>
+    <p><strong>Services pris en compte</strong> : uniquement les services du matin, identifies par un <strong>code service impair</strong> (ex: 2001, 2101).</p>
     <p><strong>Avance (minutes)</strong> : nombre de minutes avant le debut du service.</p>
     <p><strong>Horizon (jours)</strong> : periode couverte pour generer le plan.</p>
     <p>Ensuite, utilisez <strong>Importer dans Reveil</strong> pour envoyer le fichier vers l'application Reveil.</p>
