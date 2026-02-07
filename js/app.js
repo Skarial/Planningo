@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.37";
+export const APP_VERSION = "2.0.38";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -21,6 +21,7 @@ import { toISODateLocal } from "./utils.js";
 
 import { showHome } from "./router.js";
 import { initMenu } from "./components/menu.js";
+import { installRuntimeDebugLogging } from "./debug/runtime-log.js";
 
 const CONTROLLED_RELOAD_KEY = "planningo_controlled_reload";
 let viewportObserversBound = false;
@@ -30,6 +31,7 @@ let viewportObserversBound = false;
 // =======================
 
 window.addEventListener("DOMContentLoaded", () => {
+  installRuntimeDebugLogging();
   updateViewportHeightVar();
   initApp();
 });
@@ -426,6 +428,7 @@ function showUpdateBanner(registration) {
     banner.remove();
   });
 }
+
 
 
 

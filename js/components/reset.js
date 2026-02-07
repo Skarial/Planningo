@@ -98,7 +98,8 @@ export async function renderResetView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view reset-view";
+  root.className =
+    "settings-view settings-page-variant settings-card-spacing-lg reset-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";

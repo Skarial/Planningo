@@ -224,7 +224,8 @@ export async function renderAlarmView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view alarm-view";
+  root.className =
+    "settings-view settings-page-variant settings-card-spacing-md alarm-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";

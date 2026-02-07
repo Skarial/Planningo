@@ -1,0 +1,12 @@
+#!/bin/sh
+
+echo "Vérification qualité avant push..."
+powershell -ExecutionPolicy Bypass -File ./scripts/check-quality.ps1
+
+if [ $? -ne 0 ]; then
+  echo "❌ Push annulé (qualité non conforme)."
+  exit 1
+fi
+
+echo "✅ Qualité validée, push autorisé."
+exit 0

@@ -8,12 +8,16 @@ export const TetribusRender = {
   canvas: null,
   ctx: null,
   cellSize: 0,
+  resizeHandler: null,
 
   init: function (canvasId) {
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas.getContext("2d");
     this.resize();
-    window.addEventListener("resize", () => this.resize());
+    if (!this.resizeHandler) {
+      this.resizeHandler = () => this.resize();
+      window.addEventListener("resize", this.resizeHandler);
+    }
   },
 
   resize: function () {

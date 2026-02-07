@@ -50,7 +50,7 @@ export async function renderSuggestionsView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view suggestions-view";
+  root.className = "settings-view settings-page-variant suggestions-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";

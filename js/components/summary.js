@@ -144,7 +144,7 @@ export async function renderSummaryView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view summary-view";
+  root.className = "settings-view settings-page-variant summary-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";

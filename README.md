@@ -137,3 +137,24 @@ Voir le fichier `LICENSE`.
 
 Projet stable (v2.0.0), autonome, sans dependance externe.
 Le comportement documente fait foi.
+
+---
+
+## Verification qualite (avant push)
+
+Commande unique :
+
+`powershell -ExecutionPolicy Bypass -File ./scripts/check-quality.ps1`
+
+## Debug runtime leger (prod)
+
+Les erreurs JS runtime sont journalisees en local (taille bornee), avec :
+
+- vue courante,
+- dimensions ecran/viewport,
+- stack/message.
+
+Depuis la console navigateur :
+
+- lire les logs : `window.__planningoDebug.readLogs()`
+- vider les logs : `window.__planningoDebug.clearLogs()`

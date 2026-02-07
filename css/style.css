@@ -763,6 +763,32 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   padding: 0 0 24px;
 }
 
+.settings-page-variant .settings-subtitle {
+  margin-top: 12px;
+}
+
+.settings-page-variant .settings-header + .settings-card {
+  margin-top: 42px;
+}
+
+.settings-card-spacing-md .settings-card {
+  padding: 18px;
+  gap: 14px;
+}
+
+.settings-card-spacing-md .settings-actions {
+  gap: 12px;
+}
+
+.settings-card-spacing-lg .settings-card {
+  padding: 22px;
+  gap: 20px;
+}
+
+.settings-card-spacing-lg .settings-actions {
+  gap: 18px;
+}
+
 .phone-change-view.settings-view {
   min-height: calc(var(--app-vh, 1vh) * 100);
   justify-content: flex-start;
@@ -795,18 +821,6 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   margin-top: 12px;
 }
 
-.summary-view .settings-subtitle {
-  margin-top: 12px;
-}
-
-.summary-view .settings-header + .settings-card {
-  margin-top: 40px;
-}
-
-.conges-periods-view .settings-subtitle {
-  margin-top: 12px;
-}
-
 .conges-periods-view .settings-header + .tabs-bar {
   margin-top: 36px;
 }
@@ -815,51 +829,9 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   margin-top: 20px;
 }
 
-.suggestions-view .settings-subtitle {
-  margin-top: 12px;
-}
-
-.suggestions-view .settings-header + .settings-card {
-  margin-top: 42px;
-}
-
-.reset-view .settings-subtitle {
-  margin-top: 12px;
-}
-
-.reset-view .settings-header + .settings-card {
-  margin-top: 42px;
-}
-
-.reset-view .settings-card {
-  padding: 22px;
-  gap: 20px;
-}
-
-.reset-view .settings-actions {
-  gap: 18px;
-}
-
 .reset-view .settings-note {
   font-size: 0.92rem;
   line-height: 1.45;
-}
-
-.legal-view .settings-subtitle {
-  margin-top: 12px;
-}
-
-.legal-view .settings-header + .settings-card {
-  margin-top: 42px;
-}
-
-.conges-periods-view .tab-page .settings-card {
-  padding: 18px;
-  gap: 14px;
-}
-
-.conges-periods-view .tab-page .settings-actions {
-  gap: 12px;
 }
 
 .conges-periods-view .settings-periods {
@@ -875,42 +847,8 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   gap: 12px;
 }
 
-.alarm-view .settings-subtitle {
-  margin-top: 12px;
-}
-
-.alarm-view .settings-header + .settings-card {
-  margin-top: 42px;
-}
-
-.alarm-view .settings-card {
-  padding: 18px;
-  gap: 14px;
-}
-
-.alarm-view .settings-actions {
-  gap: 12px;
-}
-
 .alarm-view .settings-note {
   line-height: 1.45;
-}
-
-.consult-date-view .settings-subtitle {
-  margin-top: 12px;
-}
-
-.consult-date-view .settings-header + .settings-card {
-  margin-top: 42px;
-}
-
-.consult-date-view .settings-card {
-  padding: 22px;
-  gap: 18px;
-}
-
-.consult-date-view .settings-actions {
-  gap: 16px;
 }
 
 .tabs-view {

@@ -35,7 +35,8 @@ export async function renderCongesPeriodsView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "tabs-view conges-periods-view";
+  root.className =
+    "tabs-view settings-page-variant settings-card-spacing-md conges-periods-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
