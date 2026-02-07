@@ -258,6 +258,9 @@ export async function renderHome() {
   }
 
   container.innerHTML = "";
+  const card = document.createElement("div");
+  card.className = "home-main-card";
+
   const top = document.createElement("div");
   top.className = "home-top";
 
@@ -268,10 +271,8 @@ export async function renderHome() {
   daySummary.className = "home-day-summary";
   top.appendChild(daySummary);
 
-  const spacer = document.createElement("div");
-  spacer.className = "home-spacer";
-
-  container.append(top, spacer, bottom);
+  card.append(top, bottom);
+  container.append(card);
 
   // CONFIG CONGES (cache)
   if (!window.__homeCongesConfig) {

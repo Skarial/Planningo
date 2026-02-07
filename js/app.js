@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.31";
+export const APP_VERSION = "2.0.33";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -22,14 +22,25 @@ import { toISODateLocal } from "./utils.js";
 import { showHome } from "./router.js";
 import { initMenu } from "./components/menu.js";
 
+const CONTROLLED_RELOAD_KEY = "planningo_controlled_reload";
+let viewportObserversBound = false;
+
 // =======================
 // INIT
 // =======================
 
-window.addEventListener("DOMContentLoaded", initApp);
-window.addEventListener("pageshow", resetScrollState);
+window.addEventListener("DOMContentLoaded", () => {
+  updateViewportHeightVar();
+  initApp();
+});
+window.addEventListener("pageshow", () => {
+  updateViewportHeightVar();
+  resetScrollState();
+});
 
 async function initApp() {
+  bindViewportObservers();
+  updateViewportHeightVar();
   resetScrollState();
   if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
@@ -54,6 +65,9 @@ async function initApp() {
   // 2 UI principale
   initMenu();
   showHome();
+  if (consumeControlledReloadMarker()) {
+    stabilizeViewportAfterControlledReload();
+  }
 
   // 3 Services non bloquants
   initServicesIfNeeded();
@@ -78,6 +92,7 @@ async function initApp() {
 }
 
 function resetScrollState() {
+  updateViewportHeightVar();
   document.body.classList.remove("menu-open");
   document.body.style.overflow = "";
   document.documentElement.style.overflow = "";
@@ -92,6 +107,7 @@ function resetScrollState() {
     section.scrollTop = 0;
   });
   const resetLater = () => {
+    updateViewportHeightVar();
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
     window.scrollTo(0, 0);
@@ -104,6 +120,101 @@ function resetScrollState() {
   };
   requestAnimationFrame(resetLater);
   setTimeout(resetLater, 250);
+}
+
+function bindViewportObservers() {
+  if (viewportObserversBound) return;
+  viewportObserversBound = true;
+
+  window.addEventListener(
+    "resize",
+    () => {
+      updateViewportHeightVar();
+    },
+    { passive: true },
+  );
+
+  window.addEventListener(
+    "orientationchange",
+    () => {
+      updateViewportHeightVar();
+      resetScrollState();
+    },
+    { passive: true },
+  );
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener(
+      "resize",
+      () => {
+        updateViewportHeightVar();
+      },
+      { passive: true },
+    );
+  }
+}
+
+function getViewportHeight() {
+  const vv = window.visualViewport?.height;
+  if (typeof vv === "number" && vv > 0) {
+    return vv;
+  }
+
+  if (typeof window.innerHeight === "number" && window.innerHeight > 0) {
+    return window.innerHeight;
+  }
+
+  if (document.documentElement?.clientHeight > 0) {
+    return document.documentElement.clientHeight;
+  }
+
+  return 0;
+}
+
+function updateViewportHeightVar() {
+  const vh = getViewportHeight();
+  if (!Number.isFinite(vh) || vh <= 0) return;
+  document.documentElement.style.setProperty("--app-vh", `${vh * 0.01}px`);
+}
+
+function markControlledReloadPending() {
+  try {
+    sessionStorage.setItem(CONTROLLED_RELOAD_KEY, "1");
+  } catch {}
+}
+
+function consumeControlledReloadMarker() {
+  try {
+    const marked = sessionStorage.getItem(CONTROLLED_RELOAD_KEY) === "1";
+    if (marked) {
+      sessionStorage.removeItem(CONTROLLED_RELOAD_KEY);
+    }
+    return marked;
+  } catch {
+    return false;
+  }
+}
+
+function stabilizeViewportAfterControlledReload() {
+  updateViewportHeightVar();
+  resetScrollState();
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const homeView = document.getElementById("view-home");
+      if (homeView) {
+        // Force un recalcul de layout complet avant de reset le scroll.
+        void homeView.offsetHeight;
+      }
+      updateViewportHeightVar();
+      resetScrollState();
+    });
+  });
+
+  setTimeout(() => {
+    updateViewportHeightVar();
+    resetScrollState();
+  }, 180);
 }
 
 function showToast(message) {
@@ -262,6 +373,7 @@ function showVersionBanner(prevVersion, nextVersion) {
   });
 
   document.getElementById("version-reload").addEventListener("click", () => {
+    markControlledReloadPending();
     location.reload();
   });
 }
@@ -293,17 +405,29 @@ function showUpdateBanner(registration) {
   document.body.appendChild(banner);
 
   document.getElementById("update-reload").addEventListener("click", () => {
+    markControlledReloadPending();
     registration.waiting.postMessage("SKIP_WAITING");
 
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
+    const onControllerChange = () => {
+      navigator.serviceWorker.removeEventListener(
+        "controllerchange",
+        onControllerChange,
+      );
       location.reload();
-    });
+    };
+
+    navigator.serviceWorker.addEventListener(
+      "controllerchange",
+      onControllerChange,
+    );
   });
 
   document.getElementById("update-dismiss").addEventListener("click", () => {
     banner.remove();
   });
 }
+
+
 
 
 

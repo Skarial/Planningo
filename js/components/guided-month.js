@@ -171,15 +171,20 @@ export async function showGuidedMonth(forcedDate = null) {
   const weekdayLabel = document.createElement("div");
   weekdayLabel.className = "guided-weekday";
 
-  header.append(monthLabel, dayNumber, weekdayLabel);
-  root.appendChild(header);
+  header.append(monthLabel, dayNumber, weekdayLabel);
+  root.appendChild(header);
+
+  const saisieContent = document.createElement("div");
+  saisieContent.className = "saisie-content";
+  root.appendChild(saisieContent);
+
+  const servicesContainer = document.createElement("div");
+  servicesContainer.className = "guided-services";
+  saisieContent.appendChild(servicesContainer);
 
-  const servicesContainer = document.createElement("div");
-  servicesContainer.className = "guided-services";
-  root.appendChild(servicesContainer);
-
-  async function renderCompletedView() {
-    const nextMonthDate = new Date(targetDate);
+  async function renderCompletedView() {
+    root.classList.add("guided-complete-mode");
+    const nextMonthDate = new Date(targetDate);
     nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
 
     const nextMonthLabel = capitalizeFirst(
@@ -196,16 +201,16 @@ export async function showGuidedMonth(forcedDate = null) {
     dayNumber.classList.add("guided-day-complete");
     weekdayLabel.textContent = "";
 
-    const title = document.createElement("div");
-    title.className = "guided-complete-title";
-    title.textContent = "Mois entièrement préparé";
-
-    const subtitle = document.createElement("div");
-    subtitle.className = "guided-complete-subtitle";
-    subtitle.textContent = `${stats.totalDays} jours planifiés`;
-
-    const statsList = document.createElement("div");
-    statsList.className = "guided-stats";
+    const title = document.createElement("div");
+    title.className = "guided-complete-title";
+    title.textContent = "Mois entièrement préparé";
+
+    const subtitle = document.createElement("div");
+    subtitle.className = "guided-complete-subtitle";
+    subtitle.textContent = `${stats.totalDays} jours planifiés`;
+
+    const statsList = document.createElement("div");
+    statsList.className = "guided-stats";
 
     function addStat(label, value) {
       const row = document.createElement("div");
@@ -219,25 +224,25 @@ export async function showGuidedMonth(forcedDate = null) {
     addStat("Jours de repos", stats.reposDays);
     addStat("Jours de congés", stats.congesDays);
 
-    const btnNextGuided = document.createElement("button");
-    btnNextGuided.className = "guided-action primary";
-    btnNextGuided.textContent = `Préparer le mois ${nextMonthLabel}`;
-    btnNextGuided.onclick = () => {
+    const btnNextGuided = document.createElement("button");
+    btnNextGuided.className = "guided-action primary";
+    btnNextGuided.textContent = `Préparer le mois ${nextMonthLabel}`;
+    btnNextGuided.onclick = () => {
       const next = new Date(targetDate);
       next.setMonth(next.getMonth() + 1);
       showGuidedMonth(next);
     };
 
-    const btnMonth = document.createElement("button");
-    btnMonth.className = "guided-action";
-    btnMonth.textContent = "Voir mon planning";
-    btnMonth.onclick = () => {
+    const btnMonth = document.createElement("button");
+    btnMonth.className = "guided-action";
+    btnMonth.textContent = "Voir mon planning";
+    btnMonth.onclick = () => {
       guidedMonthDate = null;
       showHome();
     };
 
-    servicesContainer.append(title, subtitle, statsList, btnNextGuided, btnMonth);
-  }
+    servicesContainer.append(title, subtitle, statsList, btnNextGuided, btnMonth);
+  }
 
   await resumeCurrentDayFromDB();
   // =======================
@@ -263,6 +268,7 @@ export async function showGuidedMonth(forcedDate = null) {
   // =======================
 
   async function renderDay() {
+    root.classList.remove("guided-complete-mode");
     selectedLine = null;
     // =======================
     // CONGS  SAUT AUTOMATIQUE
@@ -348,40 +354,45 @@ export async function showGuidedMonth(forcedDate = null) {
         otherGrid.appendChild(btn);
       });
 
-    // Bouton annuler jour prcdent
-    if (currentDay > 1) {
-      const cancelBtn = document.createElement("button");
-      cancelBtn.textContent = "← Annuler le jour précédent";
-      cancelBtn.className = "guided-cancel-btn";
-
-      cancelBtn.onclick = async () => {
-        // Jour  annuler = jour prcdent
-        const dayToUndo = currentDay - 1;
-
-        if (dayToUndo < 1) return;
-
-        const date = new Date(year, monthIndex, dayToUndo);
-        const iso = toISODateLocal(date);
-
-        //  ROLLBACK DB : retour  REPOS
-        await savePlanningEntry({
-          date: iso,
-          serviceCode: "REPOS",
-          locked: false,
-          extra: false,
-        });
-
-        // Retour UI
-        currentDay--;
-        await renderDay();
-      };
-
-      servicesContainer.appendChild(cancelBtn);
-    }
+    const cancelSlot = document.createElement("div");
+    cancelSlot.className = "guided-cancel-slot";
+    servicesContainer.appendChild(cancelSlot);
+
+    // Bouton annuler jour prcdent
+    if (currentDay > 1) {
+      const cancelBtn = document.createElement("button");
+      cancelBtn.textContent = "← Annuler le jour précédent";
+      cancelBtn.className = "guided-cancel-btn";
+
+      cancelBtn.onclick = async () => {
+        // Jour  annuler = jour prcdent
+        const dayToUndo = currentDay - 1;
+
+        if (dayToUndo < 1) return;
+
+        const date = new Date(year, monthIndex, dayToUndo);
+        const iso = toISODateLocal(date);
+
+        //  ROLLBACK DB : retour  REPOS
+        await savePlanningEntry({
+          date: iso,
+          serviceCode: "REPOS",
+          locked: false,
+          extra: false,
+        });
+
+        // Retour UI
+        currentDay--;
+        await renderDay();
+      };
+
+      cancelSlot.appendChild(cancelBtn);
+    }
   }
 
-  function renderLine(line) {
-    servicesContainer.innerHTML = "";
+  function renderLine(line) {
+    root.classList.remove("guided-complete-mode");
+    servicesContainer.innerHTML = "";
     selectedLine = line;
 
     const back = document.createElement("button");
@@ -401,8 +412,9 @@ export async function showGuidedMonth(forcedDate = null) {
     });
   }
 
-  function renderTAD(tadServices) {
-    servicesContainer.innerHTML = "";
+  function renderTAD(tadServices) {
+    root.classList.remove("guided-complete-mode");
+    servicesContainer.innerHTML = "";
 
     const back = document.createElement("button");
     back.textContent = "← Retour";

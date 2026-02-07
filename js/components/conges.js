@@ -149,7 +149,8 @@ export async function renderCongesView(options = {}) {
   }
 
   const entry = await getConfig("conges");
-  const value = entry.value;
+  const rawValue = entry?.value;
+  const value = rawValue && typeof rawValue === "object" ? rawValue : {};
   let periods = [];
 
   if (Array.isArray(value.periods)) {
