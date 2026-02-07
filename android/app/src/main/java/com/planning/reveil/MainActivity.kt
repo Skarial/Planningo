@@ -308,9 +308,13 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun refreshStatusFromSystemAlarm() {
+    val planningoActiveCount = AlarmScheduler.getActiveAlarmCount(this)
+    if (planningoActiveCount <= 0) return
     if (Build.VERSION.SDK_INT < 21) return
     val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
     val next = alarmManager.nextAlarmClock ?: return
+    val creatorPackage = next.showIntent.creatorPackage
+    if (!creatorPackage.isNullOrBlank() && creatorPackage != packageName) return
     val triggerAt = next.triggerTime
     if (triggerAt <= System.currentTimeMillis()) return
     setStatus("Alarme active : ${formatDateTime(triggerAt)}.")
