@@ -3,6 +3,7 @@
 import android.app.AlarmManager
 import android.Manifest
 import android.app.Activity
+import android.content.ClipboardManager
 import android.content.pm.PackageManager
 import android.content.Intent
 import android.media.RingtoneManager
@@ -100,6 +101,21 @@ class MainActivity : AppCompatActivity() {
 
   private fun handleView(intent: Intent) {
     val uri = intent.data ?: return
+    if (
+      uri.scheme.equals("planningoreveil", ignoreCase = true) &&
+      uri.host.equals("import", ignoreCase = true)
+    ) {
+      if (importFromClipboard()) return
+
+      val payload = uri.getQueryParameter("plan")
+      if (!payload.isNullOrBlank()) {
+        importFromText(payload)
+      } else {
+        setStatus("Import direct impossible : aucun plan trouve.")
+      }
+      return
+    }
+
     importFromUri(uri)
   }
 
@@ -125,6 +141,16 @@ class MainActivity : AppCompatActivity() {
     } catch (err: Exception) {
       setStatus("Import invalide : ${err.message}")
     }
+  }
+
+  private fun importFromClipboard(): Boolean {
+    val clipboard = getSystemService(CLIPBOARD_SERVICE) as? ClipboardManager ?: return false
+    val clip = clipboard.primaryClip ?: return false
+    if (clip.itemCount <= 0) return false
+    val text = clip.getItemAt(0).coerceToText(this)?.toString()
+    if (text.isNullOrBlank()) return false
+    importFromText(text)
+    return true
   }
 
   private fun setStatus(message: String) {

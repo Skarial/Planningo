@@ -21,6 +21,7 @@ import { toISODateLocal } from "../utils.js";
 const RULES_KEY = "alarm_rules";
 const ALARM_NOTICE_SEEN_KEY = "planningo_alarm_notice_seen";
 const ALARM_APK_PATH = "./apk/planningo-reveil.apk";
+const ALARM_APP_IMPORT_URI = "planningoreveil://import";
 
 const DEFAULT_RULES = {
   offsetMinutes: 90,
@@ -192,6 +193,42 @@ async function sharePlan(plan) {
   a.click();
   URL.revokeObjectURL(url);
   return "download";
+}
+
+async function tryDirectImportInAlarmApp(plan) {
+  if (!navigator.clipboard || !navigator.clipboard.writeText) {
+    return false;
+  }
+
+  const json = JSON.stringify(plan, null, 2);
+
+  try {
+    await navigator.clipboard.writeText(json);
+  } catch {
+    return false;
+  }
+
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (value) => {
+      if (settled) return;
+      settled = true;
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      clearTimeout(timeoutId);
+      resolve(value);
+    };
+    const onVisibilityChange = () => {
+      if (document.hidden) finish(true);
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    const timeoutId = setTimeout(() => finish(false), 1200);
+
+    try {
+      window.location.href = `${ALARM_APP_IMPORT_URI}?source=planningo`;
+    } catch {
+      finish(false);
+    }
+  });
 }
 
 function hasSeenAlarmNotice() {
@@ -411,9 +448,15 @@ export async function renderAlarmView() {
 
     try {
       const { plan, startISO, endISO } = await buildPlan(currentRules);
-      const method = await sharePlan(plan);
+      const directImported = await tryDirectImportInAlarmApp(plan);
+      const method = directImported ? "app" : await sharePlan(plan);
       const count = plan.alarms.length;
-      const suffix = method === "share" ? "partage" : "telecharge";
+      const suffix =
+        method === "app"
+          ? "importe dans Reveil"
+          : method === "share"
+            ? "partage"
+            : "telecharge";
       status.show(
         `Plan ${suffix} (${count} alarme${count > 1 ? "s" : ""}) - ${startISO} a ${endISO}.`,
       );
