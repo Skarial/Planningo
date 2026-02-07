@@ -50,7 +50,7 @@ export async function renderSuggestionsView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view";
+  root.className = "settings-view suggestions-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
@@ -105,4 +105,3 @@ export async function renderSuggestionsView() {
   root.append(header, card);
   view.appendChild(root);
 }
-

@@ -224,7 +224,7 @@ export async function renderAlarmView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view";
+  root.className = "settings-view alarm-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
@@ -241,15 +241,6 @@ export async function renderAlarmView() {
 
   const card = document.createElement("div");
   card.className = "settings-card";
-
-  const rules = document.createElement("div");
-  rules.className = "settings-note";
-  rules.textContent =
-    "Regle active : service avant 10:00 => reveil 1h30 avant.";
-
-  const horizon = document.createElement("div");
-  horizon.className = "settings-note";
-  horizon.textContent = "Horizon : 30 jours a venir.";
 
   const labelStart = document.createElement("label");
   labelStart.textContent = "Heure limite (avant)";
@@ -288,13 +279,11 @@ export async function renderAlarmView() {
 
   const actionBtn = document.createElement("button");
   actionBtn.className = "settings-btn primary";
-  actionBtn.textContent = "Mettre a jour le reveil";
+  actionBtn.textContent = "Importer dans Réveil";
 
   const status = createStatus();
 
   card.append(
-    rules,
-    horizon,
     labelStart,
     inputStart,
     labelOffset,
@@ -314,10 +303,6 @@ export async function renderAlarmView() {
     inputStart.value = rulesValue.startBefore;
     inputOffset.value = String(rulesValue.offsetMinutes);
     inputHorizon.value = String(rulesValue.horizonDays);
-    rules.textContent = `Regle active : service avant ${rulesValue.startBefore} => reveil ${formatOffsetLabel(
-      rulesValue.offsetMinutes,
-    )} avant.`;
-    horizon.textContent = `Horizon : ${rulesValue.horizonDays} jours a venir.`;
   }
 
   syncInputs(currentRules);

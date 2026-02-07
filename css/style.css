@@ -763,6 +763,139 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   padding: 0 0 24px;
 }
 
+.phone-change-view.settings-view {
+  min-height: calc(var(--app-vh, 1vh) * 100);
+  justify-content: flex-start;
+  padding-top: calc(84px + var(--safe-top));
+  padding-bottom: calc(24px + var(--safe-bottom));
+}
+
+.phone-change-view .settings-card {
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 24px;
+  gap: 20px;
+  transform: translateY(-18px);
+}
+
+.phone-change-view .settings-note {
+  line-height: 1.55;
+  margin-top: -2px;
+}
+
+.phone-change-view .settings-note + .settings-btn {
+  margin-top: -6px;
+}
+
+.phone-change-view .settings-btn + .settings-note {
+  margin-top: 24px;
+}
+
+.phone-change-view .settings-subtitle {
+  margin-top: 12px;
+}
+
+.summary-view .settings-subtitle {
+  margin-top: 12px;
+}
+
+.summary-view .settings-header + .settings-card {
+  margin-top: 40px;
+}
+
+.conges-periods-view .settings-subtitle {
+  margin-top: 12px;
+}
+
+.conges-periods-view .settings-header + .tabs-bar {
+  margin-top: 36px;
+}
+
+.conges-periods-view .tabs-content {
+  margin-top: 20px;
+}
+
+.suggestions-view .settings-subtitle {
+  margin-top: 12px;
+}
+
+.suggestions-view .settings-header + .settings-card {
+  margin-top: 42px;
+}
+
+.reset-view .settings-subtitle {
+  margin-top: 12px;
+}
+
+.reset-view .settings-header + .settings-card {
+  margin-top: 42px;
+}
+
+.reset-view .settings-card {
+  padding: 22px;
+  gap: 20px;
+}
+
+.reset-view .settings-actions {
+  gap: 18px;
+}
+
+.reset-view .settings-note {
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.legal-view .settings-subtitle {
+  margin-top: 12px;
+}
+
+.legal-view .settings-header + .settings-card {
+  margin-top: 42px;
+}
+
+.conges-periods-view .tab-page .settings-card {
+  padding: 18px;
+  gap: 14px;
+}
+
+.conges-periods-view .tab-page .settings-actions {
+  gap: 12px;
+}
+
+.conges-periods-view .settings-periods {
+  gap: 16px;
+}
+
+.conges-periods-view .settings-period {
+  gap: 12px;
+  padding: 12px;
+}
+
+.conges-periods-view .settings-period-grid {
+  gap: 12px;
+}
+
+.alarm-view .settings-subtitle {
+  margin-top: 12px;
+}
+
+.alarm-view .settings-header + .settings-card {
+  margin-top: 42px;
+}
+
+.alarm-view .settings-card {
+  padding: 18px;
+  gap: 14px;
+}
+
+.alarm-view .settings-actions {
+  gap: 12px;
+}
+
+.alarm-view .settings-note {
+  line-height: 1.45;
+}
+
 .tabs-view {
   height: 100%;
   display: flex;

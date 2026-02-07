@@ -19,7 +19,7 @@ export async function renderCongesPeriodsView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "tabs-view";
+  root.className = "tabs-view conges-periods-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";

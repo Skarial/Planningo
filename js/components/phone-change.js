@@ -16,7 +16,7 @@ export async function renderPhoneChangeView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view";
+  root.className = "settings-view phone-change-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
@@ -51,7 +51,7 @@ export async function renderPhoneChangeView() {
   importNote.textContent =
     "À utiliser sur un nouveau téléphone ou après réinstallation.";
 
-  card.append(exportBtn, exportNote, importBtn, importNote);
+  card.append(exportNote, exportBtn, importNote, importBtn);
 
   root.append(header, card);
   view.appendChild(root);
@@ -64,4 +64,3 @@ export async function renderPhoneChangeView() {
     await importAllData();
   });
 }
-

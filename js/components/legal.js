@@ -11,7 +11,7 @@ export async function renderLegalView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view";
+  root.className = "settings-view legal-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
