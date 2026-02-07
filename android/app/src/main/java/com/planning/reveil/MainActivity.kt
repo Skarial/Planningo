@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
   private lateinit var ringtoneValueView: TextView
   private lateinit var permissionBtn: MaterialButton
   private lateinit var settingsBtn: MaterialButton
-  private lateinit var testAlarmBtn: MaterialButton
   private lateinit var ringtoneBtn: MaterialButton
   private val notificationPermissionLauncher = registerForActivityResult(
     ActivityResultContracts.RequestPermission(),
@@ -52,12 +51,10 @@ class MainActivity : AppCompatActivity() {
     ringtoneValueView = findViewById(R.id.ringtone_value)
     permissionBtn = findViewById(R.id.btn_permission)
     settingsBtn = findViewById(R.id.btn_settings)
-    testAlarmBtn = findViewById(R.id.btn_test_alarm)
     ringtoneBtn = findViewById(R.id.btn_ringtone)
 
     permissionBtn.setOnClickListener { requestExactAlarmPermission() }
     settingsBtn.setOnClickListener { openAppSettings() }
-    testAlarmBtn.setOnClickListener { scheduleTestAlarm() }
     ringtoneBtn.setOnClickListener { openRingtonePicker() }
 
     ensureNotificationPermission()
@@ -181,23 +178,6 @@ class MainActivity : AppCompatActivity() {
       null
     } ?: getString(R.string.ringtone_default_label)
     ringtoneValueView.text = getString(R.string.ringtone_current_value, title)
-  }
-
-  private fun scheduleTestAlarm() {
-    val now = System.currentTimeMillis()
-    val alarmInTwoMin = now + 2 * 60 * 1000L
-    val alarm = AlarmEntry(
-      id = "debug_alarm_$alarmInTwoMin",
-      serviceDate = null,
-      serviceCode = null,
-      serviceStart = null,
-      alarmAt = "",
-      label = "Test alarme +2 min",
-      requiresUserActionToStop = true,
-      alarmAtEpochMillis = alarmInTwoMin,
-    )
-    AlarmScheduler.scheduleAll(this, listOf(alarm))
-    setStatus("Test programmé : alarme dans 2 minutes.")
   }
 
   private fun refreshStatusFromSystemAlarm() {
