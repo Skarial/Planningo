@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -184,7 +185,7 @@ class MainActivity : AppCompatActivity() {
   private fun normalizeImportedAlarms(plan: AlarmPlan): List<AlarmEntry> {
     val offsetMinutes = (plan.rules.offsetMinutes ?: 90).coerceIn(1, 720)
     return plan.alarms.mapNotNull { alarm ->
-      val code = alarm.serviceCode?.trim()?.uppercase(Locale.ROOT) ?: return@mapNotNull alarm
+      val code = inferServiceCode(alarm)
       if (code == "DAM") return@mapNotNull null
       if (code != "DM") return@mapNotNull alarm
 
@@ -203,11 +204,38 @@ class MainActivity : AppCompatActivity() {
         .toInstant()
         .toEpochMilli()
 
+      val correctedDateTime = LocalDateTime.of(localDate, java.time.LocalTime.of(5, 45))
+      val correctedAlarmAt = correctedDateTime
+        .atZone(ZoneId.systemDefault())
+        .minusMinutes(offsetMinutes.toLong())
+        .toOffsetDateTime()
+        .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
       alarm.copy(
+        id = "${localDate}__DM__fix_${correctedEpoch}",
+        serviceCode = "DM",
         serviceStart = "05:45",
+        alarmAt = correctedAlarmAt,
         alarmAtEpochMillis = correctedEpoch,
       )
     }
+  }
+
+  private fun inferServiceCode(alarm: AlarmEntry): String {
+    val direct = alarm.serviceCode?.trim()?.uppercase(Locale.ROOT)
+    if (!direct.isNullOrBlank()) return direct
+
+    val idMatch = Regex("__([^_]+?)__start_").find(alarm.id)
+    val fromId = idMatch?.groupValues?.getOrNull(1)?.trim()?.uppercase(Locale.ROOT)
+    if (!fromId.isNullOrBlank()) return fromId
+
+    val fromLabel = alarm.label
+      ?.trim()
+      ?.uppercase(Locale.ROOT)
+      ?.let { if (it.contains(" DM")) "DM" else null }
+    if (!fromLabel.isNullOrBlank()) return fromLabel
+
+    return ""
   }
 
   private fun saveLastImportedTotal(total: Int) {
