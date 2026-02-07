@@ -23,6 +23,7 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
   private lateinit var statusView: TextView
+  private lateinit var activeAlarmCountView: TextView
   private lateinit var ringtoneValueView: TextView
   private lateinit var permissionBtn: MaterialButton
   private lateinit var settingsBtn: MaterialButton
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     setContentView(R.layout.activity_main)
 
     statusView = findViewById(R.id.status)
+    activeAlarmCountView = findViewById(R.id.active_alarm_count)
     ringtoneValueView = findViewById(R.id.ringtone_value)
     permissionBtn = findViewById(R.id.btn_permission)
     settingsBtn = findViewById(R.id.btn_settings)
@@ -61,6 +63,7 @@ class MainActivity : AppCompatActivity() {
     ensureNotificationPermission()
     updatePermissionUi()
     updateRingtoneSummary()
+    refreshActiveAlarmCount()
     refreshStatusFromSystemAlarm()
     handleIntent(intent)
   }
@@ -75,6 +78,7 @@ class MainActivity : AppCompatActivity() {
     super.onResume()
     updatePermissionUi()
     updateRingtoneSummary()
+    refreshActiveAlarmCount()
     refreshStatusFromSystemAlarm()
   }
 
@@ -135,6 +139,7 @@ class MainActivity : AppCompatActivity() {
       val result = AlarmScheduler.scheduleAll(this, plan.alarms)
       val nextAlarm = findNextAlarm(plan.alarms)
       val nextLabel = nextAlarm?.let { formatDateTime(it.alarmAtEpochMillis) } ?: "aucune"
+      refreshActiveAlarmCount(result.scheduled)
       setStatus(
         "Plan importé : ${result.scheduled} alarme(s) programmée(s), ${result.skippedPast} ignorée(s). Prochaine alarme : $nextLabel.",
       )
@@ -155,6 +160,11 @@ class MainActivity : AppCompatActivity() {
 
   private fun setStatus(message: String) {
     statusView.text = message
+  }
+
+  private fun refreshActiveAlarmCount(overrideCount: Int? = null) {
+    val count = overrideCount ?: AlarmScheduler.getActiveAlarmCount(this)
+    activeAlarmCountView.text = getString(R.string.active_alarm_count_value, count)
   }
 
   private fun updatePermissionUi() {

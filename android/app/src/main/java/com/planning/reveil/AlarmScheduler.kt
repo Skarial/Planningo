@@ -67,6 +67,12 @@ object AlarmScheduler {
     prefs.edit().remove(KEY_IDS).apply()
   }
 
+  fun getActiveAlarmCount(context: Context): Int {
+    val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    val existing = prefs.getStringSet(KEY_IDS, emptySet()) ?: emptySet()
+    return existing.size
+  }
+
   private fun scheduleAlarm(context: Context, alarm: AlarmEntry) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     val intent = Intent(context, AlarmReceiver::class.java).apply {

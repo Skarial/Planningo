@@ -56,6 +56,15 @@
           android:textColor="@color/text_secondary"
           android:textSize="14sp" />
 
+        <TextView
+          android:id="@+id/active_alarm_count"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="@string/active_alarm_count_value"
+          android:textColor="@color/text_secondary"
+          android:textSize="13sp" />
+
         <com.google.android.material.button.MaterialButton
           android:id="@+id/btn_permission"
           style="@style/Widget.ReveilPlanninngo.Button.Primary"
