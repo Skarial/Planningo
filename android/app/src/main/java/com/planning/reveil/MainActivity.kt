@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -141,6 +142,7 @@ class MainActivity : AppCompatActivity() {
   private fun importFromText(text: String) {
     try {
       val plan = AlarmPlanParser.parse(text)
+      val normalizedAlarms = normalizeImportedAlarms(plan)
       val previousPlanRaw = AlarmPlanStore.load(this)
       if (!previousPlanRaw.isNullOrBlank()) {
         try {
@@ -151,10 +153,10 @@ class MainActivity : AppCompatActivity() {
         }
       }
       AlarmPlanStore.save(this, text)
-      val importedTotal = plan.alarms.size
-      val result = AlarmScheduler.scheduleAll(this, plan.alarms)
+      val importedTotal = normalizedAlarms.size
+      val result = AlarmScheduler.scheduleAll(this, normalizedAlarms)
       saveLastImportedTotal(importedTotal)
-      val nextAlarm = findNextAlarm(plan.alarms)
+      val nextAlarm = findNextAlarm(normalizedAlarms)
       val nextLabel = nextAlarm?.let { formatDateTime(it.alarmAtEpochMillis) } ?: "aucune"
       refreshActiveAlarmCount(result.scheduled, importedTotal)
       setStatus(
@@ -177,6 +179,35 @@ class MainActivity : AppCompatActivity() {
 
   private fun setStatus(message: String) {
     statusView.text = message
+  }
+
+  private fun normalizeImportedAlarms(plan: AlarmPlan): List<AlarmEntry> {
+    val offsetMinutes = (plan.rules.offsetMinutes ?: 90).coerceIn(1, 720)
+    return plan.alarms.mapNotNull { alarm ->
+      val code = alarm.serviceCode?.trim()?.uppercase(Locale.ROOT) ?: return@mapNotNull alarm
+      if (code == "DAM") return@mapNotNull null
+      if (code != "DM") return@mapNotNull alarm
+
+      val localDate = runCatching {
+        LocalDate.parse(alarm.serviceDate ?: "")
+      }.getOrElse {
+        Instant.ofEpochMilli(alarm.alarmAtEpochMillis)
+          .atZone(ZoneId.systemDefault())
+          .toLocalDate()
+      }
+
+      val correctedEpoch = localDate
+        .atTime(5, 45)
+        .atZone(ZoneId.systemDefault())
+        .minusMinutes(offsetMinutes.toLong())
+        .toInstant()
+        .toEpochMilli()
+
+      alarm.copy(
+        serviceStart = "05:45",
+        alarmAtEpochMillis = correctedEpoch,
+      )
+    }
   }
 
   private fun saveLastImportedTotal(total: Int) {
