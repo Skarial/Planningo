@@ -19,6 +19,7 @@ import { getPeriodLabel } from "../utils/period-label.js";
 import { toISODateLocal } from "../utils.js";
 
 const RULES_KEY = "alarm_rules";
+const ALARM_NOTICE_SEEN_KEY = "planningo_alarm_notice_seen";
 
 const DEFAULT_RULES = {
   startBefore: "10:00",
@@ -217,6 +218,22 @@ async function sharePlan(plan) {
   return "download";
 }
 
+function hasSeenAlarmNotice() {
+  try {
+    return localStorage.getItem(ALARM_NOTICE_SEEN_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function setAlarmNoticeSeen() {
+  try {
+    localStorage.setItem(ALARM_NOTICE_SEEN_KEY, "1");
+  } catch {
+    // No-op: notice persistence must never break UX.
+  }
+}
+
 export async function renderAlarmView() {
   const view = document.getElementById("view-alarm");
   if (!view) return;
@@ -280,7 +297,12 @@ export async function renderAlarmView() {
 
   const actionBtn = document.createElement("button");
   actionBtn.className = "settings-btn primary";
-  actionBtn.textContent = "Importer dans Réveil";
+  actionBtn.textContent = "Importer dans Reveil";
+
+  const helpBtn = document.createElement("button");
+  helpBtn.className = "settings-btn alarm-help-btn";
+  helpBtn.type = "button";
+  helpBtn.textContent = "Voir la notice";
 
   const status = createStatus();
 
@@ -293,10 +315,75 @@ export async function renderAlarmView() {
     inputHorizon,
     actions,
     actionBtn,
+    helpBtn,
     status.node,
   );
   root.append(header, card);
   view.appendChild(root);
+  const noticeOverlay = document.createElement("div");
+  noticeOverlay.className = "alarm-notice-overlay hidden";
+
+  const noticeModal = document.createElement("div");
+  noticeModal.className = "alarm-notice-modal";
+
+  const noticeTitle = document.createElement("h3");
+  noticeTitle.className = "alarm-notice-title";
+  noticeTitle.textContent = "Notice - Reveil intelligent";
+
+  const noticeBody = document.createElement("div");
+  noticeBody.className = "alarm-notice-body";
+  noticeBody.innerHTML = `
+    <p><strong>Heure limite (avant)</strong> : seuls les services qui commencent avant cette heure sont pris en compte.</p>
+    <p><strong>Avance (minutes)</strong> : nombre de minutes avant le debut du service.</p>
+    <p><strong>Horizon (jours)</strong> : periode couverte pour generer le plan.</p>
+    <p>Ensuite, utilisez <strong>Importer dans Reveil</strong> pour envoyer le fichier vers l'application Reveil.</p>
+  `;
+
+  const noticeRememberLabel = document.createElement("label");
+  noticeRememberLabel.className = "alarm-notice-remember";
+  const noticeRemember = document.createElement("input");
+  noticeRemember.type = "checkbox";
+  noticeRemember.checked = true;
+  const noticeRememberText = document.createElement("span");
+  noticeRememberText.textContent = "Ne plus afficher";
+  noticeRememberLabel.append(noticeRemember, noticeRememberText);
+
+  const noticeCloseBtn = document.createElement("button");
+  noticeCloseBtn.type = "button";
+  noticeCloseBtn.className = "settings-btn primary";
+  noticeCloseBtn.textContent = "J'ai compris";
+
+  noticeModal.append(
+    noticeTitle,
+    noticeBody,
+    noticeRememberLabel,
+    noticeCloseBtn,
+  );
+  noticeOverlay.appendChild(noticeModal);
+  view.appendChild(noticeOverlay);
+
+  function openNotice() {
+    noticeOverlay.classList.remove("hidden");
+  }
+
+  function closeNotice() {
+    if (noticeRemember.checked) {
+      setAlarmNoticeSeen();
+    }
+    noticeOverlay.classList.add("hidden");
+  }
+
+  helpBtn.addEventListener("click", openNotice);
+  noticeCloseBtn.addEventListener("click", closeNotice);
+  noticeOverlay.addEventListener("click", (e) => {
+    if (e.target === noticeOverlay) {
+      closeNotice();
+    }
+  });
+
+  if (!hasSeenAlarmNotice()) {
+    openNotice();
+  }
 
   let currentRules = await loadRules();
 
@@ -352,3 +439,4 @@ export async function renderAlarmView() {
     }
   });
 }
+

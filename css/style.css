@@ -851,6 +851,67 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   line-height: 1.45;
 }
 
+.alarm-help-btn {
+  background: transparent;
+  color: var(--color-muted);
+  border-color: #c8c8c8;
+}
+
+.alarm-notice-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    calc(16px + var(--safe-top))
+    calc(16px + var(--safe-right))
+    calc(16px + var(--safe-bottom))
+    calc(16px + var(--safe-left));
+}
+
+.alarm-notice-modal {
+  width: min(100%, 420px);
+  background: #efefef;
+  border: 1px solid #d0d0d0;
+  border-radius: 10px;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alarm-notice-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.alarm-notice-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alarm-notice-body p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: #2d2d2d;
+}
+
+.alarm-notice-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
 .tabs-view {
   height: 100%;
   display: flex;

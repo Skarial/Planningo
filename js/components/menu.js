@@ -20,9 +20,6 @@ import {
   showAlarmView,
 } from "../router.js";
 
-const ALARM_ACCESS_CODE = "486091";
-const ALARM_ACCESS_KEY = "planningo_alarm_access_ok";
-
 // =======================
 // MENU
 // =======================
@@ -126,9 +123,6 @@ export function initMenu() {
   });
 
   alarmBtn.addEventListener("click", () => {
-    if (!ensureAlarmAccess()) {
-      return;
-    }
     showAlarmView();
     setActiveMenu("menu-alarm");
     closeMenu();
@@ -455,33 +449,4 @@ export function initMenu() {
 
   // Version affiche supprime avec le footer du menu
 }
-
-function ensureAlarmAccess() {
-  if (localStorage.getItem(ALARM_ACCESS_KEY) === "true") {
-    return true;
-  }
-  const code = window.prompt("Code d'acces reveil intelligent");
-  if (!code) return false;
-  if (code.trim() !== ALARM_ACCESS_CODE) {
-    showToast("Code incorrect.");
-    return false;
-  }
-  localStorage.setItem(ALARM_ACCESS_KEY, "true");
-  return true;
-}
-
-function showToast(message) {
-  const toast = document.createElement("div");
-  toast.className = "toast-notification";
-  toast.textContent = message;
-
-  document.body.appendChild(toast);
-  requestAnimationFrame(() => toast.classList.add("visible"));
-
-  setTimeout(() => {
-    toast.classList.remove("visible");
-    setTimeout(() => toast.remove(), 300);
-  }, 2200);
-}
-
 
