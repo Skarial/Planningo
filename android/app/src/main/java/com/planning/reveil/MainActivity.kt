@@ -310,14 +310,12 @@ class MainActivity : AppCompatActivity() {
   private fun refreshStatusFromSystemAlarm() {
     val planningoActiveCount = AlarmScheduler.getActiveAlarmCount(this)
     if (planningoActiveCount <= 0) return
-    if (Build.VERSION.SDK_INT < 21) return
-    val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-    val next = alarmManager.nextAlarmClock ?: return
-    val creatorPackage = next.showIntent.creatorPackage
-    if (!creatorPackage.isNullOrBlank() && creatorPackage != packageName) return
-    val triggerAt = next.triggerTime
-    if (triggerAt <= System.currentTimeMillis()) return
-    setStatus("Alarme active : ${formatDateTime(triggerAt)}.")
+
+    val rawPlan = AlarmPlanStore.load(this) ?: return
+    val plan = runCatching { AlarmPlanParser.parse(rawPlan) }.getOrNull() ?: return
+    val normalized = normalizeImportedAlarms(plan)
+    val next = findNextAlarm(normalized) ?: return
+    setStatus("Alarme active : ${formatDateTime(next.alarmAtEpochMillis)}.")
   }
 
   private fun findNextAlarm(alarms: List<AlarmEntry>): AlarmEntry? {
