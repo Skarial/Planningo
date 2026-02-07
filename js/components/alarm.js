@@ -35,6 +35,23 @@ const LIMITS = {
   horizonMax: 60,
 };
 
+function mergeServicesWithCatalog(userServices) {
+  const mergedByCode = new Map();
+  const addService = (service) => {
+    if (!service || !service.code) return;
+    const code = String(service.code).trim().toUpperCase();
+    if (!code) return;
+    mergedByCode.set(code, service);
+  };
+
+  SERVICES_CATALOG.forEach(addService);
+  if (Array.isArray(userServices)) {
+    userServices.forEach(addService);
+  }
+
+  return Array.from(mergedByCode.values());
+}
+
 function parseISODateLocal(dateISO) {
   if (typeof dateISO !== "string") return null;
   const parts = dateISO.split("-").map(Number);
@@ -131,10 +148,7 @@ async function buildPlan(rules) {
     getConfig("saison"),
   ]);
 
-  const servicesList =
-    Array.isArray(services) && services.length > 0
-      ? services
-      : SERVICES_CATALOG;
+  const servicesList = mergeServicesWithCatalog(services);
   const saisonConfig = saisonEntry?.value || {};
 
   const periodLabelForDate = (dateISO) => {

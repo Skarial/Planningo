@@ -140,6 +140,15 @@ class MainActivity : AppCompatActivity() {
   private fun importFromText(text: String) {
     try {
       val plan = AlarmPlanParser.parse(text)
+      val previousPlanRaw = AlarmPlanStore.load(this)
+      if (!previousPlanRaw.isNullOrBlank()) {
+        try {
+          val previousPlan = AlarmPlanParser.parse(previousPlanRaw)
+          AlarmScheduler.cancelByIds(this, previousPlan.alarms.map { it.id })
+        } catch (_: Exception) {
+          // Ignore legacy/invalid stored plan and continue with replacement.
+        }
+      }
       AlarmPlanStore.save(this, text)
       val importedTotal = plan.alarms.size
       val result = AlarmScheduler.scheduleAll(this, plan.alarms)
@@ -148,7 +157,7 @@ class MainActivity : AppCompatActivity() {
       val nextLabel = nextAlarm?.let { formatDateTime(it.alarmAtEpochMillis) } ?: "aucune"
       refreshActiveAlarmCount(result.scheduled, importedTotal)
       setStatus(
-        "Plan importé : ${importedTotal} alarme(s), ${result.scheduled} active(s), ${result.skippedPast} ignorée(s). Prochaine alarme : $nextLabel.",
+        "Plan importe (remplacement) : ${importedTotal} alarme(s), ${result.scheduled} active(s), ${result.skippedPast} ignoree(s). Prochaine alarme : $nextLabel.",
       )
     } catch (err: Exception) {
       setStatus("Import invalide : ${err.message}")

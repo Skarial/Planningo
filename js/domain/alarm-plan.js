@@ -77,6 +77,10 @@ function formatOffsetLabel(minutes) {
   return `${m}min`;
 }
 
+const FALLBACK_START_MINUTES_BY_CODE = {
+  DM: 5 * 60 + 45,
+};
+
 function getServiceStartMinutes(service, periodLabel) {
   if (!service || !Array.isArray(service.periodes)) return null;
 
@@ -163,7 +167,7 @@ export function buildAlarmPlan(options = {}) {
   const servicesByCode = new Map(
     services
       .filter((service) => service && service.code)
-      .map((service) => [String(service.code), service]),
+      .map((service) => [String(service.code).trim().toUpperCase(), service]),
   );
 
   const nowMs = (now instanceof Date ? now : new Date(now)).getTime();
@@ -172,9 +176,8 @@ export function buildAlarmPlan(options = {}) {
   for (const entry of entries) {
     if (!entry || !entry.date || !entry.serviceCode) continue;
 
-    const serviceCode = String(entry.serviceCode);
-    const service = servicesByCode.get(serviceCode);
-    if (!service) continue;
+    const serviceCode = String(entry.serviceCode).trim().toUpperCase();
+    const service = servicesByCode.get(serviceCode) || null;
 
     const periodLabel =
       typeof periodLabelForDate === "function"
@@ -186,7 +189,9 @@ export function buildAlarmPlan(options = {}) {
     const serviceStartMinutes =
       explicitStart != null
         ? explicitStart
-        : getServiceStartMinutes(service, periodLabel);
+        : getServiceStartMinutes(service, periodLabel) ??
+          FALLBACK_START_MINUTES_BY_CODE[serviceCode] ??
+          null;
     if (serviceStartMinutes == null) continue;
 
     const serviceDate = parseISODate(entry.date);

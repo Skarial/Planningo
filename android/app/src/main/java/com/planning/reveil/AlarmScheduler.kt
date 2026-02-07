@@ -67,6 +67,15 @@ object AlarmScheduler {
     prefs.edit().remove(KEY_IDS).apply()
   }
 
+  fun cancelByIds(context: Context, alarmIds: Collection<String>) {
+    alarmIds
+      .asSequence()
+      .map { it.trim() }
+      .filter { it.isNotEmpty() }
+      .toSet()
+      .forEach { cancelAlarm(context, it) }
+  }
+
   fun getActiveAlarmCount(context: Context): Int {
     val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     val existing = prefs.getStringSet(KEY_IDS, emptySet()) ?: emptySet()
