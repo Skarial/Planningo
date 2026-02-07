@@ -20,7 +20,8 @@ import { toISODateLocal } from "../utils.js";
 
 const RULES_KEY = "alarm_rules";
 const ALARM_NOTICE_SEEN_KEY = "planningo_alarm_notice_seen";
-const ALARM_APK_PATH = "./android/app/build/outputs/apk/debug/app-debug.apk";
+const ALARM_APK_LOCAL_PATH = "./android/app/build/outputs/apk/debug/app-debug.apk";
+const ALARM_APK_RELEASES_URL = "https://github.com/Skarial/Planningo/releases/latest";
 
 const DEFAULT_RULES = {
   startBefore: "10:00",
@@ -235,6 +236,13 @@ function setAlarmNoticeSeen() {
   }
 }
 
+function getAlarmApkDownloadUrl() {
+  const host = (location.hostname || "").toLowerCase();
+  const isLocalHost =
+    host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0";
+  return isLocalHost ? ALARM_APK_LOCAL_PATH : ALARM_APK_RELEASES_URL;
+}
+
 export async function renderAlarmView() {
   const view = document.getElementById("view-alarm");
   if (!view) return;
@@ -422,8 +430,13 @@ export async function renderAlarmView() {
   });
 
   installApkBtn.addEventListener("click", () => {
-    window.open(ALARM_APK_PATH, "_blank", "noopener,noreferrer");
-    status.show("Ouverture du telechargement APK...");
+    const url = getAlarmApkDownloadUrl();
+    window.open(url, "_blank", "noopener,noreferrer");
+    if (url === ALARM_APK_LOCAL_PATH) {
+      status.show("Ouverture du telechargement APK local...");
+    } else {
+      status.show("Ouverture de la page des releases APK...");
+    }
   });
 
   actionBtn.addEventListener("click", async () => {
