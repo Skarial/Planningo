@@ -22,6 +22,11 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
+  companion object {
+    private const val UI_PREFS = "alarm_ui_prefs"
+    private const val KEY_LAST_IMPORTED_TOTAL = "last_imported_total"
+  }
+
   private lateinit var statusView: TextView
   private lateinit var activeAlarmCountView: TextView
   private lateinit var ringtoneValueView: TextView
@@ -136,12 +141,14 @@ class MainActivity : AppCompatActivity() {
     try {
       val plan = AlarmPlanParser.parse(text)
       AlarmPlanStore.save(this, text)
+      val importedTotal = plan.alarms.size
       val result = AlarmScheduler.scheduleAll(this, plan.alarms)
+      saveLastImportedTotal(importedTotal)
       val nextAlarm = findNextAlarm(plan.alarms)
       val nextLabel = nextAlarm?.let { formatDateTime(it.alarmAtEpochMillis) } ?: "aucune"
-      refreshActiveAlarmCount(result.scheduled)
+      refreshActiveAlarmCount(result.scheduled, importedTotal)
       setStatus(
-        "Plan importé : ${result.scheduled} alarme(s) programmée(s), ${result.skippedPast} ignorée(s). Prochaine alarme : $nextLabel.",
+        "Plan importé : ${importedTotal} alarme(s), ${result.scheduled} active(s), ${result.skippedPast} ignorée(s). Prochaine alarme : $nextLabel.",
       )
     } catch (err: Exception) {
       setStatus("Import invalide : ${err.message}")
@@ -162,9 +169,24 @@ class MainActivity : AppCompatActivity() {
     statusView.text = message
   }
 
-  private fun refreshActiveAlarmCount(overrideCount: Int? = null) {
+  private fun saveLastImportedTotal(total: Int) {
+    val prefs = getSharedPreferences(UI_PREFS, MODE_PRIVATE)
+    prefs.edit().putInt(KEY_LAST_IMPORTED_TOTAL, total).apply()
+  }
+
+  private fun getLastImportedTotal(): Int {
+    val prefs = getSharedPreferences(UI_PREFS, MODE_PRIVATE)
+    return prefs.getInt(KEY_LAST_IMPORTED_TOTAL, 0)
+  }
+
+  private fun refreshActiveAlarmCount(overrideCount: Int? = null, overrideImportedTotal: Int? = null) {
     val count = overrideCount ?: AlarmScheduler.getActiveAlarmCount(this)
-    activeAlarmCountView.text = getString(R.string.active_alarm_count_value, count)
+    val importedTotal = overrideImportedTotal ?: getLastImportedTotal()
+    activeAlarmCountView.text = if (importedTotal > 0) {
+      getString(R.string.active_alarm_count_with_total, count, importedTotal)
+    } else {
+      getString(R.string.active_alarm_count_value, count)
+    }
   }
 
   private fun updatePermissionUi() {

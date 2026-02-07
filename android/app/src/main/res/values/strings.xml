@@ -5,6 +5,7 @@
   <string name="main_note">Sonnerie conforme aux réglages système (DND/silencieux).</string>
   <string name="status_waiting">En attente d\'import.</string>
   <string name="active_alarm_count_value">Alarmes actives : %1$d</string>
+  <string name="active_alarm_count_with_total">Alarmes actives : %1$d / %2$d importées</string>
   <string name="btn_check_permission">Autorisation alarmes exactes</string>
   <string name="btn_open_settings">Ouvrir paramètres</string>
   <string name="btn_choose_ringtone">Choisir la sonnerie</string>
