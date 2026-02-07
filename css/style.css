@@ -896,6 +896,23 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   line-height: 1.45;
 }
 
+.consult-date-view .settings-subtitle {
+  margin-top: 12px;
+}
+
+.consult-date-view .settings-header + .settings-card {
+  margin-top: 42px;
+}
+
+.consult-date-view .settings-card {
+  padding: 22px;
+  gap: 18px;
+}
+
+.consult-date-view .settings-actions {
+  gap: 16px;
+}
+
 .tabs-view {
   height: 100%;
   display: flex;

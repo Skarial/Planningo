@@ -33,7 +33,7 @@ export async function renderConsultDateView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view";
+  root.className = "settings-view consult-date-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
