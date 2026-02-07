@@ -1,16 +1,38 @@
 ﻿<resources xmlns:tools="http://schemas.android.com/tools">
-  <style name="Theme.ReveilPlanninngo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+  <style name="Theme.ReveilPlanninngo" parent="Theme.MaterialComponents.Light.NoActionBar">
     <item name="colorPrimary">@color/primary</item>
     <item name="colorPrimaryVariant">@color/primary_dark</item>
     <item name="colorAccent">@color/accent</item>
+    <item name="android:windowBackground">@color/page_background</item>
+    <item name="android:statusBarColor">@color/page_background</item>
   </style>
 
-  <style name="Theme.ReveilPlanninngo.Alarm" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+  <style name="Theme.ReveilPlanninngo.Alarm" parent="Theme.MaterialComponents.Light.NoActionBar">
     <item name="colorPrimary">@color/primary</item>
     <item name="colorPrimaryVariant">@color/primary_dark</item>
     <item name="colorAccent">@color/accent</item>
     <item name="android:windowBackground">@color/alarm_background</item>
+    <item name="android:statusBarColor">@color/alarm_background</item>
     <item name="android:windowFullscreen">true</item>
     <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="28">shortEdges</item>
+  </style>
+
+  <style name="Widget.ReveilPlanninngo.Button.Primary" parent="Widget.MaterialComponents.Button">
+    <item name="android:textAllCaps">false</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@color/button_primary_text</item>
+    <item name="backgroundTint">@color/button_primary_bg</item>
+    <item name="cornerRadius">14dp</item>
+    <item name="android:minHeight">52dp</item>
+  </style>
+
+  <style name="Widget.ReveilPlanninngo.Button.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <item name="android:textAllCaps">false</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@color/text_primary</item>
+    <item name="strokeColor">@color/button_outline</item>
+    <item name="strokeWidth">1dp</item>
+    <item name="cornerRadius">14dp</item>
+    <item name="android:minHeight">52dp</item>
   </style>
 </resources>

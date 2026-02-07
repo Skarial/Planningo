@@ -1,7 +1,20 @@
 ﻿<resources>
-  <color name="primary">#0B3D91</color>
-  <color name="primary_dark">#082B63</color>
-  <color name="accent">#FFB020</color>
-  <color name="alarm_background">#0A0F1F</color>
-  <color name="alarm_text">#FFFFFF</color>
+  <color name="primary">#1E2025</color>
+  <color name="primary_dark">#15171B</color>
+  <color name="accent">#6F7682</color>
+
+  <color name="page_background">#E4E6EA</color>
+  <color name="card_background">#F7F8FA</color>
+  <color name="card_border">#D5D9E0</color>
+
+  <color name="text_primary">#1F232B</color>
+  <color name="text_secondary">#788291</color>
+  <color name="text_on_dark">#FFFFFF</color>
+
+  <color name="button_primary_bg">#1E2025</color>
+  <color name="button_primary_text">#FFFFFF</color>
+  <color name="button_outline">#B8BEC8</color>
+
+  <color name="alarm_background">#E4E6EA</color>
+  <color name="alarm_text">@color/text_primary</color>
 </resources>
