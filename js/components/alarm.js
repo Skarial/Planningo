@@ -20,6 +20,7 @@ import { toISODateLocal } from "../utils.js";
 
 const RULES_KEY = "alarm_rules";
 const ALARM_NOTICE_SEEN_KEY = "planningo_alarm_notice_seen";
+const ALARM_APK_PATH = "./android/app/build/outputs/apk/debug/app-debug.apk";
 
 const DEFAULT_RULES = {
   startBefore: "10:00",
@@ -299,6 +300,11 @@ export async function renderAlarmView() {
   actionBtn.className = "settings-btn primary";
   actionBtn.textContent = "Importer dans Reveil";
 
+  const installApkBtn = document.createElement("button");
+  installApkBtn.className = "settings-btn";
+  installApkBtn.type = "button";
+  installApkBtn.textContent = "Installer l'app Reveil (APK)";
+
   const helpBtn = document.createElement("button");
   helpBtn.className = "settings-btn alarm-help-btn";
   helpBtn.type = "button";
@@ -314,6 +320,7 @@ export async function renderAlarmView() {
     labelHorizon,
     inputHorizon,
     actions,
+    installApkBtn,
     actionBtn,
     helpBtn,
     status.node,
@@ -412,6 +419,11 @@ export async function renderAlarmView() {
     currentRules = { ...DEFAULT_RULES };
     syncInputs(currentRules);
     status.show("Regles reinitialisees.");
+  });
+
+  installApkBtn.addEventListener("click", () => {
+    window.open(ALARM_APK_PATH, "_blank", "noopener,noreferrer");
+    status.show("Ouverture du telechargement APK...");
   });
 
   actionBtn.addEventListener("click", async () => {
