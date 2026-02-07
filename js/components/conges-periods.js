@@ -11,6 +11,22 @@ import { renderCongesView } from "./conges.js";
 import { renderSeasonView } from "./season.js";
 
 const TABS = ["conges", "periods"];
+let resizeListenerBound = false;
+let activeLayoutTrack = null;
+
+function bindResizeListenerOnce() {
+  if (resizeListenerBound) return;
+  resizeListenerBound = true;
+  window.addEventListener(
+    "resize",
+    () => {
+      if (typeof activeLayoutTrack === "function") {
+        activeLayoutTrack();
+      }
+    },
+    { passive: true },
+  );
+}
 
 export async function renderCongesPeriodsView() {
   const view = document.getElementById("view-conges-periods");
@@ -79,7 +95,8 @@ export async function renderCongesPeriodsView() {
       tabButtons[tab].classList.toggle("active", idx === index);
     });
     if (!fromSwipe) {
-      content.scrollTo({ left: 0, top: 0, behavior: "instant" });
+      content.scrollLeft = 0;
+      content.scrollTop = 0;
     }
   }
 
@@ -94,6 +111,7 @@ export async function renderCongesPeriodsView() {
   let isDragging = false;
 
   function layoutTrack() {
+    if (!content.isConnected) return;
     const width = content.clientWidth || 1;
     track.style.width = `${width * TABS.length}px`;
     [congesPage, periodsPage].forEach((page) => {
@@ -164,7 +182,15 @@ export async function renderCongesPeriodsView() {
     }
   });
 
-  window.addEventListener("resize", () => layoutTrack());
+  track.addEventListener("touchcancel", () => {
+    isTracking = false;
+    isDragging = false;
+    track.classList.remove("dragging");
+    setActive(activeIndex, true);
+  });
+
+  bindResizeListenerOnce();
+  activeLayoutTrack = layoutTrack;
 
   requestAnimationFrame(() => {
     layoutTrack();
