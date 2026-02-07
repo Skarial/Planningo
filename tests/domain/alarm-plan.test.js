@@ -7,10 +7,10 @@
 import { buildAlarmPlan } from "../../js/domain/alarm-plan.js";
 import { test, assert } from "../run-tests.js";
 
-test("alarm-plan genere une alarme avant 10:00", () => {
+test("alarm-plan genere une alarme pour un service impair", () => {
   const services = [
     {
-      code: "SVC",
+      code: "21",
       periodes: [
         {
           libelle: "P",
@@ -20,13 +20,13 @@ test("alarm-plan genere une alarme avant 10:00", () => {
     },
   ];
 
-  const entries = [{ date: "2026-02-10", serviceCode: "SVC" }];
+  const entries = [{ date: "2026-02-10", serviceCode: "21" }];
 
   const plan = buildAlarmPlan({
     entries,
     services,
     periodLabelForDate: () => "P",
-    rules: { startBefore: "10:00", offsetMinutes: 90 },
+    rules: { offsetMinutes: 90 },
     now: new Date("2026-02-01T00:00:00"),
   });
 
@@ -38,24 +38,24 @@ test("alarm-plan genere une alarme avant 10:00", () => {
   );
 });
 
-test("alarm-plan ignore les services a 10:00 ou plus", () => {
+test("alarm-plan ignore les services pairs", () => {
   const services = [
     {
-      code: "SVC",
+      code: "22",
       periodes: [
         {
           libelle: "P",
-          plages: [{ debut: "10:00", fin: "13:00" }],
+          plages: [{ debut: "08:00", fin: "13:00" }],
         },
       ],
     },
   ];
 
   const plan = buildAlarmPlan({
-    entries: [{ date: "2026-02-10", serviceCode: "SVC" }],
+    entries: [{ date: "2026-02-10", serviceCode: "22" }],
     services,
     periodLabelForDate: () => "P",
-    rules: { startBefore: "10:00", offsetMinutes: 90 },
+    rules: { offsetMinutes: 90 },
     now: new Date("2026-02-01T00:00:00"),
   });
 
@@ -65,7 +65,7 @@ test("alarm-plan ignore les services a 10:00 ou plus", () => {
 test("alarm-plan prend la premiere plage du service", () => {
   const services = [
     {
-      code: "SVC",
+      code: "23",
       periodes: [
         {
           libelle: "P",
@@ -79,10 +79,10 @@ test("alarm-plan prend la premiere plage du service", () => {
   ];
 
   const plan = buildAlarmPlan({
-    entries: [{ date: "2026-02-10", serviceCode: "SVC" }],
+    entries: [{ date: "2026-02-10", serviceCode: "23" }],
     services,
     periodLabelForDate: () => "P",
-    rules: { startBefore: "10:00", offsetMinutes: 90 },
+    rules: { offsetMinutes: 90 },
     now: new Date("2026-02-01T00:00:00"),
   });
 
@@ -93,7 +93,7 @@ test("alarm-plan prend la premiere plage du service", () => {
 test("alarm-plan ignore une alarme deja passee", () => {
   const services = [
     {
-      code: "SVC",
+      code: "25",
       periodes: [
         {
           libelle: "P",
@@ -104,10 +104,10 @@ test("alarm-plan ignore une alarme deja passee", () => {
   ];
 
   const plan = buildAlarmPlan({
-    entries: [{ date: "2026-02-10", serviceCode: "SVC" }],
+    entries: [{ date: "2026-02-10", serviceCode: "25" }],
     services,
     periodLabelForDate: () => "P",
-    rules: { startBefore: "10:00", offsetMinutes: 90 },
+    rules: { offsetMinutes: 90 },
     now: new Date("2026-02-10T08:00:00"),
   });
 

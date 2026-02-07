@@ -23,7 +23,6 @@ const ALARM_NOTICE_SEEN_KEY = "planningo_alarm_notice_seen";
 const ALARM_APK_PATH = "./apk/planningo-reveil.apk";
 
 const DEFAULT_RULES = {
-  startBefore: "10:00",
   offsetMinutes: 90,
   horizonDays: 30,
 };
@@ -52,36 +51,12 @@ function parseISODateLocal(dateISO) {
   return date;
 }
 
-function parseTimeToMinutes(value) {
-  if (typeof value !== "string") return null;
-  const [h, m] = value.split(":").map((part) => Number(part));
-  if (Number.isNaN(h) || Number.isNaN(m)) return null;
-  if (h < 0 || h > 23 || m < 0 || m > 59) return null;
-  return h * 60 + m;
-}
-
-function formatMinutesToTime(totalMinutes) {
-  if (typeof totalMinutes !== "number" || Number.isNaN(totalMinutes)) {
-    return null;
-  }
-  const minutes = ((Math.floor(totalMinutes) % 1440) + 1440) % 1440;
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-}
-
 function clampNumber(value, min, max) {
   if (!Number.isFinite(value)) return null;
   return Math.max(min, Math.min(max, value));
 }
 
 function normalizeRules(input) {
-  const startMinutes = parseTimeToMinutes(input?.startBefore);
-  const startBefore =
-    startMinutes != null
-      ? formatMinutesToTime(startMinutes)
-      : DEFAULT_RULES.startBefore;
-
   const offset = clampNumber(
     Number(input?.offsetMinutes),
     LIMITS.offsetMin,
@@ -98,7 +73,7 @@ function normalizeRules(input) {
   const horizonDays =
     horizon != null ? Math.round(horizon) : DEFAULT_RULES.horizonDays;
 
-  return { startBefore, offsetMinutes, horizonDays };
+  return { offsetMinutes, horizonDays };
 }
 
 function formatOffsetLabel(minutes) {
@@ -261,11 +236,6 @@ export async function renderAlarmView() {
   const card = document.createElement("div");
   card.className = "settings-card";
 
-  const labelStart = document.createElement("label");
-  labelStart.textContent = "Heure limite (avant)";
-  const inputStart = document.createElement("input");
-  inputStart.type = "time";
-
   const labelOffset = document.createElement("label");
   labelOffset.textContent = "Avance (minutes)";
   const inputOffset = document.createElement("input");
@@ -313,8 +283,6 @@ export async function renderAlarmView() {
   const status = createStatus();
 
   card.append(
-    labelStart,
-    inputStart,
     labelOffset,
     inputOffset,
     labelHorizon,
@@ -340,7 +308,7 @@ export async function renderAlarmView() {
   const noticeBody = document.createElement("div");
   noticeBody.className = "alarm-notice-body";
   noticeBody.innerHTML = `
-    <p><strong>Heure limite (avant)</strong> : seuls les services qui commencent avant cette heure sont pris en compte.</p>
+    <p><strong>Services pris en compte</strong> : uniquement les services du matin, identifies par un numero <strong>impair</strong>.</p>
     <p><strong>Avance (minutes)</strong> : nombre de minutes avant le debut du service.</p>
     <p><strong>Horizon (jours)</strong> : periode couverte pour generer le plan.</p>
     <p>Ensuite, utilisez <strong>Importer dans Reveil</strong> pour envoyer le fichier vers l'application Reveil.</p>
@@ -395,7 +363,6 @@ export async function renderAlarmView() {
   let currentRules = await loadRules();
 
   function syncInputs(rulesValue) {
-    inputStart.value = rulesValue.startBefore;
     inputOffset.value = String(rulesValue.offsetMinutes);
     inputHorizon.value = String(rulesValue.horizonDays);
   }
@@ -404,7 +371,6 @@ export async function renderAlarmView() {
 
   saveBtn.addEventListener("click", async () => {
     const nextRules = normalizeRules({
-      startBefore: inputStart.value,
       offsetMinutes: inputOffset.value,
       horizonDays: inputHorizon.value,
     });

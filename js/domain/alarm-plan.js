@@ -108,18 +108,28 @@ function getServiceStartMinutes(service, periodLabel) {
   return Math.min(...minutes);
 }
 
+function isMorningServiceCode(serviceCode) {
+  if (typeof serviceCode !== "string" && typeof serviceCode !== "number") {
+    return false;
+  }
+  const normalized = String(serviceCode).trim();
+  if (!/^\d+$/.test(normalized)) return false;
+  const value = Number(normalized);
+  if (!Number.isInteger(value)) return false;
+  return value % 2 === 1;
+}
+
 export function buildAlarmPlan(options = {}) {
   const {
     entries = [],
     services = [],
     periodLabelForDate = null,
-    rules = { startBefore: "10:00", offsetMinutes: 90 },
+    rules = { offsetMinutes: 90 },
     now = new Date(),
     horizonDays = null,
   } = options;
 
   const appliedRules = {
-    startBefore: rules.startBefore ?? "10:00",
     offsetMinutes:
       typeof rules.offsetMinutes === "number" ? rules.offsetMinutes : 90,
   };
@@ -137,9 +147,8 @@ export function buildAlarmPlan(options = {}) {
     alarms: [],
   };
 
-  const startBeforeMinutes = parseTimeToMinutes(appliedRules.startBefore);
   const offsetMinutes = appliedRules.offsetMinutes;
-  if (startBeforeMinutes == null || !Number.isFinite(offsetMinutes)) {
+  if (!Number.isFinite(offsetMinutes)) {
     return plan;
   }
 
@@ -156,6 +165,8 @@ export function buildAlarmPlan(options = {}) {
     if (!entry || !entry.date || !entry.serviceCode) continue;
 
     const serviceCode = String(entry.serviceCode);
+    if (!isMorningServiceCode(serviceCode)) continue;
+
     const service = servicesByCode.get(serviceCode);
     if (!service) continue;
 
@@ -170,8 +181,6 @@ export function buildAlarmPlan(options = {}) {
         ? explicitStart
         : getServiceStartMinutes(service, periodLabel);
     if (serviceStartMinutes == null) continue;
-
-    if (serviceStartMinutes >= startBeforeMinutes) continue;
 
     const serviceDate = parseISODate(entry.date);
     if (!serviceDate) continue;
