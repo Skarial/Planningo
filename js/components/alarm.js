@@ -422,7 +422,18 @@ export async function renderAlarmView() {
   });
 
   installApkBtn.addEventListener("click", () => {
-    window.open(ALARM_APK_PATH, "_blank", "noopener,noreferrer");
+    const downloadUrl = new URL(ALARM_APK_PATH, location.href);
+    downloadUrl.searchParams.set("v", String(Date.now()));
+
+    const link = document.createElement("a");
+    link.href = downloadUrl.toString();
+    link.download = "planningo-reveil.apk";
+    link.rel = "noopener noreferrer";
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
     status.show("Ouverture du telechargement APK...");
   });
 
