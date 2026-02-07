@@ -108,16 +108,23 @@ function getServiceStartMinutes(service, periodLabel) {
   return Math.min(...minutes);
 }
 
-function isMorningServiceCode(serviceCode) {
+function isMorningServiceCode(serviceCode, service, periodLabel) {
   if (typeof serviceCode !== "string" && typeof serviceCode !== "number") {
     return false;
   }
-  const normalized = String(serviceCode).trim();
+  const normalized = String(serviceCode).trim().toUpperCase();
+  if (normalized === "DM") return true;
+  if (normalized === "DAM") return false;
   // Ignore line-only values like "21"/"23": we only accept real service codes.
   if (!/^\d{3,}$/.test(normalized)) return false;
   const value = Number(normalized);
   if (!Number.isInteger(value)) return false;
-  return value % 2 === 1;
+  if (value % 2 !== 1) return false;
+
+  // Extra guard: if service timings are known, keep only morning starts.
+  const startMinutes = getServiceStartMinutes(service, periodLabel);
+  if (startMinutes == null) return true;
+  return startMinutes < 12 * 60;
 }
 
 export function buildAlarmPlan(options = {}) {
@@ -166,8 +173,6 @@ export function buildAlarmPlan(options = {}) {
     if (!entry || !entry.date || !entry.serviceCode) continue;
 
     const serviceCode = String(entry.serviceCode);
-    if (!isMorningServiceCode(serviceCode)) continue;
-
     const service = servicesByCode.get(serviceCode);
     if (!service) continue;
 
@@ -175,6 +180,7 @@ export function buildAlarmPlan(options = {}) {
       typeof periodLabelForDate === "function"
         ? periodLabelForDate(entry.date)
         : null;
+    if (!isMorningServiceCode(serviceCode, service, periodLabel)) continue;
 
     const explicitStart = parseTimeToMinutes(entry.startTime);
     const serviceStartMinutes =

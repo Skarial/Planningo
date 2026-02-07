@@ -114,6 +114,55 @@ test("alarm-plan ignore une alarme deja passee", () => {
   assert(plan.alarms.length === 0, "Alarme passee ignoree");
 });
 
+test("alarm-plan traite DM comme service du matin", () => {
+  const services = [
+    {
+      code: "DM",
+      periodes: [
+        {
+          libelle: "P",
+          plages: [{ debut: "05:45", fin: "13:00" }],
+        },
+      ],
+    },
+  ];
+
+  const plan = buildAlarmPlan({
+    entries: [{ date: "2026-02-10", serviceCode: "DM" }],
+    services,
+    periodLabelForDate: () => "P",
+    rules: { offsetMinutes: 90 },
+    now: new Date("2026-02-01T00:00:00"),
+  });
+
+  assert(plan.alarms.length === 1, "DM doit produire une alarme");
+  assert(plan.alarms[0].serviceCode === "DM", "Code service DM attendu");
+});
+
+test("alarm-plan ignore DAM (apres-midi)", () => {
+  const services = [
+    {
+      code: "DAM",
+      periodes: [
+        {
+          libelle: "P",
+          plages: [{ debut: "12:30", fin: "20:00" }],
+        },
+      ],
+    },
+  ];
+
+  const plan = buildAlarmPlan({
+    entries: [{ date: "2026-02-10", serviceCode: "DAM" }],
+    services,
+    periodLabelForDate: () => "P",
+    rules: { offsetMinutes: 90 },
+    now: new Date("2026-02-01T00:00:00"),
+  });
+
+  assert(plan.alarms.length === 0, "DAM ne doit pas produire d'alarme");
+});
+
 test("alarm-plan ignore un numero de ligne (2 chiffres)", () => {
   const services = [
     {
