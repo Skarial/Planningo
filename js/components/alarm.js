@@ -309,7 +309,7 @@ export async function renderAlarmView() {
   noticeBody.className = "alarm-notice-body";
   noticeBody.innerHTML = `
     <p><strong>Important</strong> : le reveil intelligent s'occupe uniquement des <strong>services du matin</strong>.</p>
-    <p><strong>Regle utilisee</strong> : codes service numeriques impairs (ex: 2001, 2101). Les numeros de ligne (ex: 21, 23) ne sont pas traites.</p>
+    <p><strong>Regle utilisee</strong> : codes service numeriques impairs (ex: 2001, 2101).</p>
     <p><strong>Avance (minutes)</strong> : nombre de minutes avant le debut du service.</p>
     <p><strong>Horizon (jours)</strong> : periode couverte pour generer le plan.</p>
     <p>Ensuite, utilisez <strong>Importer dans Reveil</strong> pour envoyer le fichier vers l'application Reveil.</p>
