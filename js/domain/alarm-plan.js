@@ -187,10 +187,10 @@ export function buildAlarmPlan(options = {}) {
 
     const explicitStart = parseTimeToMinutes(entry.startTime);
     const serviceStartMinutes =
-      explicitStart != null
-        ? explicitStart
-        : serviceCode === "DM"
-          ? FALLBACK_START_MINUTES_BY_CODE.DM
+      serviceCode === "DM"
+        ? FALLBACK_START_MINUTES_BY_CODE.DM
+        : explicitStart != null
+          ? explicitStart
           : getServiceStartMinutes(service, periodLabel) ??
             FALLBACK_START_MINUTES_BY_CODE[serviceCode] ??
             null;

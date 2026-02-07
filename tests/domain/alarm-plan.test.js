@@ -139,6 +139,35 @@ test("alarm-plan traite DM comme service du matin", () => {
   assert(plan.alarms[0].serviceCode === "DM", "Code service DM attendu");
 });
 
+test("alarm-plan force DM matin meme avec une heure saisie incoherente", () => {
+  const services = [
+    {
+      code: "DM",
+      periodes: [
+        {
+          libelle: "P",
+          plages: [{ debut: "05:45", fin: "13:00" }],
+        },
+      ],
+    },
+  ];
+
+  const plan = buildAlarmPlan({
+    entries: [{ date: "2026-02-10", serviceCode: "DM", startTime: "12:00" }],
+    services,
+    periodLabelForDate: () => "P",
+    rules: { offsetMinutes: 90 },
+    now: new Date("2026-02-01T00:00:00"),
+  });
+
+  assert(plan.alarms.length === 1, "DM doit produire une alarme");
+  assert(plan.alarms[0].serviceStart === "05:45", "DM doit rester a 05:45");
+  assert(
+    plan.alarms[0].alarmAt.includes("T04:15"),
+    "Alarme DM attendue a 04:15 avec offset 90",
+  );
+});
+
 test("alarm-plan ignore DAM (apres-midi)", () => {
   const services = [
     {
