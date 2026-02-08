@@ -17,6 +17,7 @@ import { buildAlarmPlan } from "../domain/alarm-plan.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
 import { toISODateLocal } from "../utils.js";
+import { clearAlarmResyncPending } from "../state/alarm-resync.js";
 
 const RULES_KEY = "alarm_rules";
 const ALARM_NOTICE_SEEN_KEY = "planningo_alarm_notice_seen";
@@ -31,8 +32,6 @@ const DEFAULT_RULES = {
 const LIMITS = {
   offsetMin: 1,
   offsetMax: 720,
-  horizonMin: 1,
-  horizonMax: 60,
 };
 
 function mergeServicesWithCatalog(userServices) {
@@ -97,13 +96,7 @@ function normalizeRules(input) {
   const offsetMinutes =
     offset != null ? Math.round(offset) : DEFAULT_RULES.offsetMinutes;
 
-  const horizon = clampNumber(
-    Number(input?.horizonDays),
-    LIMITS.horizonMin,
-    LIMITS.horizonMax,
-  );
-  const horizonDays =
-    horizon != null ? Math.round(horizon) : DEFAULT_RULES.horizonDays;
+  const horizonDays = DEFAULT_RULES.horizonDays;
 
   return { offsetMinutes, horizonDays };
 }
@@ -279,7 +272,7 @@ function setAlarmNoticeSeen() {
   }
 }
 
-export async function renderAlarmView() {
+export async function renderAlarmView(options = {}) {
   const view = document.getElementById("view-alarm");
   if (!view) return;
 
@@ -298,7 +291,7 @@ export async function renderAlarmView() {
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
-  subtitle.textContent = "Android uniquement (pour l'instant)";
+  subtitle.textContent = "Android uniquement";
 
   header.append(title, subtitle);
 
@@ -312,14 +305,6 @@ export async function renderAlarmView() {
   inputOffset.min = String(LIMITS.offsetMin);
   inputOffset.max = String(LIMITS.offsetMax);
   inputOffset.step = "5";
-
-  const labelHorizon = document.createElement("label");
-  labelHorizon.textContent = "Horizon (jours)";
-  const inputHorizon = document.createElement("input");
-  inputHorizon.type = "number";
-  inputHorizon.min = String(LIMITS.horizonMin);
-  inputHorizon.max = String(LIMITS.horizonMax);
-  inputHorizon.step = "1";
 
   const actions = document.createElement("div");
   actions.className = "settings-actions";
@@ -354,8 +339,6 @@ export async function renderAlarmView() {
   card.append(
     labelOffset,
     inputOffset,
-    labelHorizon,
-    inputHorizon,
     actions,
     installApkBtn,
     actionBtn,
@@ -378,9 +361,8 @@ export async function renderAlarmView() {
   noticeBody.className = "alarm-notice-body";
   noticeBody.innerHTML = `
     <p><strong>Important</strong> : le réveil intelligent s'occupe uniquement des <strong>services du matin</strong>.</p>
-    <p><strong>Regle utilisee</strong> : <strong>DM</strong> et codes service numeriques impairs (ex : DM, 2001, 2101). <strong>DAM</strong> est ignore.</p>
+    <p><strong>Regle utilisee</strong> : <strong>DM</strong> et codes service numeriques impairs (ex : DM, 2001, 2101).</p>
     <p><strong>Avance (minutes)</strong> : nombre de minutes avant le début du service.</p>
-    <p><strong>Horizon (jours)</strong> : période couverte pour générer le plan.</p>
     <p>Ensuite, utilisez <strong>Importer dans Réveil</strong> pour envoyer le fichier vers l'application Réveil.</p>
   `;
 
@@ -434,7 +416,6 @@ export async function renderAlarmView() {
 
   function syncInputs(rulesValue) {
     inputOffset.value = String(rulesValue.offsetMinutes);
-    inputHorizon.value = String(rulesValue.horizonDays);
   }
 
   syncInputs(currentRules);
@@ -442,7 +423,6 @@ export async function renderAlarmView() {
   saveBtn.addEventListener("click", async () => {
     const nextRules = normalizeRules({
       offsetMinutes: inputOffset.value,
-      horizonDays: inputHorizon.value,
     });
     await persistRules(nextRules);
     currentRules = nextRules;
@@ -473,7 +453,11 @@ export async function renderAlarmView() {
     status.show("Ouverture du telechargement APK...");
   });
 
-  actionBtn.addEventListener("click", async () => {
+  let isImporting = false;
+
+  async function runImport() {
+    if (isImporting) return;
+    isImporting = true;
     actionBtn.disabled = true;
     const prevText = actionBtn.textContent;
     actionBtn.textContent = "Generation...";
@@ -492,6 +476,7 @@ export async function renderAlarmView() {
       status.show(
         `Plan ${suffix} (${count} alarme${count > 1 ? "s" : ""}) - ${startISO} a ${endISO}.`,
       );
+      clearAlarmResyncPending();
     } catch (err) {
       const msg =
         err && err.name === "AbortError"
@@ -501,7 +486,14 @@ export async function renderAlarmView() {
     } finally {
       actionBtn.textContent = prevText;
       actionBtn.disabled = false;
+      isImporting = false;
     }
-  });
+  }
+
+  actionBtn.addEventListener("click", runImport);
+
+  if (options?.autoImport === true) {
+    runImport();
+  }
 }
 

@@ -121,16 +121,20 @@ export async function renderCongesPeriodsView() {
     setActive(activeIndex, true);
   }
 
-  track.addEventListener("touchstart", (e) => {
-    const touch = e.touches[0];
-    startX = touch.clientX;
-    startY = touch.clientY;
-    isTracking = true;
-    isDragging = false;
-    const width = content.clientWidth || 1;
-    startTranslate = -activeIndex * width;
-    track.classList.add("dragging");
-  });
+  track.addEventListener(
+    "touchstart",
+    (e) => {
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      isTracking = true;
+      isDragging = false;
+      const width = content.clientWidth || 1;
+      startTranslate = -activeIndex * width;
+      track.classList.add("dragging");
+    },
+    { passive: true },
+  );
 
   track.addEventListener(
     "touchmove",

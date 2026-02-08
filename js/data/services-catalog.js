@@ -1693,6 +1693,16 @@ export const SERVICES_CATALOG = [
     ],
   },
   {
+    code: "2623",
+    type: "STANDARD",
+    periodes: [
+      {
+        libelle: "Période saisonnière",
+        plages: [{ debut: "06:43", fin: "13:24" }],
+      },
+    ],
+  },
+  {
     code: "2624",
     type: "STANDARD",
     periodes: [

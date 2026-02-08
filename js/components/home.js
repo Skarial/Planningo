@@ -29,6 +29,12 @@ import { getServiceSuggestions } from "../domain/service-suggestions.js";
 import { getUiMode } from "../state/ui-mode.js";
 import { hasPanier } from "../domain/service-panier.js";
 import { getHolidayNameForDate } from "../domain/holidays-fr.js";
+import {
+  isAlarmResyncPending,
+  markAlarmResyncPending,
+} from "../state/alarm-resync.js";
+
+let alarmResyncNoticeDismissed = false;
 
 function parseISODateLocal(dateISO) {
   const [year, month, day] = dateISO.split("-").map(Number);
@@ -64,6 +70,19 @@ function formatDuration(minutes) {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+function isMorningServiceCode(serviceCode) {
+  if (typeof serviceCode !== "string" && typeof serviceCode !== "number") {
+    return false;
+  }
+  const normalized = String(serviceCode).trim().toUpperCase();
+  if (!normalized) return false;
+  if (normalized === "DM") return true;
+  if (normalized === "DAM") return false;
+  if (!/^\d{3,}$/.test(normalized)) return false;
+  const value = Number(normalized);
+  return Number.isInteger(value) && value % 2 === 1;
 }
 
 function shouldAddExtraMinutes(service) {
@@ -379,7 +398,46 @@ export async function renderHome() {
     panierIcon.setAttribute("aria-hidden", "true");
     panier.appendChild(panierIcon);
 
-    right.append(service, timeRow, duration, holidayLabel, extraLabel, panier);
+    const alarmResyncBtn = document.createElement("button");
+    alarmResyncBtn.type = "button";
+    alarmResyncBtn.className = "alarm-resync-btn";
+    alarmResyncBtn.textContent = "Réveil à resynchroniser";
+    alarmResyncBtn.addEventListener("click", () => {
+      import("../router.js").then(({ showAlarmView }) => {
+        showAlarmView({ autoImport: true });
+      });
+    });
+
+    const alarmResyncDismissBtn = document.createElement("button");
+    alarmResyncDismissBtn.type = "button";
+    alarmResyncDismissBtn.className = "alarm-resync-dismiss";
+    alarmResyncDismissBtn.textContent = "";
+    alarmResyncDismissBtn.setAttribute(
+      "aria-label",
+      "Masquer le rappel de resynchronisation du reveil",
+    );
+
+    const alarmResyncActions = document.createElement("div");
+    alarmResyncActions.className = "alarm-resync-actions";
+    alarmResyncActions.hidden = true;
+    alarmResyncActions.append(alarmResyncBtn, alarmResyncDismissBtn);
+
+    alarmResyncDismissBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      alarmResyncNoticeDismissed = true;
+      alarmResyncActions.hidden = true;
+    });
+
+    right.append(
+      service,
+      timeRow,
+      duration,
+      holidayLabel,
+      extraLabel,
+      panier,
+      alarmResyncActions,
+    );
 
     section.append(left, right);
     daySummary.appendChild(section);
@@ -392,6 +450,13 @@ export async function renderHome() {
 
     // chargement service reel
     getPlanningEntry(iso).then((entry) => {
+      const shouldShowAlarmResync =
+        isAlarmResyncPending() &&
+        Boolean(entry?.serviceCode) &&
+        isMorningServiceCode(entry.serviceCode) &&
+        !alarmResyncNoticeDismissed;
+      alarmResyncActions.hidden = !shouldShowAlarmResync;
+
       if (!entry || !entry.serviceCode) {
         if (isCongesDay) {
           service.hidden = false;
@@ -610,6 +675,11 @@ export async function renderHome() {
         locked: false,
         extra: code ? (isRepos ? false : wasExtra || wasRepos) : false,
       });
+
+      if (isMorningServiceCode(code)) {
+        markAlarmResyncPending();
+        alarmResyncNoticeDismissed = false;
+      }
 
       if (closeAfter) {
         setHomeMode(HOME_MODE.VIEW);

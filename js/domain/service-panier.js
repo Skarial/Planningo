@@ -65,6 +65,7 @@ const PANIER_CODES = new Set([
   "2533",
   "2535",
   "2621",
+  "2623",
   "2821",
   "2823",
   "2831",
@@ -81,4 +82,3 @@ export function hasPanier(code) {
   const normalized = String(code).toUpperCase().trim();
   return PANIER_CODES.has(normalized);
 }
-

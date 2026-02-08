@@ -220,12 +220,12 @@ export async function showLegalView() {
   renderLegalView();
 }
 
-export async function showAlarmView() {
+export async function showAlarmView(options = {}) {
   const view = activateView("alarm");
   if (!view) return;
   const { renderAlarmView } = await import("./components/alarm.js");
   if (currentView !== "alarm") return;
-  renderAlarmView();
+  renderAlarmView(options);
 }
 
 export async function showExchangesView() {

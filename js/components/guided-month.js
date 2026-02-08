@@ -9,16 +9,27 @@ import {
   getPlanningEntry,
 } from "../data/storage.js";
 
-import { getConfig } from "../data/db.js";
-import { getServiceDisplayName, toISODateLocal } from "../utils.js";
-import { showHome } from "../router.js";
-import { getGuidedStartDay, isDateInConges } from "../domain/conges.js";
-import { hasPanier } from "../domain/service-panier.js";
+import { getConfig } from "../data/db.js";
+import { getServiceDisplayName, toISODateLocal } from "../utils.js";
+import { showAlarmView, showHome } from "../router.js";
+import { getGuidedStartDay, isDateInConges } from "../domain/conges.js";
+import { hasPanier } from "../domain/service-panier.js";
+import { markAlarmResyncPending } from "../state/alarm-resync.js";
 
-function capitalizeFirst(input) {
-  if (typeof input !== "string" || input.length === 0) return input;
-  return input.charAt(0).toUpperCase() + input.slice(1);
-}
+function capitalizeFirst(input) {
+  if (typeof input !== "string" || input.length === 0) return input;
+  return input.charAt(0).toUpperCase() + input.slice(1);
+}
+
+function isMorningServiceCode(serviceCode) {
+  if (typeof serviceCode !== "string") return false;
+  const normalized = serviceCode.trim().toUpperCase();
+  if (!normalized) return false;
+  if (normalized === "DM") return true;
+  if (normalized === "DAM") return false;
+  if (!/^\d{3,}$/.test(normalized)) return false;
+  return Number(normalized) % 2 === 1;
+}
 
 // =======================
 // VUE : PRPARER MOIS SUIVANT
@@ -234,14 +245,33 @@ export async function showGuidedMonth(forcedDate = null) {
     };
 
     const btnMonth = document.createElement("button");
-    btnMonth.className = "guided-action";
+    btnMonth.className = "guided-action ghost";
     btnMonth.textContent = "Voir mon planning";
     btnMonth.onclick = () => {
-      guidedMonthDate = null;
-      showHome();
-    };
-
-    servicesContainer.append(title, subtitle, statsList, btnNextGuided, btnMonth);
+      guidedMonthDate = null;
+      showHome();
+    };
+
+    const btnSyncAlarm = document.createElement("button");
+    btnSyncAlarm.className = "guided-action alarm-sync-action";
+    const alarmLabel = document.createElement("span");
+    alarmLabel.textContent = "Synchroniser le reveil";
+    const androidBadge = document.createElement("span");
+    androidBadge.className = "menu-badge";
+    androidBadge.textContent = "Android";
+    btnSyncAlarm.append(alarmLabel, androidBadge);
+    btnSyncAlarm.onclick = () => {
+      showAlarmView({ autoImport: true });
+    };
+
+    servicesContainer.append(
+      title,
+      subtitle,
+      statsList,
+      btnNextGuided,
+      btnSyncAlarm,
+      btnMonth,
+    );
   }
 
   await resumeCurrentDayFromDB();
@@ -455,6 +485,9 @@ export async function showGuidedMonth(forcedDate = null) {
         locked: false,
         extra: false,
       });
+      if (isMorningServiceCode(serviceCodeToSave)) {
+        markAlarmResyncPending();
+      }
 
       selectedLine = null;
       currentDay++;

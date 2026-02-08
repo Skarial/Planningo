@@ -412,6 +412,73 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   display: none !important;
 }
 
+.alarm-resync-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-end;
+}
+
+.alarm-resync-actions[hidden] {
+  display: none !important;
+}
+
+.alarm-resync-btn {
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid #d2d2d2;
+  background: #f1f1f1;
+  color: var(--color-ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.alarm-resync-btn:active {
+  transform: scale(0.98);
+}
+
+.alarm-resync-dismiss {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid #c8c8c8;
+  background: #f1f1f1;
+  color: var(--color-muted);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.alarm-resync-dismiss::before,
+.alarm-resync-dismiss::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 1.8px;
+  background: #676767;
+  border-radius: 2px;
+  top: 50%;
+  left: 50%;
+}
+
+.alarm-resync-dismiss::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.alarm-resync-dismiss::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.alarm-resync-dismiss:active {
+  transform: scale(0.96);
+}
+
 .panier-icon {
   width: 22px;
   height: 22px;
@@ -746,6 +813,17 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   background: transparent;
   color: var(--color-muted);
   border-color: #c8c8c8;
+}
+
+.guided-action.alarm-sync-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.guided-action.alarm-sync-action .menu-badge {
+  margin-left: 0;
 }
 
 /* ==========================================================================
