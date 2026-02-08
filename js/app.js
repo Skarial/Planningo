@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.64";
+export const APP_VERSION = "2.0.65";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -24,7 +24,39 @@ import { initMenu } from "./components/menu.js";
 import { installRuntimeDebugLogging } from "./debug/runtime-log.js";
 
 const CONTROLLED_RELOAD_KEY = "planningo_controlled_reload";
+const SW_DIAGNOSTIC_KEY = "planningo_sw_diag";
+const SW_RELOAD_FALLBACK_MS = 4500;
 let viewportObserversBound = false;
+let swReloadInFlight = false;
+
+function isServiceWorkerDiagnosticEnabled() {
+  try {
+    const params = new URLSearchParams(location.search);
+    if (params.get("swdiag") === "1") {
+      localStorage.setItem(SW_DIAGNOSTIC_KEY, "1");
+    } else if (params.get("swdiag") === "0") {
+      localStorage.removeItem(SW_DIAGNOSTIC_KEY);
+    }
+    return localStorage.getItem(SW_DIAGNOSTIC_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function swDiagLog(...args) {
+  if (!isServiceWorkerDiagnosticEnabled()) return;
+  console.info("[SW-DIAG]", ...args);
+}
+
+function triggerControlledReload(reason) {
+  if (swReloadInFlight) {
+    swDiagLog("reload ignored (already in flight)", { reason });
+    return;
+  }
+  swReloadInFlight = true;
+  swDiagLog("reload triggered", { reason });
+  location.reload();
+}
 
 // =======================
 // INIT
@@ -77,6 +109,11 @@ async function initApp() {
 
   // 4 Service Worker + bannire
   await registerServiceWorker(showUpdateBanner);
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      swDiagLog("controllerchange");
+    });
+  }
 
   // 4b Debug : version DB (console uniquement)
   console.info(`[DB] version ${DB_VERSION}`);
@@ -377,16 +414,22 @@ function showVersionBanner(prevVersion, nextVersion) {
 
   document.getElementById("version-reload").addEventListener("click", () => {
     markControlledReloadPending();
-    location.reload();
+    triggerControlledReload("version-banner");
   });
 }
 
 
 function showUpdateBanner(registration) {
-  if (!registration?.waiting) return;
+  if (!registration?.waiting) {
+    swDiagLog("update banner skipped (no waiting worker)");
+    return;
+  }
 
   // Securite : ne jamais dupliquer
-  if (document.getElementById("update-banner")) return;
+  if (document.getElementById("update-banner")) {
+    swDiagLog("update banner already displayed");
+    return;
+  }
 
   const banner = document.createElement("div");
   banner.id = "update-banner";
@@ -406,26 +449,78 @@ function showUpdateBanner(registration) {
   `;
 
   document.body.appendChild(banner);
+  swDiagLog("update banner displayed", {
+    waitingScriptURL: registration.waiting?.scriptURL || null,
+  });
 
-  document.getElementById("update-reload").addEventListener("click", () => {
+  const reloadButton = document.getElementById("update-reload");
+  const dismissButton = document.getElementById("update-dismiss");
+  let resolved = false;
+  let fallbackTimer = null;
+
+  const cleanup = () => {
+    navigator.serviceWorker.removeEventListener(
+      "controllerchange",
+      onControllerChange,
+    );
+    if (fallbackTimer !== null) {
+      clearTimeout(fallbackTimer);
+      fallbackTimer = null;
+    }
+  };
+
+  const finalizeReload = (reason) => {
+    if (resolved) return;
+    resolved = true;
+    cleanup();
     markControlledReloadPending();
-    registration.waiting.postMessage("SKIP_WAITING");
+    banner.remove();
+    triggerControlledReload(reason);
+  };
 
-    const onControllerChange = () => {
-      navigator.serviceWorker.removeEventListener(
-        "controllerchange",
-        onControllerChange,
-      );
-      location.reload();
-    };
+  const onControllerChange = () => {
+    finalizeReload("controllerchange");
+  };
+
+  reloadButton.addEventListener("click", () => {
+    if (resolved) return;
+    swDiagLog("update button clicked", {
+      hasWaitingWorker: Boolean(registration.waiting),
+    });
+    reloadButton.disabled = true;
+    dismissButton.disabled = true;
 
     navigator.serviceWorker.addEventListener(
       "controllerchange",
       onControllerChange,
     );
+
+    fallbackTimer = setTimeout(() => {
+      swDiagLog("controllerchange timeout fallback", {
+        timeoutMs: SW_RELOAD_FALLBACK_MS,
+      });
+      finalizeReload("controllerchange-timeout");
+    }, SW_RELOAD_FALLBACK_MS);
+
+    try {
+      if (!registration.waiting) {
+        swDiagLog("missing waiting worker when update clicked");
+        finalizeReload("waiting-missing");
+        return;
+      }
+      registration.waiting.postMessage("SKIP_WAITING");
+      swDiagLog("SKIP_WAITING sent");
+    } catch (error) {
+      swDiagLog("SKIP_WAITING failed", {
+        message: error?.message || String(error),
+      });
+      finalizeReload("skip-waiting-error");
+    }
   });
 
-  document.getElementById("update-dismiss").addEventListener("click", () => {
+  dismissButton.addEventListener("click", () => {
+    cleanup();
+    swDiagLog("update dismissed");
     banner.remove();
   });
 }
@@ -460,6 +555,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 

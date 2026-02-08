@@ -14,6 +14,12 @@
 const CACHE_PREFIX = "planning-pwa-cache-";
 const CACHE_VERSION = "__APP_VERSION__";
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
+let SW_DIAGNOSTIC_ENABLED = false;
+
+function swDiagLog(...args) {
+  if (!SW_DIAGNOSTIC_ENABLED) return;
+  console.info("[SW-DIAG]", ...args);
+}
 
 const ESSENTIAL_ASSETS = [
   "./",
@@ -69,6 +75,7 @@ const ESSENTIAL_ASSETS = [
 // =======================
 
 self.addEventListener("install", (event) => {
+  swDiagLog("install", { cacheName: CACHE_NAME });
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
       Promise.allSettled(
@@ -86,6 +93,7 @@ self.addEventListener("install", (event) => {
 // =======================
 
 self.addEventListener("activate", (event) => {
+  swDiagLog("activate:start", { cacheName: CACHE_NAME });
   event.waitUntil(
     caches
       .keys()
@@ -96,7 +104,10 @@ self.addEventListener("activate", (event) => {
             .map((n) => caches.delete(n)),
         ),
       )
-      .then(() => self.clients.claim()),
+      .then(() => self.clients.claim())
+      .then(() => {
+        swDiagLog("activate:claimed", { cacheName: CACHE_NAME });
+      }),
   );
 });
 
@@ -185,10 +196,22 @@ self.addEventListener("fetch", (event) => {
 // =======================
 
 self.addEventListener("message", (event) => {
+  const data = event.data;
+  if (data && typeof data === "object" && data.type === "SW_DIAGNOSTIC_SET") {
+    SW_DIAGNOSTIC_ENABLED = Boolean(data.enabled);
+    swDiagLog("diagnostic", {
+      enabled: SW_DIAGNOSTIC_ENABLED,
+      cacheName: CACHE_NAME,
+    });
+    return;
+  }
+
   if (event.data === "SKIP_WAITING") {
+    swDiagLog("message:SKIP_WAITING");
     self.skipWaiting();
   }
 });
+
 
 
 
