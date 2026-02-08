@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.69";
+export const APP_VERSION = "2.0.70";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -564,6 +564,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 

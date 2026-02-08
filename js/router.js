@@ -101,6 +101,7 @@ function hideAllViews(previousView) {
     "conges-periods",
     "consult-date",
     "suggestions",
+    "feedback",
     "phone-change",
     "summary",
     "exchanges",
@@ -194,6 +195,14 @@ export async function showSuggestionsView() {
   const { renderSuggestionsView } = await import("./components/suggestions.js");
   if (currentView !== "suggestions") return;
   renderSuggestionsView();
+}
+
+export async function showFeedbackView() {
+  const view = activateView("feedback");
+  if (!view) return;
+  const { renderFeedbackView } = await import("./components/feedback.js");
+  if (currentView !== "feedback") return;
+  renderFeedbackView();
 }
 
 export async function showPhoneChangeView() {
@@ -294,6 +303,10 @@ export function refreshCurrentView() {
 
     case "suggestions":
       showSuggestionsView();
+      break;
+
+    case "feedback":
+      showFeedbackView();
       break;
 
     case "phone-change":

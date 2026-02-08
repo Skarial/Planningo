@@ -15,6 +15,7 @@ import {
   showConsultDateView,
   showResetView,
   showSuggestionsView,
+  showFeedbackView,
   showSummaryView,
   showExchangesView,
   showPhoneChangeView,
@@ -100,6 +101,7 @@ export function initMenu() {
 
   const congesPeriodsBtn = document.getElementById("menu-conges-periods");
   const suggestionsBtn = document.getElementById("menu-suggestions");
+  const feedbackBtn = document.getElementById("menu-feedback");
   const summaryBtn = document.getElementById("menu-summary");
   const phoneBtn = document.getElementById("menu-phone-change");
   const alarmBtn = document.getElementById("menu-alarm");
@@ -117,6 +119,14 @@ export function initMenu() {
     setActiveMenu("menu-suggestions");
     closeMenu();
   });
+
+  if (feedbackBtn) {
+    feedbackBtn.addEventListener("click", () => {
+      showFeedbackView();
+      setActiveMenu("menu-feedback");
+      closeMenu();
+    });
+  }
 
   summaryBtn.addEventListener("click", () => {
     showSummaryView();
