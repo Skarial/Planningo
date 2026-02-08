@@ -7,6 +7,7 @@
 // js/components/menu.js
 
 import { setUiMode, UI_MODE } from "../state/ui-mode.js";
+import { isExchangesUiEnabled } from "../state/feature-flags.js";
 import {
   showHome,
   showGuidedMonth,
@@ -15,6 +16,7 @@ import {
   showResetView,
   showSuggestionsView,
   showSummaryView,
+  showExchangesView,
   showPhoneChangeView,
   showLegalView,
   showAlarmView,
@@ -201,6 +203,61 @@ export function initMenu() {
 
     document.body.classList.remove("menu-open");
     document.body.style.overflow = "";
+  }
+
+  function showMenuToast(message, anchorButton = null) {
+    const text = typeof message === "string" ? message.trim() : "";
+    if (!text) return;
+
+    const existing = document.getElementById("menu-toast");
+    if (existing) {
+      existing.remove();
+    }
+
+    const toast = document.createElement("div");
+    toast.id = "menu-toast";
+    toast.textContent = text;
+    toast.style.background = "#1f1f1f";
+    toast.style.color = "#ffffff";
+    toast.style.padding = "8px 10px";
+    toast.style.borderRadius = "8px";
+    toast.style.fontSize = "0.82rem";
+    toast.style.lineHeight = "1.2";
+    toast.style.opacity = "0";
+    toast.style.transition = "opacity 0.2s ease, transform 0.2s ease";
+    toast.style.transform = "translateY(2px)";
+    toast.style.margin = "6px 0 0 32px";
+    toast.style.display = "inline-block";
+    toast.style.maxWidth = "220px";
+    toast.style.pointerEvents = "none";
+
+    if (anchorButton && menu.contains(anchorButton)) {
+      anchorButton.insertAdjacentElement("afterend", toast);
+    } else {
+      toast.className = "toast-notification";
+      document.body.appendChild(toast);
+    }
+
+    requestAnimationFrame(() => {
+      if (toast.classList.contains("toast-notification")) {
+        toast.classList.add("visible");
+      } else {
+        toast.style.opacity = "1";
+        toast.style.transform = "translateY(0)";
+      }
+    });
+
+    setTimeout(() => {
+      if (toast.classList.contains("toast-notification")) {
+        toast.classList.remove("visible");
+      } else {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(2px)";
+      }
+      setTimeout(() => {
+        toast.remove();
+      }, 220);
+    }, 1700);
   }
 
   toggle.addEventListener("click", () => {
@@ -414,6 +471,7 @@ export function initMenu() {
     const button = e.target.closest("button[data-action]");
     if (!button) return;
     const action = button.dataset.action;
+    let shouldCloseMenu = true;
 
     switch (action) {
       case "home":
@@ -432,6 +490,17 @@ export function initMenu() {
         setActiveMenu("guided-month");
         break;
 
+      case "exchanges":
+        if (!isExchangesUiEnabled()) {
+          showMenuToast("Module bientôt disponible", button);
+          shouldCloseMenu = false;
+          break;
+        }
+        setUiMode(UI_MODE.CONSULTATION);
+        void showExchangesView();
+        setActiveMenu("exchanges");
+        break;
+
       case "tetribus":
         import("../router.js").then(({ showTetribusView }) => {
           showTetribusView();
@@ -440,7 +509,9 @@ export function initMenu() {
         break;
     }
 
-    closeMenu();
+    if (shouldCloseMenu) {
+      closeMenu();
+    }
   });
 
   // =======================

@@ -6,8 +6,83 @@
 
 // js/router.js
 
+import { isExchangesUiEnabled } from "./state/feature-flags.js";
+
 let currentView = null;
 let stopTetribusFn = null;
+
+function asTrimmedString(value) {
+  if (typeof value !== "string") return "";
+  return value.trim();
+}
+
+function normalizePathname(pathname) {
+  const raw = asTrimmedString(pathname);
+  if (!raw) return "/";
+  let normalized = raw.startsWith("/") ? raw : `/${raw}`;
+  if (normalized.length > 1) {
+    normalized = normalized.replace(/\/+$/, "");
+  }
+  return normalized || "/";
+}
+
+function normalizeHash(hash) {
+  const raw = asTrimmedString(hash).toLowerCase();
+  if (!raw) return "";
+  return raw.startsWith("#") ? raw : `#${raw}`;
+}
+
+function isExchangesRoute(pathname, hash) {
+  const normalizedPath = normalizePathname(pathname).toLowerCase();
+  const normalizedHash = normalizeHash(hash);
+
+  if (normalizedPath === "/exchanges") return true;
+  if (normalizedPath.endsWith("/exchanges")) return true;
+  if (normalizedHash === "#exchanges") return true;
+  if (normalizedHash === "#/exchanges") return true;
+
+  return false;
+}
+
+export function resolveRouteGuard(pathname = "", hash = "", options = {}) {
+  const exchangesEnabled = isExchangesUiEnabled({
+    location: options.location,
+    storage: options.storage,
+  });
+  const wantsExchanges = isExchangesRoute(pathname, hash);
+
+  if (wantsExchanges && !exchangesEnabled) {
+    return {
+      allowed: false,
+      requestedView: "exchanges",
+      resolvedView: "home",
+      redirectTo: "/",
+    };
+  }
+
+  return {
+    allowed: true,
+    requestedView: wantsExchanges ? "exchanges" : "home",
+    resolvedView: wantsExchanges ? "exchanges" : "home",
+    redirectTo: null,
+  };
+}
+
+export function applyRouteGuardFromLocation(locationLike = globalThis.location) {
+  const pathname = locationLike?.pathname || "";
+  const hash = locationLike?.hash || "";
+  const guard = resolveRouteGuard(pathname, hash);
+
+  if (
+    !guard.allowed &&
+    typeof history !== "undefined" &&
+    typeof history.replaceState === "function"
+  ) {
+    history.replaceState(null, "", guard.redirectTo || "/");
+  }
+
+  return guard;
+}
 
 function getView(name) {
   return document.getElementById(`view-${name}`);
@@ -28,6 +103,7 @@ function hideAllViews(previousView) {
     "suggestions",
     "phone-change",
     "summary",
+    "exchanges",
     "tetribus",
     "alarm",
     "legal",
@@ -152,6 +228,25 @@ export async function showAlarmView() {
   renderAlarmView();
 }
 
+export async function showExchangesView() {
+  if (!isExchangesUiEnabled()) {
+    showHome();
+    return;
+  }
+
+  try {
+    const view = activateView("exchanges");
+    if (!view) return;
+    const { renderExchangesView } = await import(
+      "./components/exchange/exchanges-view.js"
+    );
+    if (currentView !== "exchanges") return;
+    renderExchangesView(view);
+  } catch (error) {
+    console.error("Erreur affichage vue exchanges", error);
+  }
+}
+
 // =======================
 // ROUTER INTERNE
 // =======================
@@ -207,6 +302,10 @@ export function refreshCurrentView() {
 
     case "summary":
       showSummaryView();
+      break;
+
+    case "exchanges":
+      showExchangesView();
       break;
 
     case "legal":

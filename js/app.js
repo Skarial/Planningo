@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.65";
+export const APP_VERSION = "2.0.66";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -19,7 +19,11 @@ import { initServicesIfNeeded } from "./data/services-init.js";
 import { getActiveDateISO, setActiveDateISO } from "./state/active-date.js";
 import { toISODateLocal } from "./utils.js";
 
-import { showHome } from "./router.js";
+import {
+  applyRouteGuardFromLocation,
+  showExchangesView,
+  showHome,
+} from "./router.js";
 import { initMenu } from "./components/menu.js";
 import { installRuntimeDebugLogging } from "./debug/runtime-log.js";
 
@@ -98,7 +102,12 @@ async function initApp() {
 
   // 2 UI principale
   initMenu();
-  showHome();
+  const routeGuard = applyRouteGuardFromLocation();
+  if (routeGuard.resolvedView === "exchanges") {
+    showExchangesView();
+  } else {
+    showHome();
+  }
   prewarmSecondaryViews();
   if (consumeControlledReloadMarker()) {
     stabilizeViewportAfterControlledReload();
@@ -555,6 +564,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 
