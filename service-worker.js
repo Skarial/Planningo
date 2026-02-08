@@ -15,34 +15,26 @@ const CACHE_PREFIX = "planning-pwa-cache-";
 const CACHE_VERSION = "__APP_VERSION__";
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
-const CORE_ASSETS = [
+const ESSENTIAL_ASSETS = [
   "./",
-  "./LICENSE",
-  "./NOTICE",
-  "./assets/icons/icon-192.png",
-  "./assets/icons/icon-512.png",
+  "./index.html",
+  "./manifest.webmanifest",
+  "./service-worker.js",
   "./css/style.css",
   "./css/tetribus.css",
-  "./index.html",
-  "./js/adapters/activation.web.js",
+  "./assets/icons/icon-192.png",
+  "./assets/icons/icon-512.png",
+  "./assets/images/breakfast.png",
   "./js/app.js",
-  "./js/components/activationScreen.js",
-  "./js/components/alarm.js",
-  "./js/components/conges.js",
-  "./js/components/conges-periods.js",
-  "./js/components/guided-month.js",
-  "./js/components/home-month-calendar.js",
-  "./js/components/home.js",
-  "./js/components/legal.js",
+  "./js/router.js",
+  "./js/sw/sw-register.js",
+  "./js/utils.js",
+  "./js/debug/runtime-log.js",
   "./js/components/menu.js",
-  "./js/components/phone-change.js",
-  "./js/components/season.js",
-  "./js/components/suggestions.js",
-  "./js/components/summary.js",
-  "./js/components/tetribus.js",
+  "./js/adapters/activation.web.js",
+  "./js/components/activationScreen.js",
   "./js/data/db.js",
   "./js/data/device.js",
-  "./js/data/export-db.js",
   "./js/data/import-db.js",
   "./js/data/services-catalog.js",
   "./js/data/services-init.js",
@@ -53,8 +45,12 @@ const CORE_ASSETS = [
   "./js/data/storage.js",
   "./js/data/storage.memory.js",
   "./js/data/storage.selector.js",
+  "./js/state/active-date.js",
+  "./js/state/home-mode.js",
+  "./js/state/month-calendar-state.js",
+  "./js/state/month-navigation.js",
+  "./js/state/ui-mode.js",
   "./js/domain/activation.js",
-  "./js/domain/alarm-plan.js",
   "./js/domain/conges.js",
   "./js/domain/day-status.js",
   "./js/domain/holidays-fr.js",
@@ -63,20 +59,9 @@ const CORE_ASSETS = [
   "./js/domain/service-panier.js",
   "./js/domain/service-suggestions.js",
   "./js/domain/services-availability.js",
-  "./js/games/tetribus/tetribus.game.js",
-  "./js/games/tetribus/tetribus.render.js",
-  "./js/router.js",
-  "./js/state/active-date.js",
-  "./js/state/home-mode.js",
-  "./js/state/month-calendar-state.js",
-  "./js/state/month-navigation.js",
-  "./js/state/ui-mode.js",
-  "./js/sw/sw-register.js",
-  "./js/utils.js",
   "./js/utils/period-label.js",
-  "./manifest.webmanifest",
-  "./service-worker.js",
-  "./assets/images/breakfast.png",
+  "./js/components/home.js",
+  "./js/components/home-month-calendar.js",
 ];
 
 // =======================
@@ -85,7 +70,13 @@ const CORE_ASSETS = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS)),
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.allSettled(
+        ESSENTIAL_ASSETS.map((asset) =>
+          cache.add(asset).catch(() => null),
+        ),
+      ),
+    ),
   );
   // no skipWaiting here
 });
@@ -117,24 +108,58 @@ self.addEventListener("fetch", (event) => {
   const req = event.request;
   const isSameOrigin = new URL(req.url).origin === self.location.origin;
 
-  // Navigation : reseau prioritaire
+  // Navigation : app-shell immediat depuis le cache, puis refresh en fond.
+  // Objectif : ouverture la plus rapide possible sur mobile.
   if (req.mode === "navigate") {
-    event.respondWith(fetch(req).catch(() => caches.match("./index.html")));
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const cachedShell = await cache.match("./index.html");
+
+        if (cachedShell) {
+          event.waitUntil(
+            fetch("./index.html", { cache: "no-cache" })
+              .then((res) => {
+                if (res && res.ok) {
+                  return cache.put("./index.html", res.clone());
+                }
+              })
+              .catch(() => {}),
+          );
+          return cachedShell;
+        }
+
+        return fetch(req).catch(() => caches.match("./index.html"));
+      })(),
+    );
     return;
   }
 
-  // JS & CSS : reseau d'abord, cache en fallback et mise en cache
+  // JS & CSS : stale-while-revalidate (ultra reactif + auto-refresh du cache)
   if (req.destination === "script" || req.destination === "style") {
     event.respondWith(
-      fetch(req)
-        .then((res) => {
-          if (isSameOrigin && res.ok) {
-            const copy = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-          }
-          return res;
-        })
-        .catch(() => caches.match(req)),
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const cached = await cache.match(req);
+
+        const networkPromise = fetch(req)
+          .then((res) => {
+            if (isSameOrigin && res && res.ok) {
+              cache.put(req, res.clone());
+            }
+            return res;
+          })
+          .catch(() => null);
+
+        if (cached) {
+          event.waitUntil(networkPromise);
+          return cached;
+        }
+
+        const networkRes = await networkPromise;
+        if (networkRes) return networkRes;
+        return caches.match(req);
+      })(),
     );
     return;
   }
@@ -164,6 +189,7 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
+
 
 
 

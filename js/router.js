@@ -7,27 +7,17 @@
 // js/router.js
 
 let currentView = null;
-
-import { renderHome } from "./components/home.js";
-
-import { showGuidedMonth as renderGuidedMonth } from "./components/guided-month.js";
-import { showTetribus, stopTetribus } from "./components/tetribus.js";
-import { renderCongesView } from "./components/conges.js";
-import { renderSeasonView } from "./components/season.js";
-import { renderCongesPeriodsView } from "./components/conges-periods.js";
-import { renderPhoneChangeView } from "./components/phone-change.js";
-import { renderSummaryView } from "./components/summary.js";
-import { renderSuggestionsView } from "./components/suggestions.js";
-import { renderLegalView } from "./components/legal.js";
-import { renderConsultDateView } from "./components/consult-date.js";
-import { renderResetView } from "./components/reset.js";
-import { renderAlarmView } from "./components/alarm.js";
+let stopTetribusFn = null;
 
 function getView(name) {
   return document.getElementById(`view-${name}`);
 }
 
-function hideAllViews() {
+function hideAllViews(previousView) {
+  if (previousView === "tetribus") {
+    stopTetribusIfRunning();
+  }
+
   [
     "home",
     "guided-month",
@@ -46,17 +36,18 @@ function hideAllViews() {
     const el = getView(name);
     if (el) el.hidden = true;
   });
-
-  stopTetribus();
 }
 
 // =======================
 // HOME
 // =======================
 
-export function showHome() {
+export async function showHome() {
   const view = activateView("home");
   if (!view) return;
+
+  const { renderHome } = await import("./components/home.js");
+  if (currentView !== "home") return;
   renderHome();
 }
 
@@ -64,10 +55,14 @@ export function showHome() {
 // GUIDED
 // =======================
 
-export function showGuidedMonth() {
+export async function showGuidedMonth() {
   const view = activateView("guided-month");
   if (!view) return;
 
+  const { showGuidedMonth: renderGuidedMonth } = await import(
+    "./components/guided-month.js"
+  );
+  if (currentView !== "guided-month") return;
   renderGuidedMonth();
 }
 
@@ -75,63 +70,85 @@ export function showGuidedMonth() {
 // OUTILS
 // =======================
 
-export function showCongesView() {
+export async function showCongesView() {
   const view = activateView("conges");
   if (!view) return;
+  const { renderCongesView } = await import("./components/conges.js");
+  if (currentView !== "conges") return;
   renderCongesView();
 }
 
-export function showSeasonView() {
+export async function showSeasonView() {
   const view = activateView("season");
   if (!view) return;
+  const { renderSeasonView } = await import("./components/season.js");
+  if (currentView !== "season") return;
   renderSeasonView();
 }
 
-export function showCongesPeriodsView() {
+export async function showCongesPeriodsView() {
   const view = activateView("conges-periods");
   if (!view) return;
+  const { renderCongesPeriodsView } = await import(
+    "./components/conges-periods.js"
+  );
+  if (currentView !== "conges-periods") return;
   renderCongesPeriodsView();
 }
 
-export function showConsultDateView() {
+export async function showConsultDateView() {
   const view = activateView("consult-date");
   if (!view) return;
+  const { renderConsultDateView } = await import("./components/consult-date.js");
+  if (currentView !== "consult-date") return;
   renderConsultDateView();
 }
 
-export function showResetView() {
+export async function showResetView() {
   const view = activateView("reset");
   if (!view) return;
+  const { renderResetView } = await import("./components/reset.js");
+  if (currentView !== "reset") return;
   renderResetView();
 }
 
-export function showSuggestionsView() {
+export async function showSuggestionsView() {
   const view = activateView("suggestions");
   if (!view) return;
+  const { renderSuggestionsView } = await import("./components/suggestions.js");
+  if (currentView !== "suggestions") return;
   renderSuggestionsView();
 }
 
-export function showPhoneChangeView() {
+export async function showPhoneChangeView() {
   const view = activateView("phone-change");
   if (!view) return;
+  const { renderPhoneChangeView } = await import("./components/phone-change.js");
+  if (currentView !== "phone-change") return;
   renderPhoneChangeView();
 }
 
-export function showSummaryView() {
+export async function showSummaryView() {
   const view = activateView("summary");
   if (!view) return;
+  const { renderSummaryView } = await import("./components/summary.js");
+  if (currentView !== "summary") return;
   renderSummaryView();
 }
 
-export function showLegalView() {
+export async function showLegalView() {
   const view = activateView("legal");
   if (!view) return;
+  const { renderLegalView } = await import("./components/legal.js");
+  if (currentView !== "legal") return;
   renderLegalView();
 }
 
-export function showAlarmView() {
+export async function showAlarmView() {
   const view = activateView("alarm");
   if (!view) return;
+  const { renderAlarmView } = await import("./components/alarm.js");
+  if (currentView !== "alarm") return;
   renderAlarmView();
 }
 
@@ -139,10 +156,15 @@ export function showAlarmView() {
 // ROUTER INTERNE
 // =======================
 
-export function showTetribusView() {
+export async function showTetribusView() {
   const view = activateView("tetribus");
   if (!view) return;
 
+  const mod = await import("./components/tetribus.js");
+  if (currentView !== "tetribus") return;
+  stopTetribusFn = typeof mod.stopTetribus === "function" ? mod.stopTetribus : null;
+  const showTetribus = mod.showTetribus;
+  if (typeof showTetribus !== "function") return;
   showTetribus();
 }
 
@@ -204,9 +226,9 @@ function activateView(name) {
     return null;
   }
 
+  const previousView = currentView;
+  hideAllViews(previousView);
   currentView = name;
-
-  hideAllViews();
   view.hidden = false;
   view.innerHTML = "";
 
@@ -216,4 +238,13 @@ function activateView(name) {
   }
 
   return view;
+}
+
+function stopTetribusIfRunning() {
+  if (typeof stopTetribusFn !== "function") return;
+  try {
+    stopTetribusFn();
+  } catch {
+    // ignore game cleanup errors
+  }
 }

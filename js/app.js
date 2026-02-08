@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.63";
+export const APP_VERSION = "2.0.64";
 
 import { DB_VERSION, getConfig } from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
@@ -67,6 +67,7 @@ async function initApp() {
   // 2 UI principale
   initMenu();
   showHome();
+  prewarmSecondaryViews();
   if (consumeControlledReloadMarker()) {
     stabilizeViewportAfterControlledReload();
   }
@@ -428,6 +429,38 @@ function showUpdateBanner(registration) {
     banner.remove();
   });
 }
+
+function prewarmSecondaryViews() {
+  const preload = () => {
+    const modules = [
+      () => import("./components/guided-month.js"),
+      () => import("./components/conges-periods.js"),
+      () => import("./components/suggestions.js"),
+      () => import("./components/summary.js"),
+      () => import("./components/alarm.js"),
+      () => import("./components/phone-change.js"),
+      () => import("./components/legal.js"),
+      () => import("./components/reset.js"),
+      () => import("./components/consult-date.js"),
+      () => import("./components/conges.js"),
+      () => import("./components/season.js"),
+    ];
+
+    modules.reduce(
+      (promise, load) =>
+        promise.then(() => load().catch(() => {})),
+      Promise.resolve(),
+    );
+  };
+
+  if (typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(preload, { timeout: 5000 });
+    return;
+  }
+
+  setTimeout(preload, 1200);
+}
+
 
 
 
