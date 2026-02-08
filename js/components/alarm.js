@@ -111,6 +111,62 @@ function formatOffsetLabel(minutes) {
   return `${m}min`;
 }
 
+function isAndroidDevice() {
+  try {
+    return /android/i.test(String(navigator?.userAgent || ""));
+  } catch {
+    return false;
+  }
+}
+
+function getAlarmEnvironmentDiagnostics() {
+  const canClipboardWrite = Boolean(
+    navigator?.clipboard && typeof navigator.clipboard.writeText === "function",
+  );
+  const canNavigatorShare = Boolean(
+    navigator?.share && typeof navigator.share === "function",
+  );
+  const canFileShare = Boolean(
+    navigator?.canShare && typeof navigator.canShare === "function",
+  );
+
+  return {
+    isAndroid: isAndroidDevice(),
+    canClipboardWrite,
+    canNavigatorShare,
+    canFileShare,
+  };
+}
+
+function validatePlanShape(plan) {
+  if (!plan || typeof plan !== "object") {
+    return { ok: false, reason: "Plan invalide." };
+  }
+
+  if (!Array.isArray(plan.alarms)) {
+    return { ok: false, reason: "Plan invalide: alarms manquant." };
+  }
+
+  const ids = new Set();
+  for (const alarm of plan.alarms) {
+    if (!alarm || typeof alarm !== "object") {
+      return { ok: false, reason: "Plan invalide: alarme incomplete." };
+    }
+    if (!alarm.id || typeof alarm.id !== "string") {
+      return { ok: false, reason: "Plan invalide: id d'alarme manquant." };
+    }
+    if (ids.has(alarm.id)) {
+      return { ok: false, reason: "Plan invalide: id d'alarme duplique." };
+    }
+    ids.add(alarm.id);
+    if (!alarm.alarmAt || Number.isNaN(Date.parse(alarm.alarmAt))) {
+      return { ok: false, reason: "Plan invalide: date alarme non valide." };
+    }
+  }
+
+  return { ok: true, count: plan.alarms.length };
+}
+
 function addDays(date, days) {
   const next = new Date(date);
   next.setDate(next.getDate() + days);
@@ -288,7 +344,7 @@ export async function renderAlarmView(options = {}) {
 
   const title = document.createElement("div");
   title.className = "settings-title";
-  title.textContent = "Reveil intelligent";
+  title.textContent = "Réveil intelligent";
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
@@ -317,23 +373,43 @@ export async function renderAlarmView(options = {}) {
   const resetBtn = document.createElement("button");
   resetBtn.className = "settings-btn danger";
   resetBtn.type = "button";
-  resetBtn.textContent = "Reinitialiser";
+  resetBtn.textContent = "Réinitialiser";
 
   actions.append(saveBtn, resetBtn);
 
   const actionBtn = document.createElement("button");
   actionBtn.className = "settings-btn primary";
-  actionBtn.textContent = "Importer dans Reveil";
+  actionBtn.textContent = "Importer dans Réveil";
 
   const installApkBtn = document.createElement("button");
   installApkBtn.className = "settings-btn";
   installApkBtn.type = "button";
-  installApkBtn.textContent = "Installer l'app Reveil (APK)";
+  installApkBtn.textContent = "Installer l'app Réveil (APK)";
 
   const helpBtn = document.createElement("button");
   helpBtn.className = "settings-btn alarm-help-btn";
   helpBtn.type = "button";
   helpBtn.textContent = "Voir la notice";
+
+  const diagnoseBtn = document.createElement("button");
+  diagnoseBtn.className = "settings-btn";
+  diagnoseBtn.type = "button";
+  diagnoseBtn.textContent = "Vérifier l'environnement";
+
+  const previewBtn = document.createElement("button");
+  previewBtn.className = "settings-btn";
+  previewBtn.type = "button";
+  previewBtn.textContent = "Vérifier la prochaine alarme";
+
+  const diagnosticsList = document.createElement("ul");
+  diagnosticsList.className = "settings-note";
+  diagnosticsList.style.margin = "6px 0 0";
+  diagnosticsList.style.paddingLeft = "18px";
+
+  const reliabilityHint = document.createElement("p");
+  reliabilityHint.className = "settings-note";
+  reliabilityHint.textContent =
+    "Conseil : vérifiez toujours la prochaine alarme dans l'app Réveil avant un service important.";
 
   const status = createStatus();
 
@@ -343,6 +419,10 @@ export async function renderAlarmView(options = {}) {
     actions,
     installApkBtn,
     actionBtn,
+    previewBtn,
+    diagnoseBtn,
+    diagnosticsList,
+    reliabilityHint,
     helpBtn,
     status.node,
   );
@@ -362,7 +442,7 @@ export async function renderAlarmView(options = {}) {
   noticeBody.className = "alarm-notice-body";
   noticeBody.innerHTML = `
     <p><strong>Important</strong> : le réveil intelligent s'occupe uniquement des <strong>services du matin</strong>.</p>
-    <p><strong>Regle utilisee</strong> : <strong>DM</strong> et codes service numeriques impairs (ex : DM, 2001, 2101).</p>
+    <p><strong>Règle utilisée</strong> : <strong>DM</strong> et codes service numériques impairs (ex : DM, 2001, 2101).</p>
     <p><strong>Avance (minutes)</strong> : nombre de minutes avant le début du service.</p>
     <p>Ensuite, utilisez <strong>Importer dans Réveil</strong> pour envoyer le fichier vers l'application Réveil.</p>
   `;
@@ -413,6 +493,34 @@ export async function renderAlarmView(options = {}) {
     openNotice();
   }
 
+  function renderDiagnostics() {
+    const diagnostics = getAlarmEnvironmentDiagnostics();
+    diagnosticsList.innerHTML = "";
+
+    const lines = [
+      diagnostics.isAndroid
+        ? "OK - appareil Android détecté."
+        : "Attention - Android non détecté (import direct potentiellement indisponible).",
+      diagnostics.canClipboardWrite
+        ? "OK - accès presse-papiers disponible."
+        : "Attention - presse-papiers indisponible : import direct vers l'app désactivé.",
+      diagnostics.canNavigatorShare
+        ? "OK - partage navigateur disponible."
+        : "Info - partage navigateur indisponible : téléchargement du plan utilisé.",
+      diagnostics.canFileShare
+        ? "OK - partage de fichier disponible."
+        : "Info - partage fichier limité : téléchargement du plan utilisé.",
+    ];
+
+    lines.forEach((text) => {
+      const item = document.createElement("li");
+      item.textContent = text;
+      diagnosticsList.appendChild(item);
+    });
+  }
+
+  renderDiagnostics();
+
   let currentRules = await loadRules();
 
   function syncInputs(rulesValue) {
@@ -428,14 +536,14 @@ export async function renderAlarmView(options = {}) {
     await persistRules(nextRules);
     currentRules = nextRules;
     syncInputs(currentRules);
-    status.show("Regles enregistrees.");
+    status.show("Règles enregistrées.");
   });
 
   resetBtn.addEventListener("click", async () => {
     await persistRules(DEFAULT_RULES);
     currentRules = { ...DEFAULT_RULES };
     syncInputs(currentRules);
-    status.show("Regles reinitialisees.");
+    status.show("Règles réinitialisées.");
   });
 
   installApkBtn.addEventListener("click", () => {
@@ -451,38 +559,79 @@ export async function renderAlarmView(options = {}) {
     link.click();
     link.remove();
 
-    status.show("Ouverture du telechargement APK...");
+    status.show("Ouverture du téléchargement APK...");
   });
 
   let isImporting = false;
+
+  diagnoseBtn.addEventListener("click", () => {
+    renderDiagnostics();
+    status.show("Diagnostic mis à jour.");
+  });
+
+  previewBtn.addEventListener("click", async () => {
+    try {
+      const { plan, startISO, endISO } = await buildPlan(currentRules);
+      const planCheck = validatePlanShape(plan);
+      if (!planCheck.ok) {
+        status.show(planCheck.reason);
+        return;
+      }
+      if (planCheck.count === 0) {
+        status.show(
+          `Aucune alarme générée entre ${startISO} et ${endISO}. Vérifiez le planning et les services du matin.`,
+        );
+        return;
+      }
+      const nextAlarm = plan.alarms[0];
+      status.show(
+        `Prochaine alarme : ${nextAlarm.serviceDate} à ${nextAlarm.serviceStart} (déclenchement ${nextAlarm.alarmAt}).`,
+      );
+    } catch {
+      status.show("Erreur pendant la vérification du plan.");
+    }
+  });
 
   async function runImport() {
     if (isImporting) return;
     isImporting = true;
     actionBtn.disabled = true;
     const prevText = actionBtn.textContent;
-    actionBtn.textContent = "Generation...";
+    actionBtn.textContent = "Génération...";
 
     try {
       const { plan, startISO, endISO } = await buildPlan(currentRules);
+      const planCheck = validatePlanShape(plan);
+      if (!planCheck.ok) {
+        status.show(planCheck.reason);
+        return;
+      }
+      if (planCheck.count === 0) {
+        status.show(
+          `Aucune alarme à importer entre ${startISO} et ${endISO}. Vérifiez le planning et les services du matin.`,
+        );
+        clearAlarmResyncPending();
+        return;
+      }
+
       const directImported = await tryDirectImportInAlarmApp(plan);
       const method = directImported ? "app" : await sharePlan(plan);
-      const count = plan.alarms.length;
+      const count = planCheck.count;
       const suffix =
         method === "app"
-          ? "importe dans Reveil"
+          ? "importé dans Réveil"
           : method === "share"
-            ? "partage"
-            : "telecharge";
+            ? "partagé"
+            : "téléchargé";
       status.show(
-        `Plan ${suffix} (${count} alarme${count > 1 ? "s" : ""}) - ${startISO} a ${endISO}.`,
+        `Plan ${suffix} (${count} alarme${count > 1 ? "s" : ""}) - ${startISO} à ${endISO}.`,
       );
       clearAlarmResyncPending();
     } catch (err) {
       const msg =
         err && err.name === "AbortError"
-          ? "Partage annule."
-          : "Erreur de generation.";
+          ? "Partage annulé."
+          : "Erreur de génération.";
       status.show(msg);
     } finally {
       actionBtn.textContent = prevText;
