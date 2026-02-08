@@ -15,6 +15,7 @@ import { showAlarmView, showHome } from "../router.js";
 import { getGuidedStartDay, isDateInConges } from "../domain/conges.js";
 import { hasPanier } from "../domain/service-panier.js";
 import { markAlarmResyncPending } from "../state/alarm-resync.js";
+import { getAlarmAutoImportOptions } from "../state/alarm-auto-import.js";
 
 function capitalizeFirst(input) {
   if (typeof input !== "string" || input.length === 0) return input;
@@ -261,7 +262,7 @@ export async function showGuidedMonth(forcedDate = null) {
     androidBadge.textContent = "Android";
     btnSyncAlarm.append(alarmLabel, androidBadge);
     btnSyncAlarm.onclick = () => {
-      showAlarmView({ autoImport: true });
+      showAlarmView(getAlarmAutoImportOptions());
     };
 
     servicesContainer.append(

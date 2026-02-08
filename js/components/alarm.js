@@ -18,6 +18,7 @@ import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
 import { toISODateLocal } from "../utils.js";
 import { clearAlarmResyncPending } from "../state/alarm-resync.js";
+import { shouldAutoImportAlarm } from "../state/alarm-auto-import.js";
 
 const RULES_KEY = "alarm_rules";
 const ALARM_NOTICE_SEEN_KEY = "planningo_alarm_notice_seen";
@@ -26,7 +27,7 @@ const ALARM_APP_IMPORT_URI = "planningoreveil://import";
 
 const DEFAULT_RULES = {
   offsetMinutes: 90,
-  horizonDays: 30,
+  horizonDays: 31,
 };
 
 const LIMITS = {
@@ -492,7 +493,7 @@ export async function renderAlarmView(options = {}) {
 
   actionBtn.addEventListener("click", runImport);
 
-  if (options?.autoImport === true) {
+  if (shouldAutoImportAlarm(options)) {
     runImport();
   }
 }

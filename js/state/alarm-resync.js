@@ -5,6 +5,7 @@
 */
 
 const ALARM_RESYNC_PENDING_KEY = "planningo_alarm_resync_pending";
+const ALARM_RESYNC_DISMISSED_KEY = "planningo_alarm_resync_dismissed";
 
 function safeGetStorageValue(key) {
   try {
@@ -30,11 +31,20 @@ export function isAlarmResyncPending() {
   return safeGetStorageValue(ALARM_RESYNC_PENDING_KEY) === "1";
 }
 
+export function isAlarmResyncDismissed() {
+  return safeGetStorageValue(ALARM_RESYNC_DISMISSED_KEY) === "1";
+}
+
 export function markAlarmResyncPending() {
   safeSetStorageValue(ALARM_RESYNC_PENDING_KEY, "1");
+  safeRemoveStorageValue(ALARM_RESYNC_DISMISSED_KEY);
 }
 
 export function clearAlarmResyncPending() {
   safeRemoveStorageValue(ALARM_RESYNC_PENDING_KEY);
+  safeRemoveStorageValue(ALARM_RESYNC_DISMISSED_KEY);
 }
 
+export function dismissAlarmResyncNotice() {
+  safeSetStorageValue(ALARM_RESYNC_DISMISSED_KEY, "1");
+}

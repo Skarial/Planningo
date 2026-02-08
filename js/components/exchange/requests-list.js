@@ -13,6 +13,7 @@ import { getPlanningEntry } from "../../data/storage.js";
 import { respondToExchangeRequest } from "../../data/exchange/requests-client.js";
 import { getExchangeAuthState } from "../../state/exchange/auth-state.js";
 import { selectExchangeConversationWithParticipants } from "../../state/exchange/selection-state.js";
+import { showToast } from "../ui-toast.js";
 
 const unsubscribeByContainer = new WeakMap();
 
@@ -71,7 +72,7 @@ async function handleRespondToRequest(request) {
   const currentUser = auth?.currentUser || null;
 
   if (!currentUser || !currentUser.id) {
-    alert("Connexion requise");
+    showToast("Connexion requise");
     return;
   }
 
@@ -79,7 +80,7 @@ async function handleRespondToRequest(request) {
   const currentUserId = normalizeIdentifier(currentUser.id);
 
   if (ownerId && currentUserId && ownerId === currentUserId) {
-    alert("Vous ne pouvez pas repondre a votre propre demande");
+    showToast("Vous ne pouvez pas repondre a votre propre demande");
     return;
   }
 
@@ -87,7 +88,7 @@ async function handleRespondToRequest(request) {
     ? request.counterProposals
     : [];
   if (counterProposals.length === 0) {
-    alert("Aucune contre-proposition");
+    showToast("Aucune contre-proposition");
     return;
   }
 
@@ -101,13 +102,13 @@ async function handleRespondToRequest(request) {
   const wantedService = chosenProposal?.wantedService || null;
 
   if (!wantedDateISO || !wantedService) {
-    alert("Contre-proposition invalide");
+    showToast("Contre-proposition invalide");
     return;
   }
 
   const planningEntry = await getPlanningEntry(wantedDateISO);
   if (!planningEntry) {
-    alert(`Planning non renseigné sur ${wantedDateISO}`);
+    showToast(`Planning non renseigne sur ${wantedDateISO}`);
     return;
   }
 
@@ -118,13 +119,13 @@ async function handleRespondToRequest(request) {
   });
 
   if (!respondResult.ok) {
-    alert(respondResult.error?.message || "Erreur lors de la reponse");
+    showToast(respondResult.error?.message || "Erreur lors de la reponse");
     return;
   }
 
   const conversationId = getConversationIdFromRespondResult(respondResult);
   if (!conversationId) {
-    alert("Conversation creee, mais identifiant introuvable");
+    showToast("Conversation creee, mais identifiant introuvable");
     return;
   }
 
@@ -152,7 +153,7 @@ async function handleRespondToRequest(request) {
     participantsMap,
   );
   if (!selectionResult.ok) {
-    alert(selectionResult.error?.message || "Erreur de selection conversation");
+    showToast(selectionResult.error?.message || "Erreur de selection conversation");
     return;
   }
 }

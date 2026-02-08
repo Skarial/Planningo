@@ -30,11 +30,12 @@ import { getUiMode } from "../state/ui-mode.js";
 import { hasPanier } from "../domain/service-panier.js";
 import { getHolidayNameForDate } from "../domain/holidays-fr.js";
 import {
+  dismissAlarmResyncNotice,
+  isAlarmResyncDismissed,
   isAlarmResyncPending,
   markAlarmResyncPending,
 } from "../state/alarm-resync.js";
-
-let alarmResyncNoticeDismissed = false;
+import { getAlarmAutoImportOptions } from "../state/alarm-auto-import.js";
 
 function parseISODateLocal(dateISO) {
   const [year, month, day] = dateISO.split("-").map(Number);
@@ -404,7 +405,7 @@ export async function renderHome() {
     alarmResyncBtn.textContent = "Réveil à resynchroniser";
     alarmResyncBtn.addEventListener("click", () => {
       import("../router.js").then(({ showAlarmView }) => {
-        showAlarmView({ autoImport: true });
+        showAlarmView(getAlarmAutoImportOptions());
       });
     });
 
@@ -425,7 +426,7 @@ export async function renderHome() {
     alarmResyncDismissBtn.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
-      alarmResyncNoticeDismissed = true;
+      dismissAlarmResyncNotice();
       alarmResyncActions.hidden = true;
     });
 
@@ -454,7 +455,7 @@ export async function renderHome() {
         isAlarmResyncPending() &&
         Boolean(entry?.serviceCode) &&
         isMorningServiceCode(entry.serviceCode) &&
-        !alarmResyncNoticeDismissed;
+        !isAlarmResyncDismissed();
       alarmResyncActions.hidden = !shouldShowAlarmResync;
 
       if (!entry || !entry.serviceCode) {
@@ -678,7 +679,6 @@ export async function renderHome() {
 
       if (isMorningServiceCode(code)) {
         markAlarmResyncPending();
-        alarmResyncNoticeDismissed = false;
       }
 
       if (closeAfter) {
