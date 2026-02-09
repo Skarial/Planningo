@@ -1,4 +1,4 @@
-/*
+﻿/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -103,13 +103,38 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   subtitle.textContent = `Date : ${formatDateFr(iso)}`;
 
   const card = document.createElement("div");
-  card.className = "settings-card";
-  const summary = document.createElement("p");
-  summary.className = "settings-note";
-  summary.textContent = "Chargement du jour...";
+  card.className = "settings-card edit-day-card";
+  const summary = document.createElement("div");
+  summary.className = "edit-day-summary-block";
+
+  const summaryLine1 = document.createElement("p");
+  summaryLine1.className = "edit-day-summary-line edit-day-summary-line-primary";
+  summaryLine1.textContent = "Service actuel : chargement...";
+
+  const summaryLine2 = document.createElement("p");
+  summaryLine2.className = "edit-day-summary-line edit-day-summary-line-meta";
+  summaryLine2.innerHTML = "Panier : <strong>Non</strong>";
+
+  const summaryLine3 = document.createElement("p");
+  summaryLine3.className = "edit-day-summary-line edit-day-summary-line-meta";
+  summaryLine3.innerHTML = "Heures suppl\u00E9mentaires major\u00E9es : <strong>00:00</strong>";
+
+  const summaryLine4 = document.createElement("p");
+  summaryLine4.className = "edit-day-summary-line edit-day-summary-line-meta";
+  summaryLine4.innerHTML = "Heures d\u00E9duites : <strong>00:00</strong>";
+
+  summary.append(summaryLine1, summaryLine2, summaryLine3, summaryLine4);
+
+  const serviceSection = document.createElement("section");
+  serviceSection.className = "edit-day-section";
+
+  const serviceTitle = document.createElement("p");
+  serviceTitle.className = "edit-day-section-title";
+  serviceTitle.textContent = "Service";
 
   const inputLabel = document.createElement("label");
   inputLabel.textContent = "Code service";
+  inputLabel.className = "edit-day-label";
 
   const input = document.createElement("input");
   input.type = "text";
@@ -119,6 +144,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
 
   const formationLabel = document.createElement("label");
   formationLabel.textContent = "Dur\u00E9e formation (heures:minutes)";
+  formationLabel.className = "edit-day-label";
   formationLabel.hidden = true;
 
   const formationInput = document.createElement("input");
@@ -129,24 +155,47 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   formationInput.autocomplete = "off";
   formationInput.hidden = true;
 
+  const hoursSection = document.createElement("section");
+  hoursSection.className = "edit-day-section";
+
+  const hoursTitle = document.createElement("p");
+  hoursTitle.className = "edit-day-section-title";
+  hoursTitle.textContent = "Heures";
+
+  const extraTypeLabel = document.createElement("label");
+  extraTypeLabel.className = "edit-day-label";
+  extraTypeLabel.textContent = "Type d'heures supplémentaires";
+
   const extraLabel = document.createElement("label");
+  extraLabel.className = "edit-day-label";
   extraLabel.textContent = "Heures suppl\u00E9mentaires (minutes)";
 
   const extraTypeRow = document.createElement("div");
-  extraTypeRow.className = "settings-period-grid";
-  extraTypeRow.style.gridTemplateColumns = "1fr 1fr";
+  extraTypeRow.className = "edit-day-extra-type";
 
-  const majorTypeBtn = document.createElement("button");
-  majorTypeBtn.type = "button";
-  majorTypeBtn.className = "settings-btn";
+  const majorTypeInput = document.createElement("input");
+  majorTypeInput.type = "radio";
+  majorTypeInput.name = "edit-day-extra-type";
+  majorTypeInput.id = "edit-day-extra-major";
+  majorTypeInput.className = "edit-day-chip-input";
+
+  const majorTypeBtn = document.createElement("label");
+  majorTypeBtn.className = "edit-day-chip";
+  majorTypeBtn.setAttribute("for", majorTypeInput.id);
   majorTypeBtn.textContent = "Major\u00E9es";
 
-  const nonMajorTypeBtn = document.createElement("button");
-  nonMajorTypeBtn.type = "button";
-  nonMajorTypeBtn.className = "settings-btn";
+  const nonMajorTypeInput = document.createElement("input");
+  nonMajorTypeInput.type = "radio";
+  nonMajorTypeInput.name = "edit-day-extra-type";
+  nonMajorTypeInput.id = "edit-day-extra-nonmajor";
+  nonMajorTypeInput.className = "edit-day-chip-input";
+
+  const nonMajorTypeBtn = document.createElement("label");
+  nonMajorTypeBtn.className = "edit-day-chip";
+  nonMajorTypeBtn.setAttribute("for", nonMajorTypeInput.id);
   nonMajorTypeBtn.textContent = "Non major\u00E9es";
 
-  extraTypeRow.append(majorTypeBtn, nonMajorTypeBtn);
+  extraTypeRow.append(majorTypeInput, majorTypeBtn, nonMajorTypeInput, nonMajorTypeBtn);
 
   const extraInput = document.createElement("input");
   extraInput.type = "text";
@@ -155,8 +204,12 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   extraInput.inputMode = "numeric";
   extraInput.autocomplete = "off";
 
-  const missingLabel = document.createElement("label");
-  missingLabel.textContent = "Heures non effectu\u00E9es d\u00E9duites (minutes)";
+  const missingSection = document.createElement("section");
+  missingSection.className = "edit-day-section";
+
+  const missingHelp = document.createElement("p");
+  missingHelp.className = "edit-day-help";
+  missingHelp.textContent = "Minutes \u00E0 soustraire en cas de d\u00E9part anticip\u00E9 (minutes)";
 
   const missingInput = document.createElement("input");
   missingInput.type = "text";
@@ -165,13 +218,35 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   missingInput.inputMode = "numeric";
   missingInput.autocomplete = "off";
 
-  const panierRow = document.createElement("label");
-  panierRow.className = "settings-toggle";
+  const optionsSection = document.createElement("section");
+  optionsSection.className = "edit-day-section";
+
+  const optionsTitle = document.createElement("p");
+  optionsTitle.className = "edit-day-section-title";
+  optionsTitle.textContent = "Options";
+
+  const panierRow = document.createElement("div");
+  panierRow.className = "edit-day-panier-row";
+
   const panierLabel = document.createElement("span");
+  panierLabel.className = "edit-day-label";
   panierLabel.textContent = "Panier";
+
+  const switchWrap = document.createElement("label");
+  switchWrap.className = "switch";
+
   const panierToggle = document.createElement("input");
   panierToggle.type = "checkbox";
-  panierRow.append(panierLabel, panierToggle);
+  const slider = document.createElement("span");
+  slider.className = "slider";
+
+  switchWrap.append(panierToggle, slider);
+  panierRow.append(panierLabel, switchWrap);
+
+  const panierDetails = document.createElement("p");
+  panierDetails.className = "edit-day-help edit-day-panier-help";
+  panierDetails.dataset.panierOn = "false";
+  panierDetails.textContent = "Panier activ\u00E9";
 
   const suggestions = document.createElement("div");
   suggestions.className = "settings-periods";
@@ -190,21 +265,13 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   saveBtn.textContent = "Enregistrer";
 
   actions.append(cancelBtn, saveBtn);
-  card.append(
-    summary,
-    inputLabel,
-    input,
-    formationLabel,
-    formationInput,
-    extraLabel,
-    extraTypeRow,
-    extraInput,
-    missingLabel,
-    missingInput,
-    panierRow,
-    suggestions,
-    actions,
-  );
+
+  serviceSection.append(serviceTitle, inputLabel, input, formationLabel, formationInput, suggestions);
+  hoursSection.append(hoursTitle, extraTypeLabel, extraTypeRow, extraLabel, extraInput);
+  missingSection.append(missingHelp, missingInput);
+  optionsSection.append(optionsTitle, panierRow, panierDetails);
+
+  card.append(summary, serviceSection, hoursSection, missingSection, optionsSection, actions);
   root.appendChild(card);
 
   let isPrefilled = false;
@@ -264,8 +331,11 @@ export async function renderEditDayView(container, { dateISO } = {}) {
       : "major";
 
   function updateExtraTypeButtons() {
-    majorTypeBtn.classList.toggle("primary", selectedExtraType === "major");
-    nonMajorTypeBtn.classList.toggle("primary", selectedExtraType === "nonMajor");
+    const isMajor = selectedExtraType === "major";
+    majorTypeInput.checked = isMajor;
+    nonMajorTypeInput.checked = !isMajor;
+    majorTypeBtn.classList.toggle("is-selected", isMajor);
+    nonMajorTypeBtn.classList.toggle("is-selected", !isMajor);
   }
 
   function storeCurrentExtraInput() {
@@ -323,8 +393,10 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     missingRaw = "";
     missingInput.value = "";
     missingInput.disabled = true;
-    majorTypeBtn.disabled = true;
-    nonMajorTypeBtn.disabled = true;
+    majorTypeInput.disabled = true;
+    nonMajorTypeInput.disabled = true;
+    majorTypeBtn.classList.add("is-disabled");
+    nonMajorTypeBtn.classList.add("is-disabled");
     formationRaw = "";
     formationInput.value = "";
     formationInput.disabled = true;
@@ -333,10 +405,19 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   syncExtraInputFromState();
   syncFormationInputVisibility();
 
+  function syncPanierDetailsState() {
+    panierDetails.dataset.panierOn = panierToggle.checked ? "true" : "false";
+  }
+
   function renderSummaryText() {
     const normalizedCode = normalizeServiceCode(input.value);
     if (!normalizedCode) {
-      summary.textContent = "Service actuel : aucun";
+      summaryLine1.textContent = "Service actuel : aucun";
+      summaryLine2.innerHTML = "Panier : <strong>Non</strong>";
+      summaryLine3.innerHTML =
+        "Heures suppl\u00E9mentaires major\u00E9es : <strong>00:00</strong>";
+      summaryLine4.innerHTML = "Heures d\u00E9duites : <strong>00:00</strong>";
+      syncPanierDetailsState();
       return;
     }
 
@@ -345,31 +426,26 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     const missingMinutes = parseMissingInputMinutes(missingRaw);
     const formationMinutes = parseFormationInputMinutes(formationRaw);
     const details = [];
+    const isMajorType = selectedExtraType === "major";
+    const activeTypeLabel = isMajorType ? "major\u00E9es" : "non major\u00E9es";
+    const activeDuration = isMajorType
+      ? formatMajorExtraMinutes(majorMinutes)
+      : formatNonMajorExtraMinutes(nonMajorMinutes);
     if (isCongesDay) {
-      details.push(
-        "Cong\u00E9s: panier, heures suppl\u00E9mentaires et heures non effectu\u00E9es indisponibles",
-      );
-    } else if (selectedExtraType === "major" && majorMinutes > 0) {
-      details.push(
-        `Heures suppl\u00E9mentaires : ${formatMajorExtraMinutes(majorMinutes)}`,
-      );
-    } else if (selectedExtraType === "nonMajor" && nonMajorMinutes > 0) {
-      details.push(
-        `Heures suppl\u00E9mentaires non major\u00E9es : ${formatNonMajorExtraMinutes(nonMajorMinutes)}`,
-      );
-    }
-
-    if (!isCongesDay && missingMinutes > 0) {
-      details.push(`Heures non effectu\u00E9es : ${formatMissingMinutes(missingMinutes)}`);
+      details.push("Cong\u00E9s: options indisponibles");
     }
 
     if (normalizedCode === "FORMATION" && formationMinutes > 0) {
-      details.push(`Dur\u00E9e formation : ${formatFormationMinutes(formationMinutes)}`);
+      details.push(`Formation : ${formatFormationMinutes(formationMinutes)}`);
     }
 
-    summary.textContent = `Service actuel : ${getServiceDisplayName(normalizedCode)}${
-      panierToggle.checked ? " - Panier: oui" : " - Panier: non"
-    }${details.length > 0 ? ` - ${details.join(" - ")}` : ""}`;
+    summaryLine1.textContent = `Service actuel : ${getServiceDisplayName(normalizedCode)}`;
+    summaryLine2.innerHTML = `Panier : <strong>${panierToggle.checked ? "Oui" : "Non"}</strong>`;
+    summaryLine3.innerHTML = `Heures suppl\u00E9mentaires ${activeTypeLabel} : <strong>${activeDuration}</strong>`;
+    summaryLine4.innerHTML = `Heures d\u00E9duites : <strong>${formatMissingMinutes(missingMinutes)}</strong>${
+      details.length > 0 ? ` - ${details.join(" - ")}` : ""
+    }`;
+    syncPanierDetailsState();
   }
 
   renderSummaryText();
@@ -398,6 +474,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     suggestions.innerHTML = "";
     const filter = normalizeServiceCode(filterValue);
     if (!filter) return;
+    if (allCodes.includes(filter)) return;
 
     const matches = allCodes.filter((code) => code.startsWith(filter));
     if (matches.length === 0) return;
@@ -442,14 +519,16 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     renderSummaryText();
   });
 
-  majorTypeBtn.addEventListener("click", () => {
+  majorTypeInput.addEventListener("change", () => {
     switchExtraType("major");
   });
-
-  nonMajorTypeBtn.addEventListener("click", () => {
+  nonMajorTypeInput.addEventListener("change", () => {
     switchExtraType("nonMajor");
   });
-  panierToggle.addEventListener("change", renderSummaryText);
+  panierToggle.addEventListener("change", () => {
+    syncPanierDetailsState();
+    renderSummaryText();
+  });
   renderSuggestionsFiltered(input.value);
 
   cancelBtn.addEventListener("click", () => {
@@ -481,3 +560,4 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     navigateHome();
   });
 }
+

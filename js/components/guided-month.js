@@ -19,6 +19,9 @@ import {
   getAllServices,
 
 
+  deletePlanningEntry,
+
+
   savePlanningEntry,
 
 
@@ -1118,13 +1121,8 @@ export async function showGuidedMonth(forcedDate = null) {
         const date = new Date(year, monthIndex, dayToUndo);
         const iso = toISODateLocal(date);
 
-        //  ROLLBACK DB : retour  REPOS
-        await savePlanningEntry({
-          date: iso,
-          serviceCode: "REPOS",
-          locked: false,
-          extra: false,
-        });
+        // ROLLBACK DB : retour a un jour vide (non saisi)
+        await deletePlanningEntry(iso);
 
         // Retour UI
         guidedRestWarningText = "";

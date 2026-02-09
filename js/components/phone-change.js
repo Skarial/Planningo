@@ -1,4 +1,4 @@
-/*
+﻿/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -40,7 +40,7 @@ export async function renderPhoneChangeView() {
 
   const exportNote = document.createElement("div");
   exportNote.className = "settings-note";
-  exportNote.textContent = "À faire avant de changer de téléphone.";
+  exportNote.textContent = "Ancien téléphone";
 
   const importBtn = document.createElement("button");
   importBtn.className = "settings-btn danger";
@@ -48,8 +48,7 @@ export async function renderPhoneChangeView() {
 
   const importNote = document.createElement("div");
   importNote.className = "settings-note";
-  importNote.textContent =
-    "À utiliser sur un nouveau téléphone ou après réinstallation.";
+  importNote.textContent = "Nouveau téléphone";
 
   card.append(exportNote, exportBtn, importNote, importBtn);
 
@@ -64,3 +63,6 @@ export async function renderPhoneChangeView() {
     await importAllData();
   });
 }
+
+
+

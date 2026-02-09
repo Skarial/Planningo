@@ -1,4 +1,4 @@
-/*
+﻿/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -359,6 +359,12 @@ export async function renderAlarmView(options = {}) {
   const card = document.createElement("div");
   card.className = "settings-card";
 
+  const sectionSettings = document.createElement("section");
+  sectionSettings.className = "alarm-section alarm-section-settings";
+  const sectionSettingsTitle = document.createElement("h3");
+  sectionSettingsTitle.className = "alarm-section-title";
+  sectionSettingsTitle.textContent = "Réglages";
+
   const enableSyncRow = document.createElement("label");
   enableSyncRow.className = "settings-toggle";
   const enableSyncLabel = document.createElement("span");
@@ -371,16 +377,16 @@ export async function renderAlarmView(options = {}) {
   labelOffset.textContent = "Avance (minutes)";
   const inputOffset = document.createElement("input");
   inputOffset.type = "number";
-  inputOffset.min = String(LIMITS.offsetMin);
+  inputOffset.min = "0";
   inputOffset.max = String(LIMITS.offsetMax);
-  inputOffset.step = "5";
+  inputOffset.step = "2";
 
   const actions = document.createElement("div");
   actions.className = "settings-actions";
 
   const saveBtn = document.createElement("button");
   saveBtn.className = "settings-btn primary";
-  saveBtn.textContent = "Valider";
+  saveBtn.textContent = "Enregistrer les réglages";
 
   const resetBtn = document.createElement("button");
   resetBtn.className = "settings-btn danger";
@@ -390,8 +396,14 @@ export async function renderAlarmView(options = {}) {
   actions.append(saveBtn, resetBtn);
 
   const actionBtn = document.createElement("button");
-  actionBtn.className = "settings-btn primary";
-  actionBtn.textContent = "Importer dans Réveil";
+  actionBtn.className = "settings-btn alarm-import-btn";
+  actionBtn.textContent = "Importer les alarmes dans le reveil";
+
+  const sectionInstall = document.createElement("section");
+  sectionInstall.className = "alarm-section alarm-section-install";
+  const sectionInstallTitle = document.createElement("h3");
+  sectionInstallTitle.className = "alarm-section-title";
+  sectionInstallTitle.textContent = "Installation";
 
   const installApkBtn = document.createElement("button");
   installApkBtn.className = "settings-btn";
@@ -403,19 +415,36 @@ export async function renderAlarmView(options = {}) {
   helpBtn.type = "button";
   helpBtn.textContent = "Voir la notice";
 
-  const diagnoseBtn = document.createElement("button");
-  diagnoseBtn.className = "settings-btn";
-  diagnoseBtn.type = "button";
-  diagnoseBtn.textContent = "Vérifier l'environnement";
-
   const previewBtn = document.createElement("button");
   previewBtn.className = "settings-btn";
   previewBtn.type = "button";
   previewBtn.textContent = "Vérifier la prochaine alarme";
 
+  const diagnoseBtn = document.createElement("button");
+  diagnoseBtn.className = "settings-btn";
+  diagnoseBtn.type = "button";
+  diagnoseBtn.textContent = "Vérifier l'environnement";
+
+  const sectionChecks = document.createElement("section");
+  sectionChecks.className = "alarm-section alarm-section-checks";
+  const sectionChecksTitle = document.createElement("h3");
+  sectionChecksTitle.className = "alarm-section-title";
+  sectionChecksTitle.textContent = "Vérifications";
+  const checksActions = document.createElement("div");
+  checksActions.className = "alarm-check-actions";
+
+  const diagnosticsToggleBtn = document.createElement("button");
+  diagnosticsToggleBtn.type = "button";
+  diagnosticsToggleBtn.className = "alarm-diagnostics-toggle";
+  diagnosticsToggleBtn.textContent = "Afficher le diagnostic ▾";
+
+  const diagnosticsPanel = document.createElement("div");
+  diagnosticsPanel.className = "alarm-diagnostics-panel";
+  diagnosticsPanel.hidden = true;
+
   const diagnosticsList = document.createElement("ul");
   diagnosticsList.className = "settings-note";
-  diagnosticsList.style.margin = "6px 0 0";
+  diagnosticsList.style.margin = "0";
   diagnosticsList.style.paddingLeft = "18px";
 
   const reliabilityHint = document.createElement("p");
@@ -425,18 +454,36 @@ export async function renderAlarmView(options = {}) {
 
   const status = createStatus();
 
-  card.append(
+  sectionSettings.append(
+    sectionSettingsTitle,
     enableSyncRow,
     labelOffset,
     inputOffset,
     actions,
-    installApkBtn,
     actionBtn,
-    previewBtn,
-    diagnoseBtn,
-    diagnosticsList,
+  );
+
+  sectionInstall.append(sectionInstallTitle, installApkBtn);
+
+  checksActions.append(previewBtn);
+  diagnosticsPanel.append(diagnoseBtn, diagnosticsList);
+  sectionChecks.append(
+    sectionChecksTitle,
+    checksActions,
+    diagnosticsToggleBtn,
+    diagnosticsPanel,
     reliabilityHint,
-    helpBtn,
+  );
+
+  const footerActions = document.createElement("div");
+  footerActions.className = "alarm-footer-actions";
+  footerActions.append(helpBtn);
+
+  card.append(
+    sectionSettings,
+    sectionInstall,
+    sectionChecks,
+    footerActions,
     status.node,
   );
   root.append(header, card);
@@ -457,7 +504,7 @@ export async function renderAlarmView(options = {}) {
     <p><strong>Important</strong> : le réveil intelligent s'occupe uniquement des <strong>services du matin</strong>.</p>
     <p><strong>Règle utilisée</strong> : <strong>DM</strong> et codes service numériques impairs (ex : DM, 2001, 2101).</p>
     <p><strong>Avance (minutes)</strong> : nombre de minutes avant le début du service.</p>
-    <p>Ensuite, utilisez <strong>Importer dans Réveil</strong> pour envoyer le fichier vers l'application Réveil.</p>
+    <p>Ensuite, utiliséz <strong>Importer dans Réveil</strong> pour envoyer le fichier vers l'application Réveil.</p>
   `;
 
   const noticeRememberLabel = document.createElement("label");
@@ -545,7 +592,7 @@ export async function renderAlarmView(options = {}) {
     status.show(
       enabled
         ? "Rappels reveil actives."
-        : "Rappels reveil desactives.",
+        : "Rappels reveil désactivés.",
     );
   });
 
@@ -592,11 +639,6 @@ export async function renderAlarmView(options = {}) {
 
   let isImporting = false;
 
-  diagnoseBtn.addEventListener("click", () => {
-    renderDiagnostics();
-    status.show("Diagnostic mis à jour.");
-  });
-
   previewBtn.addEventListener("click", async () => {
     try {
       const { plan, startISO, endISO } = await buildPlan(currentRules);
@@ -618,6 +660,19 @@ export async function renderAlarmView(options = {}) {
     } catch {
       status.show("Erreur pendant la vérification du plan.");
     }
+  });
+
+  diagnosticsToggleBtn.addEventListener("click", () => {
+    const isHidden = diagnosticsPanel.hidden;
+    diagnosticsPanel.hidden = !isHidden;
+    diagnosticsToggleBtn.textContent = isHidden
+      ? "Masquer le diagnostic ▴"
+      : "Afficher le diagnostic ▾";
+  });
+
+  diagnoseBtn.addEventListener("click", () => {
+    renderDiagnostics();
+    status.show("Diagnostic mis à jour.");
   });
 
   async function runImport() {
@@ -674,5 +729,9 @@ export async function renderAlarmView(options = {}) {
     runImport();
   }
 }
+
+
+
+
 
 
