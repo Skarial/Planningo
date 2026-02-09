@@ -19,6 +19,10 @@ import { getPeriodLabel } from "../utils/period-label.js";
 import { toISODateLocal } from "../utils.js";
 import { clearAlarmResyncPending } from "../state/alarm-resync.js";
 import { shouldAutoImportAlarm } from "../state/alarm-auto-import.js";
+import {
+  getAlarmSyncEnabled,
+  setAlarmSyncEnabled,
+} from "../state/alarm-feature.js";
 
 const RULES_KEY = "alarm_rules";
 const ALARM_NOTICE_SEEN_KEY = "planningo_alarm_notice_seen";
@@ -355,6 +359,14 @@ export async function renderAlarmView(options = {}) {
   const card = document.createElement("div");
   card.className = "settings-card";
 
+  const enableSyncRow = document.createElement("label");
+  enableSyncRow.className = "settings-toggle";
+  const enableSyncLabel = document.createElement("span");
+  enableSyncLabel.textContent = "Activer le reveil intelligent (Android)";
+  const enableSyncToggle = document.createElement("input");
+  enableSyncToggle.type = "checkbox";
+  enableSyncRow.append(enableSyncLabel, enableSyncToggle);
+
   const labelOffset = document.createElement("label");
   labelOffset.textContent = "Avance (minutes)";
   const inputOffset = document.createElement("input");
@@ -414,6 +426,7 @@ export async function renderAlarmView(options = {}) {
   const status = createStatus();
 
   card.append(
+    enableSyncRow,
     labelOffset,
     inputOffset,
     actions,
@@ -520,6 +533,21 @@ export async function renderAlarmView(options = {}) {
   }
 
   renderDiagnostics();
+
+  const alarmSyncEnabled = await getAlarmSyncEnabled();
+  enableSyncToggle.checked = alarmSyncEnabled;
+
+  enableSyncToggle.addEventListener("change", async () => {
+    const enabled = await setAlarmSyncEnabled(enableSyncToggle.checked);
+    if (!enabled) {
+      clearAlarmResyncPending();
+    }
+    status.show(
+      enabled
+        ? "Rappels reveil actives."
+        : "Rappels reveil desactives.",
+    );
+  });
 
   let currentRules = await loadRules();
 
@@ -646,4 +674,5 @@ export async function renderAlarmView(options = {}) {
     runImport();
   }
 }
+
 

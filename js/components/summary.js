@@ -11,7 +11,12 @@ import { getConfig } from "../data/db.js";
 import { isDateInConges } from "../domain/conges.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
-import { hasPanier } from "../domain/service-panier.js";
+import {
+  normalizeMajorExtraMinutes,
+  normalizeMissingMinutes,
+  normalizeNonMajorExtraMinutes,
+  resolvePanierEnabled,
+} from "../domain/day-edit.js";
 import { getFixedServiceMinutes } from "../utils.js";
 import { getHolidayNameForDate } from "../domain/holidays-fr.js";
 
@@ -247,6 +252,9 @@ export async function renderSummaryView() {
     let congesDays = 0;
     let totalMinutes = 0;
     let extraMinutes = 0;
+    let majorExtraMinutes = 0;
+    let nonMajorExtraMinutes = 0;
+    let missingMinutes = 0;
     let panierCount = 0;
 
     const cursor = new Date(start.getTime());
@@ -306,7 +314,30 @@ export async function renderSummaryView() {
               }
             }
 
-            if (hasPanier(entry.serviceCode)) {
+            const dayMajorExtraMinutes = normalizeMajorExtraMinutes(
+              entry.majorExtraMinutes,
+            );
+            if (dayMajorExtraMinutes > 0) {
+              majorExtraMinutes += dayMajorExtraMinutes;
+              extraMinutes += dayMajorExtraMinutes;
+              totalMinutes += dayMajorExtraMinutes;
+            }
+
+            const dayNonMajorExtraMinutes = normalizeNonMajorExtraMinutes(
+              entry.nonMajorExtraMinutes,
+            );
+            if (dayNonMajorExtraMinutes > 0) {
+              nonMajorExtraMinutes += dayNonMajorExtraMinutes;
+              totalMinutes += dayNonMajorExtraMinutes;
+            }
+
+            const dayMissingMinutes = normalizeMissingMinutes(entry.missingMinutes);
+            if (dayMissingMinutes > 0) {
+              missingMinutes += dayMissingMinutes;
+              totalMinutes -= dayMissingMinutes;
+            }
+
+            if (resolvePanierEnabled(entry.serviceCode, entry.panierOverride)) {
               panierCount++;
             }
           }
@@ -318,7 +349,7 @@ export async function renderSummaryView() {
 
     resultGrid.innerHTML = "";
 
-    const totalDuration = formatDuration(totalMinutes).replace(":", " : ");
+    const totalDuration = formatDuration(Math.max(0, totalMinutes)).replace(":", " : ");
     const extraDuration = formatDuration(extraMinutes).replace(":", " : ");
 const rows = [
   ["Demi dimanche travaill\u00e9", halfSundayDays],
@@ -330,15 +361,15 @@ const rows = [
 ];
 
 if (extraMinutes > 0) {
-  rows.push(["Heures suppl\u00e9mentaires", extraDuration]);
+  rows.push(["Heures supplémentaires", extraDuration]);
 }
 
-rows.push(["Total jours travaill\u00e9s", workedDays]);
-rows.push(["Total heures travaill\u00e9es", totalDuration]);
+rows.push(["Total jours travaillés", workedDays]);
+rows.push(["Total heures travaillées", totalDuration]);
 
 const filteredRows = rows.filter(([label, value]) => {
-  if (label === "Total jours travaill\u00e9s") return true;
-  if (label === "Total heures travaill\u00e9es") return true;
+  if (label === "Total jours travaillés") return true;
+  if (label === "Total heures travaillées") return true;
   if (typeof value === "number") return value !== 0;
   if (typeof value === "string") {
     const normalized = value.replace(/\s/g, "");
@@ -351,8 +382,8 @@ const filteredRows = rows.filter(([label, value]) => {
       const row = document.createElement("div");
       row.className = "summary-row";
       if (
-        label === "Total jours travaill\u00e9s" ||
-        label === "Total heures travaill\u00e9es"
+        label === "Total jours travaillés" ||
+        label === "Total heures travaillées"
       ) {
         row.classList.add("summary-total");
       }

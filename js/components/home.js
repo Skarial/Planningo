@@ -10,9 +10,7 @@
 // Cette vue remplace les anciennes pages :
 // - consulter date
 // - vue mensuelle dediee
-import { HOME_MODE, getHomeMode, setHomeMode } from "../state/home-mode.js";
 import { getAllServices } from "../data/storage.js";
-import { savePlanningEntry } from "../data/storage.js";
 import { renderHomeMonthCalendar } from "./home-month-calendar.js";
 
 import { getPlanningEntry, getPlanningForMonth } from "../data/storage.js";
@@ -25,22 +23,47 @@ import { getConfig } from "../data/db.js";
 import { initMonthFromDateISO } from "../state/month-navigation.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
-import { getServiceSuggestions } from "../domain/service-suggestions.js";
-import { getUiMode } from "../state/ui-mode.js";
-import { hasPanier } from "../domain/service-panier.js";
+import { computeDailyRestWarning } from "../domain/daily-rest-warning.js";
+import {
+  formatMajorExtraMinutes,
+  formatMissingMinutes,
+  normalizeMajorExtraMinutes,
+  normalizeMissingMinutes,
+  formatNonMajorExtraMinutes,
+  normalizeNonMajorExtraMinutes,
+  resolvePanierEnabled,
+} from "../domain/day-edit.js";
 import { getHolidayNameForDate } from "../domain/holidays-fr.js";
 import {
   dismissAlarmResyncNotice,
   isAlarmResyncDismissed,
   isAlarmResyncPending,
-  markAlarmResyncPending,
 } from "../state/alarm-resync.js";
 import { getAlarmAutoImportOptions } from "../state/alarm-auto-import.js";
+import { getAlarmSyncEnabled } from "../state/alarm-feature.js";
 
 function parseISODateLocal(dateISO) {
   const [year, month, day] = dateISO.split("-").map(Number);
   return new Date(year, month - 1, day);
 }
+
+async function findPreviousWorkedDayEntry(currentDate, congesConfig) {
+  const probe = new Date(currentDate);
+  for (let i = 0; i < 62; i++) {
+    probe.setDate(probe.getDate() - 1);
+    if (isDateInConges(probe, congesConfig)) continue;
+    const iso = toISODateLocal(probe);
+    const entry = await getPlanningEntry(iso);
+    const code =
+      entry && typeof entry.serviceCode === "string"
+        ? entry.serviceCode.trim().toUpperCase()
+        : "";
+    if (!code || code === "REPOS") continue;
+    return { dateISO: iso, entry };
+  }
+  return null;
+}
+
 function shiftMonth(date, delta) {
   const year = date.getFullYear();
   const month = date.getMonth();
@@ -178,15 +201,12 @@ function renderMonthNav(container) {
     wrapper.classList.add("month-nav-with-today");
 
     btnToday.addEventListener("click", () => {
-      if (getHomeMode() === HOME_MODE.EDIT_DAY) return;
       setActiveDateISO(todayISO);
       renderHome();
     });
   }
 
   btnPrev.addEventListener("click", () => {
-    if (getHomeMode() === HOME_MODE.EDIT_DAY) return;
-
     const d = parseISODateLocal(getActiveDateISO());
     const newDate = shiftMonth(d, -1);
     setActiveDateISO(toISODateLocal(newDate));
@@ -194,8 +214,6 @@ function renderMonthNav(container) {
   });
 
   btnNext.addEventListener("click", () => {
-    if (getHomeMode() === HOME_MODE.EDIT_DAY) return;
-
     const d = parseISODateLocal(getActiveDateISO());
     const newDate = shiftMonth(d, +1);
     setActiveDateISO(toISODateLocal(newDate));
@@ -225,7 +243,6 @@ function bindMonthSwipe(container) {
   }
 
   container.addEventListener("touchstart", (e) => {
-    if (getHomeMode() === HOME_MODE.EDIT_DAY) return;
     if (isMenuBlocking()) return;
     const touch = e.touches[0];
     startX = touch.clientX;
@@ -280,9 +297,6 @@ export async function renderHome() {
   container.innerHTML = "";
   const card = document.createElement("div");
   card.className = "home-main-card";
-  if (getHomeMode() === HOME_MODE.EDIT_DAY) {
-    card.classList.add("home-edit-active");
-  }
 
   const top = document.createElement("div");
   top.className = "home-top";
@@ -307,6 +321,7 @@ export async function renderHome() {
     const saisonEntry = await getConfig("saison");
     window.__homeSaisonConfig = saisonEntry?.value ?? null;
   }
+  const alarmSyncEnabled = await getAlarmSyncEnabled();
 
   initMonthFromDateISO(getActiveDateISO());
 
@@ -349,15 +364,11 @@ export async function renderHome() {
     const editBtn = document.createElement("button");
     editBtn.id = "edit-btn";
     editBtn.className = "edit-btn";
-    editBtn.textContent =
-      getHomeMode() === HOME_MODE.EDIT_DAY ? "Fermer" : "Éditer";
+    editBtn.textContent = "Modifier";
     editBtn.onclick = () => {
-      setHomeMode(
-        getHomeMode() === HOME_MODE.EDIT_DAY
-          ? HOME_MODE.VIEW
-          : HOME_MODE.EDIT_DAY,
-      );
-      renderHome();
+      import("../router.js").then(({ showEditDayView }) => {
+        showEditDayView(iso);
+      });
     };
 
     right.appendChild(editBtn);
@@ -378,6 +389,18 @@ export async function renderHome() {
     extraLabel.className = "day-extra-label";
     extraLabel.textContent = "Heures supplémentaires";
     extraLabel.hidden = true;
+
+    const nonMajorExtraLabel = document.createElement("div");
+    nonMajorExtraLabel.className = "day-extra-label";
+    nonMajorExtraLabel.hidden = true;
+
+    const majorExtraLabel = document.createElement("div");
+    majorExtraLabel.className = "day-extra-label";
+    majorExtraLabel.hidden = true;
+
+    const missingLabel = document.createElement("div");
+    missingLabel.className = "day-extra-label";
+    missingLabel.hidden = true;
 
     timeRow.append(time);
 
@@ -430,15 +453,21 @@ export async function renderHome() {
       alarmResyncActions.hidden = true;
     });
 
-    right.append(
+    const rightChildren = [
       service,
       timeRow,
       duration,
       holidayLabel,
       extraLabel,
+      majorExtraLabel,
+      nonMajorExtraLabel,
+      missingLabel,
       panier,
-      alarmResyncActions,
-    );
+    ];
+    if (alarmSyncEnabled) {
+      rightChildren.push(alarmResyncActions);
+    }
+    right.append(...rightChildren);
 
     section.append(left, right);
     daySummary.appendChild(section);
@@ -450,13 +479,70 @@ export async function renderHome() {
     }
 
     // chargement service reel
-    getPlanningEntry(iso).then((entry) => {
+    getPlanningEntry(iso).then(async (entry) => {
       const shouldShowAlarmResync =
+        alarmSyncEnabled &&
         isAlarmResyncPending() &&
         Boolean(entry?.serviceCode) &&
         isMorningServiceCode(entry.serviceCode) &&
         !isAlarmResyncDismissed();
       alarmResyncActions.hidden = !shouldShowAlarmResync;
+
+      function updateExtraIndicators(entryValue) {
+        if (isCongesDay) {
+          extraLabel.hidden = true;
+          majorExtraLabel.hidden = true;
+          majorExtraLabel.textContent = "";
+          nonMajorExtraLabel.hidden = true;
+          nonMajorExtraLabel.textContent = "";
+          missingLabel.hidden = true;
+          missingLabel.textContent = "";
+          panier.hidden = true;
+          return;
+        }
+
+        if (entryValue && entryValue.extra) {
+          extraLabel.hidden = false;
+        } else {
+          extraLabel.hidden = true;
+        }
+
+        const majorExtraMinutes = normalizeMajorExtraMinutes(
+          entryValue?.majorExtraMinutes,
+        );
+        if (majorExtraMinutes > 0) {
+          majorExtraLabel.hidden = false;
+          majorExtraLabel.textContent = `Heures supplémentaires : ${formatMajorExtraMinutes(majorExtraMinutes)}`;
+        } else {
+          majorExtraLabel.hidden = true;
+          majorExtraLabel.textContent = "";
+        }
+
+        const nonMajorExtraMinutes = normalizeNonMajorExtraMinutes(
+          entryValue?.nonMajorExtraMinutes,
+        );
+        if (nonMajorExtraMinutes > 0) {
+          nonMajorExtraLabel.hidden = false;
+          nonMajorExtraLabel.textContent = `Heures supplémentaires non majorées : ${formatNonMajorExtraMinutes(nonMajorExtraMinutes)}`;
+        } else {
+          nonMajorExtraLabel.hidden = true;
+          nonMajorExtraLabel.textContent = "";
+        }
+
+        const missingMinutes = normalizeMissingMinutes(entryValue?.missingMinutes);
+        if (missingMinutes > 0) {
+          missingLabel.hidden = false;
+          missingLabel.textContent = `Heures non effectuées : ${formatMissingMinutes(missingMinutes)}`;
+        } else {
+          missingLabel.hidden = true;
+          missingLabel.textContent = "";
+        }
+
+        panier.hidden = !resolvePanierEnabled(
+          entryValue?.serviceCode,
+          entryValue?.panierOverride,
+        );
+      }
 
       if (!entry || !entry.serviceCode) {
         if (isCongesDay) {
@@ -469,16 +555,55 @@ export async function renderHome() {
 
       service.hidden = false;
       service.textContent = getServiceDisplayName(entry.serviceCode);
+      service.classList.remove("rest-warning");
+      service.removeAttribute("title");
+      const normalizedServiceCode = String(entry.serviceCode).trim().toUpperCase();
 
-      if (entry.serviceCode === "REPOS") {
+      let servicesCatalog = null;
+      async function loadServicesCatalog() {
+        if (!servicesCatalog) {
+          servicesCatalog = await getAllServices();
+        }
+        return servicesCatalog;
+      }
+
+      if (normalizedServiceCode === "REPOS") {
         service.classList.add("repos");
         timeRow.hidden = true;
         time.textContent = "";
         duration.hidden = true;
         duration.textContent = "";
-        panier.hidden = true;
-        extraLabel.hidden = true;
+        updateExtraIndicators(entry);
         return;
+      }
+
+      try {
+        const previousWorkedDay = await findPreviousWorkedDayEntry(
+          date,
+          window.__homeCongesConfig,
+        );
+        if (previousWorkedDay) {
+          const services = await loadServicesCatalog();
+          const servicesByCode = new Map(
+            services
+              .filter((item) => item && item.code)
+              .map((item) => [String(item.code).trim().toUpperCase(), item]),
+          );
+          const restCheck = computeDailyRestWarning({
+            previousDateISO: previousWorkedDay.dateISO,
+            previousEntry: previousWorkedDay.entry,
+            currentDateISO: iso,
+            currentServiceCode: entry.serviceCode,
+            servicesByCode,
+            saisonConfig: window.__homeSaisonConfig,
+          });
+          if (restCheck.shouldWarn) {
+            service.classList.add("rest-warning");
+            service.title = "Repos legal insuffisant (< 11h)";
+          }
+        }
+      } catch {
+        // Ne pas bloquer le rendu Home si le calcul de warning echoue.
       }
 
       const fixedMinutes = getFixedServiceMinutes(entry.serviceCode);
@@ -487,8 +612,7 @@ export async function renderHome() {
         time.textContent = "";
         duration.hidden = false;
         duration.textContent = formatMinutesAsDuration(fixedMinutes);
-        panier.hidden = true;
-        extraLabel.hidden = true;
+        updateExtraIndicators(entry);
         return;
       }
 
@@ -503,21 +627,12 @@ export async function renderHome() {
         duration.textContent = entry.duration;
       }
 
-      if (entry.extra) {
-        extraLabel.hidden = false;
-      } else {
-        extraLabel.hidden = true;
-      }
-
-      if (hasPanier(entry.serviceCode)) {
-        panier.hidden = false;
-      } else {
-        panier.hidden = true;
-      }
+      updateExtraIndicators(entry);
 
       if (entry.startTime && entry.endTime) return;
 
-      getAllServices().then((services) => {
+      try {
+        const services = await loadServicesCatalog();
         const serviceCode = entry.serviceCode.toUpperCase();
         const matchedService = services.find(
           (item) =>
@@ -561,18 +676,10 @@ export async function renderHome() {
           }
         }
 
-        if (entry.extra) {
-          extraLabel.hidden = false;
-        } else {
-          extraLabel.hidden = true;
-        }
-
-        if (hasPanier(entry.serviceCode)) {
-          panier.hidden = false;
-        } else {
-          panier.hidden = true;
-        }
-      });
+        updateExtraIndicators(entry);
+      } catch {
+        updateExtraIndicators(entry);
+      }
     });
   }
 
@@ -602,168 +709,10 @@ export async function renderHome() {
     },
 
     onDaySelected: (iso) => {
-      if (getHomeMode() === HOME_MODE.EDIT_DAY) return;
-
       setActiveDateISO(iso);
       initMonthFromDateISO(iso);
       renderHome();
     },
   });
 
-  // =======================
-  // EDITION DU JOUR ACTIF (INLINE)
-  // =======================
-
-  if (getHomeMode() === HOME_MODE.EDIT_DAY) {
-    const panel = document.createElement("div");
-    panel.className = "edit-panel";
-    panel.style.pointerEvents = "auto";
-
-    const label = document.createElement("div");
-    label.className = "edit-panel-label edit-panel-label-row";
-
-    const iso = getActiveDateISO();
-    const [y, m, d] = iso.split("-");
-
-    const labelText = document.createElement("span");
-    labelText.textContent = `Jour sélectionné : ${d}/${m}/${y}`;
-
-    const input = document.createElement("input");
-    input.type = "text";
-    input.className = "edit-panel-input";
-    input.placeholder = "Code service (ex : 2910, DM, REPOS)";
-    input.autocomplete = "off";
-    let isPrefilled = false;
-
-    input.addEventListener("beforeinput", () => {
-      if (!isPrefilled) return;
-      input.value = "";
-      isPrefilled = false;
-    });
-
-    const suggestContainer = document.createElement("div");
-    suggestContainer.className = "edit-panel-suggestions";
-
-    const backBtn = document.createElement("button");
-    backBtn.type = "button";
-    backBtn.className = "guided-btn ghost guided-back-btn";
-    backBtn.textContent = "← Retour";
-    backBtn.onclick = () => {
-      const value = input.value.trim();
-      if (!value) {
-        persistEdit("", true);
-        return;
-      }
-      setHomeMode(HOME_MODE.VIEW);
-      renderHome();
-    };
-
-    label.append(labelText, backBtn);
-
-    panel.append(label, input, suggestContainer);
-    top.appendChild(panel);
-
-    async function persistEdit(rawCode, closeAfter = true) {
-      const code = rawCode.trim().toUpperCase();
-      const prevEntry = await getPlanningEntry(iso);
-      const wasRepos = prevEntry?.serviceCode === "REPOS";
-      const wasExtra = prevEntry?.extra === true;
-      const isRepos = code === "REPOS";
-
-      await savePlanningEntry({
-        date: iso,
-        serviceCode: code,
-        locked: false,
-        extra: code ? (isRepos ? false : wasExtra || wasRepos) : false,
-      });
-
-      if (isMorningServiceCode(code)) {
-        markAlarmResyncPending();
-      }
-
-      if (closeAfter) {
-        setHomeMode(HOME_MODE.VIEW);
-      }
-      renderHome();
-    }
-
-    // Preremplissage asynchrone du service existant
-    (async () => {
-      const entry = await getPlanningEntry(iso);
-      if (entry && typeof entry.serviceCode === "string") {
-        input.value = entry.serviceCode;
-        isPrefilled = true;
-      }
-    })();
-
-    (async () => {
-      const servicesCatalog = await getAllServices();
-      const prefsEntry = await getConfig("suggestions_prefs");
-      const suggestionsPrefs = prefsEntry.value ?? null;
-
-      const grouped = getServiceSuggestions({
-        servicesCatalog,
-        saisonConfig: window.__homeSaisonConfig,
-        date: new Date(iso),
-        prefs: suggestionsPrefs,
-        mode: getUiMode(),
-      });
-
-      const allCodesRaw = [
-        ...grouped.REPOS,
-        ...grouped.DM,
-        ...grouped.DAM,
-        ...grouped.FORMATION,
-        ...grouped.TAD,
-        ...Object.values(grouped.LIGNES).flat(),
-      ];
-
-      const allCodes = Array.from(
-        new Set(allCodesRaw.map((code) => String(code).toUpperCase())),
-      ).sort();
-
-      function createSuggestionButton(code, target) {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "guided-btn";
-        btn.textContent = getServiceDisplayName(code, { short: true });
-
-        btn.onclick = async () => {
-          persistEdit(code, true);
-        };
-
-        target.appendChild(btn);
-      }
-
-      function renderSuggestionsFiltered(filter) {
-        suggestContainer.innerHTML = "";
-        const f = filter.trim().toUpperCase();
-        if (!f) return;
-
-        const matches = allCodes.filter((code) => code.startsWith(f));
-        if (matches.length === 0) return;
-
-        const grid = document.createElement("div");
-        grid.className = "guided-lines-grid";
-        suggestContainer.appendChild(grid);
-
-        matches.forEach((code) => createSuggestionButton(code, grid));
-      }
-
-      renderSuggestionsFiltered(input.value);
-      input.addEventListener("input", () => {
-        renderSuggestionsFiltered(input.value);
-      });
-    })();
-
-    input.addEventListener("input", () => {
-      const value = input.value.trim();
-      if (!value) {
-        suggestContainer.innerHTML = "";
-        persistEdit("", false);
-      }
-    });
-
-    input.focus();
-  }
 }

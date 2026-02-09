@@ -7,6 +7,8 @@
 // js/router.js
 
 import { isExchangesUiEnabled } from "./state/feature-flags.js";
+import { setActiveDateISO } from "./state/active-date.js";
+import { initMonthFromDateISO } from "./state/month-navigation.js";
 
 let currentView = null;
 let stopTetribusFn = null;
@@ -32,6 +34,31 @@ function normalizeHash(hash) {
   return raw.startsWith("#") ? raw : `#${raw}`;
 }
 
+function isValidISODate(dateISO) {
+  if (typeof dateISO !== "string") return false;
+  const value = dateISO.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(value);
+  return !Number.isNaN(date.getTime());
+}
+
+function buildEditDayHash(dateISO) {
+  return `#/edit-day?date=${encodeURIComponent(dateISO)}`;
+}
+
+function updateHashRoute(hash, options = {}) {
+  const next = `${location.pathname}${location.search}${hash}`;
+  const current = `${location.pathname}${location.search}${location.hash || ""}`;
+  if (next === current) return;
+
+  if (options.replace === true) {
+    history.replaceState(null, "", next);
+    return;
+  }
+
+  history.pushState(null, "", next);
+}
+
 function isExchangesRoute(pathname, hash) {
   const normalizedPath = normalizePathname(pathname).toLowerCase();
   const normalizedHash = normalizeHash(hash);
@@ -42,6 +69,19 @@ function isExchangesRoute(pathname, hash) {
   if (normalizedHash === "#/exchanges") return true;
 
   return false;
+}
+
+export function getEditDayDateFromLocation(locationLike = globalThis.location) {
+  const hash = asTrimmedString(locationLike?.hash || "");
+  if (!hash) return null;
+  const normalized = hash.startsWith("#") ? hash.slice(1) : hash;
+  if (!normalized.startsWith("/edit-day")) return null;
+
+  const queryIndex = normalized.indexOf("?");
+  const queryString = queryIndex >= 0 ? normalized.slice(queryIndex + 1) : "";
+  const params = new URLSearchParams(queryString);
+  const dateISO = asTrimmedString(params.get("date") || "");
+  return isValidISODate(dateISO) ? dateISO : null;
 }
 
 export function resolveRouteGuard(pathname = "", hash = "", options = {}) {
@@ -104,6 +144,7 @@ function hideAllViews(previousView) {
     "feedback",
     "phone-change",
     "summary",
+    "edit-day",
     "exchanges",
     "tetribus",
     "alarm",
@@ -237,6 +278,26 @@ export async function showAlarmView(options = {}) {
   renderAlarmView(options);
 }
 
+export async function showEditDayView(dateISO, options = {}) {
+  if (!isValidISODate(dateISO)) {
+    showHome();
+    return;
+  }
+
+  setActiveDateISO(dateISO);
+  initMonthFromDateISO(dateISO);
+
+  if (options.updateHash !== false) {
+    updateHashRoute(buildEditDayHash(dateISO), { replace: options.replaceHash });
+  }
+
+  const view = activateView("edit-day");
+  if (!view) return;
+  const { renderEditDayView } = await import("./components/edit-day.js");
+  if (currentView !== "edit-day") return;
+  renderEditDayView(view, { dateISO });
+}
+
 export async function showExchangesView() {
   if (!isExchangesUiEnabled()) {
     showHome();
@@ -316,6 +377,16 @@ export function refreshCurrentView() {
     case "summary":
       showSummaryView();
       break;
+
+    case "edit-day": {
+      const dateISO = getEditDayDateFromLocation();
+      if (dateISO) {
+        showEditDayView(dateISO, { updateHash: false });
+      } else {
+        showHome();
+      }
+      break;
+    }
 
     case "exchanges":
       showExchangesView();

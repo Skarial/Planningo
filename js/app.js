@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.73";
+export const APP_VERSION = "2.0.74";
 
 import {
   DB_VERSION,
@@ -30,6 +30,8 @@ import { toISODateLocal } from "./utils.js";
 
 import {
   applyRouteGuardFromLocation,
+  getEditDayDateFromLocation,
+  showEditDayView,
   showExchangesView,
   showHome,
 } from "./router.js";
@@ -41,6 +43,7 @@ const SW_DIAGNOSTIC_KEY = "planningo_sw_diag";
 const SW_RELOAD_FALLBACK_MS = 4500;
 let viewportObserversBound = false;
 let swReloadInFlight = false;
+let appRouteBindingsReady = false;
 
 function isServiceWorkerDiagnosticEnabled() {
   try {
@@ -134,12 +137,8 @@ async function initApp() {
 
   // 2 UI principale
   initMenu();
-  const routeGuard = applyRouteGuardFromLocation();
-  if (routeGuard.resolvedView === "exchanges") {
-    showExchangesView();
-  } else {
-    showHome();
-  }
+  bindAppRouteListeners();
+  renderRouteFromLocation();
   prewarmSecondaryViews();
   if (consumeControlledReloadMarker()) {
     stabilizeViewportAfterControlledReload();
@@ -169,6 +168,35 @@ async function initApp() {
   // Toast migration (si necessaire)
   window.addEventListener("db:migrated", () => {
     showToast("Migration terminée");
+  });
+}
+
+function renderRouteFromLocation() {
+  const routeGuard = applyRouteGuardFromLocation();
+  if (routeGuard.resolvedView === "exchanges") {
+    showExchangesView();
+    return;
+  }
+
+  const editDayDateISO = getEditDayDateFromLocation();
+  if (editDayDateISO) {
+    showEditDayView(editDayDateISO, { updateHash: false });
+    return;
+  }
+
+  showHome();
+}
+
+function bindAppRouteListeners() {
+  if (appRouteBindingsReady) return;
+  appRouteBindingsReady = true;
+
+  window.addEventListener("hashchange", () => {
+    renderRouteFromLocation();
+  });
+
+  window.addEventListener("popstate", () => {
+    renderRouteFromLocation();
   });
 }
 
@@ -596,6 +624,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 

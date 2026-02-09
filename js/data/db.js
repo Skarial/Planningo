@@ -273,6 +273,11 @@ window.savePlanningEntry = async function (entry) {
       serviceCode: entry.serviceCode,
       locked: entry.locked ?? false,
       extra: entry.extra ?? false,
+      panierOverride:
+        typeof entry.panierOverride === "boolean" ? entry.panierOverride : null,
+      majorExtraMinutes: normalizeMajorExtraMinutes(entry.majorExtraMinutes),
+      nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(entry.nonMajorExtraMinutes),
+      missingMinutes: normalizeMissingMinutes(entry.missingMinutes),
     });
   });
 
@@ -317,11 +322,30 @@ function normalizePlanningEntry(entry) {
     serviceCode: entry.serviceCode ?? "REPOS",
     locked: entry.locked ?? false,
     extra: entry.extra ?? false,
+    panierOverride:
+      typeof entry.panierOverride === "boolean" ? entry.panierOverride : null,
+    majorExtraMinutes: normalizeMajorExtraMinutes(entry.majorExtraMinutes),
+    nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(entry.nonMajorExtraMinutes),
+    missingMinutes: normalizeMissingMinutes(entry.missingMinutes),
   };
 }
 
 function sortPlanningResults(results) {
   return results.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+function normalizeNonMajorExtraMinutes(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric <= 0) return 0;
+  return Math.round(numeric);
+}
+
+function normalizeMajorExtraMinutes(value) {
+  return normalizeNonMajorExtraMinutes(value);
+}
+
+function normalizeMissingMinutes(value) {
+  return normalizeNonMajorExtraMinutes(value);
 }
 
 // =======================

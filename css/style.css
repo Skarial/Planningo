@@ -329,6 +329,23 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   color: var(--color-service);
 }
 
+.day-header-service.rest-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-header-service.rest-warning::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3L1.9 20.5h20.2L12 3z' fill='%23c62828' stroke='%23c62828' stroke-width='1.4' stroke-linejoin='round'/%3E%3Crect x='11.1' y='8' width='1.8' height='7.2' rx='0.9' fill='%23111111'/%3E%3Ccircle cx='12' cy='17.8' r='1.2' fill='%23111111'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  flex: 0 0 auto;
+}
+
 .day-header-service.repos {
   color: #3a3a3a;
   font-weight: 700;
@@ -357,7 +374,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 .day-extra-label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #3a3a3a;
+  color: var(--color-muted);
   white-space: nowrap;
   text-align: right;
   margin-top: 4px;
@@ -480,8 +497,8 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 .panier-icon {
-  width: 22px;
-  height: 22px;
+  width: 34px;
+  height: 34px;
   display: inline-block;
   background-image: url("../assets/images/breakfast.png");
   background-repeat: no-repeat;
@@ -643,6 +660,55 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   padding-top: 0;
   gap: 14px;
   align-items: center;
+}
+
+.guided-rest-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #e3d59a;
+  border-left: 4px solid #b25a5a;
+  background: #fff7d6;
+  color: #2a2a2a;
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.45;
+  white-space: pre-line;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.guided-rest-warning[hidden] {
+  display: none !important;
+}
+
+.guided-rest-warning-text {
+  display: none;
+}
+
+.guided-rest-warning[data-warning]::after {
+  content: attr(data-warning);
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: pre-line;
+  color: #2a2a2a;
+}
+
+.guided-rest-warning::before {
+  content: "";
+  display: block;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3L1.9 20.5h20.2L12 3z' fill='%23c62828' stroke='%23c62828' stroke-width='1.4' stroke-linejoin='round'/%3E%3Crect x='11.1' y='8' width='1.8' height='7.2' rx='0.9' fill='%23111111'/%3E%3Ccircle cx='12' cy='17.8' r='1.2' fill='%23111111'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex: 0 0 auto;
+  margin-top: 1px;
 }
 
 .guided-cancel-slot {

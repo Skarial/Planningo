@@ -8,6 +8,24 @@
 
 import { openDB, STORES } from "./db.js";
 
+function normalizePanierOverride(value) {
+  return typeof value === "boolean" ? value : null;
+}
+
+function normalizeNonMajorExtraMinutes(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric <= 0) return 0;
+  return Math.round(numeric);
+}
+
+function normalizeMajorExtraMinutes(value) {
+  return normalizeNonMajorExtraMinutes(value);
+}
+
+function normalizeMissingMinutes(value) {
+  return normalizeNonMajorExtraMinutes(value);
+}
+
 // =======================
 // SERVICES
 // =======================
@@ -67,6 +85,10 @@ export async function savePlanningEntry(entry) {
       serviceCode: entry.serviceCode,
       locked: entry.locked ?? false,
       extra: entry.extra ?? false,
+      panierOverride: normalizePanierOverride(entry.panierOverride),
+      majorExtraMinutes: normalizeMajorExtraMinutes(entry.majorExtraMinutes),
+      nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(entry.nonMajorExtraMinutes),
+      missingMinutes: normalizeMissingMinutes(entry.missingMinutes),
     });
     tx.oncomplete = resolve;
     tx.onerror = () => reject(tx.error);
@@ -94,6 +116,10 @@ export async function getPlanningForMonth(monthISO) {
           serviceCode: cursor.value.serviceCode ?? "REPOS",
           locked: cursor.value.locked ?? false,
           extra: cursor.value.extra ?? false,
+          panierOverride: normalizePanierOverride(cursor.value.panierOverride),
+          majorExtraMinutes: normalizeMajorExtraMinutes(cursor.value.majorExtraMinutes),
+          nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(cursor.value.nonMajorExtraMinutes),
+          missingMinutes: normalizeMissingMinutes(cursor.value.missingMinutes),
         });
       }
 
@@ -128,6 +154,10 @@ export async function getPlanningEntriesInRange(startISO, endISO) {
           serviceCode: cursor.value.serviceCode ?? "REPOS",
           locked: cursor.value.locked ?? false,
           extra: cursor.value.extra ?? false,
+          panierOverride: normalizePanierOverride(cursor.value.panierOverride),
+          majorExtraMinutes: normalizeMajorExtraMinutes(cursor.value.majorExtraMinutes),
+          nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(cursor.value.nonMajorExtraMinutes),
+          missingMinutes: normalizeMissingMinutes(cursor.value.missingMinutes),
         });
       }
 
@@ -148,7 +178,17 @@ export async function getPlanningEntry(dateISO) {
     const request = store.get(dateISO);
 
     request.onsuccess = () => {
-      resolve(request.result || null);
+      if (!request.result) {
+        resolve(null);
+        return;
+      }
+      resolve({
+        ...request.result,
+        panierOverride: normalizePanierOverride(request.result.panierOverride),
+        majorExtraMinutes: normalizeMajorExtraMinutes(request.result.majorExtraMinutes),
+        nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(request.result.nonMajorExtraMinutes),
+        missingMinutes: normalizeMissingMinutes(request.result.missingMinutes),
+      });
     };
 
     request.onerror = () => {
