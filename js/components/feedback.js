@@ -1,4 +1,4 @@
-/*
+﻿/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
@@ -20,11 +20,11 @@ export function renderFeedbackView() {
 
   const title = document.createElement("div");
   title.className = "settings-title";
-  title.textContent = "Suggestions / Améliorations";
+  title.textContent = "Suggestions / Am\u00e9liorations";
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
-  subtitle.textContent = "Partagez vos idées d'amélioration.";
+  subtitle.textContent = "Partagez vos id\u00e9es d'am\u00e9lioration.";
 
   header.append(title, subtitle);
 
@@ -32,12 +32,12 @@ export function renderFeedbackView() {
   card.className = "settings-card";
 
   const aboutTitle = document.createElement("label");
-  aboutTitle.textContent = "À propos";
+  aboutTitle.textContent = "\u00c0 propos";
 
   const aboutText = document.createElement("p");
   aboutText.className = "settings-note";
   aboutText.textContent =
-    "Pour proposer une suggestion ou une amélioration, contactez-nous par email.";
+    "Pour proposer une suggestion, une am\u00e9lioration ou signaler un bug visuel, contactez-nous par email en joignant une capture d'\u00e9cran.";
 
   const contactLink = document.createElement("a");
   contactLink.className = "settings-btn primary";
@@ -95,3 +95,4 @@ export function renderFeedbackView() {
   root.append(header, card);
   view.appendChild(root);
 }
+

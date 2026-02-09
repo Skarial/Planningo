@@ -161,7 +161,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   const missingInput = document.createElement("input");
   missingInput.type = "text";
   missingInput.className = "settings-input";
-  missingInput.placeholder = "Nombre de minutes (ex : 30)";
+  missingInput.placeholder = "Nombre de minutes (ex : 60)";
   missingInput.inputMode = "numeric";
   missingInput.autocomplete = "off";
 

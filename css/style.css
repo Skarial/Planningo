@@ -1311,6 +1311,12 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   gap: 8px;
 }
 
+.edit-day-view .settings-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
 .settings-btn {
   height: 36px;
   border-radius: 8px;
