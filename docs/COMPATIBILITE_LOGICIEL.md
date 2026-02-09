@@ -1,17 +1,5 @@
-﻿# Compatibilite logiciel — Planningo
+# Compatibilite logiciel - Planningo
 
-## Generateur d'activation CLI (outil developpeur)
-
-Un script local permet de generer un code d'activation sans navigateur.
-
-- Fichier :
-  -- tools/generate-activation.js : logique de generation
-  -- tools/gen-code : raccourci executable
-- Usage : ./tools/gen-code DEVICE_ID
-- Exemple :
-  -- ./tools/gen-code a9c4f2d1-87b3
-  -- Resultat : 3f8a91c4b2de
-- Algorithme strictement identique au generateur HTML
 
 ## Objectif
 
@@ -32,7 +20,6 @@ Fichiers concernes :
 
 - `domain/conges.js`
 - `domain/periods.js`
-- `domain/activation.js`
 
 ---
 
@@ -163,3 +150,4 @@ sans modification du domain ni des regles metier.
 Toute evolution future devra respecter ces garanties.
 
 Toute configuration hors de ce perimetre n'est pas garantie comme fonctionnelle.
+

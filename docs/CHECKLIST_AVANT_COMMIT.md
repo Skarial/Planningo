@@ -42,16 +42,8 @@ Aucun commit ne doit être effectué si un point est en échec.
 - [ ] Aucun stockage d’état utilisateur
 - [ ] Gestion des mises à jour basée uniquement sur `registration.waiting`
 
-## 4. Activation
 
-- [ ] L’écran d’activation s’affiche uniquement si `config.activation_ok !== "true"`
-- [ ] Le Device ID est généré via `getOrCreateDeviceId()` uniquement
-- [ ] Le Device ID n’est jamais recalculé après création
-- [ ] Aucune logique d’activation n’est dupliquée
-- [ ] L’algorithme d’activation provient exclusivement de `tools/activation-algo.js`
-- [ ] Aucun utilisateur déjà activé n’est réévalué
-
-## 5. Sécurité et régression
+## 4. Sécurité et régression
 
 - [ ] Aucune donnée utilisateur n’est perdue
 - [ ] Aucun comportement existant n’est modifié
@@ -66,8 +58,6 @@ Aucun commit ne doit être effectué si un point est en échec.
   - [ ] tous les stores connus
 - [ ] L’import valide le format avant toute modification locale
 - [ ] L’import efface intégralement les données existantes
-- [ ] L’import restaure l’état d’activation
-- [ ] Aucun contrôle d’activation n’est déclenché après import
 - [ ] Un import valide entraîne un redémarrage automatique
 
 ## Vérifications générales
@@ -90,8 +80,8 @@ Aucun commit ne doit être effectué si un point est en échec.
 - [ ] Aucun comportement implicite non documenté
 - [ ] Les documents contractuels sont à jour :
   - [ ] ARCHITECTURE.md
-  - [ ] ACTIVATION.md
   - [ ] SAUVEGARDE_RESTAURATION.md
 
 Un commit effectué sans validation complète de cette checklist
 est considéré comme invalide.
+

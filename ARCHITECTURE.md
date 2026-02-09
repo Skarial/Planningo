@@ -1,33 +1,4 @@
-﻿# ARCHITECTURE — Planningo
-
----
-
-## Outil interne — Generateur d'activation
-
-Un outil interne est integre au depot pour generer les codes d'activation par appareil.
-
-### Emplacement
-
-tools/generator-activation/
-
-### Caracteristiques
-
-- Usage developpeur uniquement
-- Aucune dependance fonctionnelle avec l'application principale
-- PWA installable independamment
-- Fonctionne hors ligne
-- Service Worker isole (scope propre)
-- Aucune donnee utilisateur
-- Aucun impact sur les utilisateurs existants
-
-### Regles
-
-- Ne doit jamais etre lie depuis l'interface utilisateur
-- Ne depend pas de l'application principale
-- Partage uniquement un module pur commun servant de source unique de verite algorithmique
-- Aucun couplage UI, stockage ou runtime avec l'application
-- Ne doit contenir aucune logique metier Planning
-- Peut evoluer independamment
+# ARCHITECTURE - Planningo
 
 ---
 
@@ -70,7 +41,6 @@ js/
   utils.js
 
   components/
-    activationScreen.js
     home.js
     home-month-calendar.js
     guided-month.js
@@ -78,7 +48,6 @@ js/
     menu.js
 
   domain/
-    activation.js
     conges.js
     day-status.js
     periods.js
@@ -112,7 +81,6 @@ js/
       tetribus.render.js
 
 docs/
-  ACTIVATION.md
   SAUVEGARDE_RESTAURATION.md
   SERVICE_WORKER.md
   CONTEXTE_METIER.md
@@ -125,74 +93,18 @@ app.js orchestre l'ordre d'execution.
 
 Ordre strict :
 
-1. Lecture de l'etat applicatif depuis les donnees locales :
-   - config.activation_ok
-   - config.imported_ok
-2. Si l'application n'est ni activee ni restauree par import :
-   - affichage exclusif de l'ecran d'activation
-   - aucune autre initialisation
-3. Si l'application est activee ou restauree par import :
-   - initialisation du menu
-   - affichage de la vue d'accueil
+1. Lecture de l'etat applicatif depuis les donnees locales
+2. Initialisation du menu
+3. Affichage de la vue d'accueil
 4. Taches non bloquantes :
    - initialisation des services
    - enregistrement du Service Worker
    - surveillance des mises a jour
 
-Aucune vue metier n'est accessible tant que l'etat applicatif n'est pas valide.
 
 ---
 
-## 4. Activation
-
-L'activation est locale, hors ligne et sans serveur.
-
-- Interface : components/activationScreen.js
-- Logique : domain/activation.js
-- Identifiant appareil : data/device.js
-- Persistance : IndexedDB (config.activation_ok)
-
-Caracteristiques :
-
-- Une activation initiale par appareil, restaurable par import de donnees
-- Aucun compte utilisateur
-- Aucun echange reseau
-- Activation restaurable via import des donnees
-
-Details fonctionnels : docs/ACTIVATION.md
-
-### Regle post-import
-
-Lorsqu'une restauration de donnees est effectuee :
-
-- l'etat applicatif est considere comme valide,
-- l'ecran d'activation ne doit plus jamais apparaitre,
-- aucun code d'activation n'est redemande,
-- le Device ID n'intervient plus dans le flux utilisateur,
-- l'application demarre immediatement en mode normal.
-
-L'import de donnees est prioritaire sur toute regle d'activation.
-
-### Regle d'activation
-
-Le code d'activation est calcule selon la regle suivante :
-
-SHA-256("PLANNING_PWA_SECRET_V1:DEVICE_ID").slice(0, 12)
-
-- La regle d'activation est definie dans un module pur partage : tools/activation-algo.js
-- Ce module constitue la source unique de verite
-- L'adaptateur web consomme cette regle
-- Le domain peut la consommer si necessaire, sans jamais la redefinir
-- Les utilisateurs deja actives ne sont jamais reevales
-
-Principe cle :
-
-- Toute evolution de la regle d'activation doit etre effectuee exclusivement dans tools/activation-algo.js
-- Aucune autre implementation ne doit exister
-
----
-
-## 5. Navigation et vues
+## 4. Navigation et vues
 
 Le routing est interne et sans framework.
 
@@ -233,7 +145,6 @@ IndexedDB :
 - Planning
 - Services
 - Configuration
-- Activation
 - Sauvegarde et restauration
 - Retention planning : conservation automatique des 36 derniers mois (nettoyage apres ecriture)
 
@@ -348,14 +259,12 @@ css : presentation visuelle
 - Migration automatique legacy : conversion vers le service FORMATION
 - Migration idempotente, verrouillee et declenchee a l'ouverture DB
 
-## Priorite de l'import sur l'activation
+## Priorite de l'import
 
 L'import de donnees constitue une restauration complete de l'etat applicatif.
 
 A ce titre :
 
-- il remplace toute activation manuelle,
-- il neutralise definitivement l'ecran d'activation,
 - il est independant :
   - de l'appareil,
   - du navigateur,
@@ -374,3 +283,4 @@ Ce comportement est contractuel et ne doit jamais etre contourne par l'interface
 - Donnees locales uniquement
 - Comportement deterministe
 - Code lisible et structure
+
