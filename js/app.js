@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.74";
+export const APP_VERSION = "2.0.75";
 
 import {
   DB_VERSION,
@@ -41,6 +41,11 @@ import { installRuntimeDebugLogging } from "./debug/runtime-log.js";
 const CONTROLLED_RELOAD_KEY = "planningo_controlled_reload";
 const SW_DIAGNOSTIC_KEY = "planningo_sw_diag";
 const SW_RELOAD_FALLBACK_MS = 4500;
+const ACTIVATION_COHORT_EXCLUDED_CONFIG_KEYS = [
+  "user_cohort",
+  "migration_service_formation_v1",
+  "migration_service_formation_v1_in_progress",
+];
 let viewportObserversBound = false;
 let swReloadInFlight = false;
 let appRouteBindingsReady = false;
@@ -103,7 +108,9 @@ async function initApp() {
   let configEntryCount = 0;
   let countConfigFailed = false;
   try {
-    configEntryCount = await countConfigEntries({ excludeKeys: ["user_cohort"] });
+    configEntryCount = await countConfigEntries({
+      excludeKeys: ACTIVATION_COHORT_EXCLUDED_CONFIG_KEYS,
+    });
   } catch {
     countConfigFailed = true;
     console.warn("[Activation] config count failed; applying legacy-safe mode");
@@ -624,6 +631,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 
