@@ -12,6 +12,7 @@ import { isDateInConges } from "../domain/conges.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
 import {
+  normalizeFormationMinutes,
   normalizeMajorExtraMinutes,
   normalizeMissingMinutes,
   normalizeNonMajorExtraMinutes,
@@ -40,6 +41,16 @@ function shouldAddExtraMinutes(code) {
   if (upper === "DM" || upper === "DAM" || upper === "FORMATION") return false;
   if (upper.startsWith("TAD")) return false;
   return true;
+}
+
+function getEntryFixedMinutes(entry) {
+  if (!entry || !entry.serviceCode) return null;
+  const normalizedCode = String(entry.serviceCode).trim().toUpperCase();
+  if (normalizedCode === "FORMATION") {
+    const customFormationMinutes = normalizeFormationMinutes(entry.formationMinutes);
+    if (customFormationMinutes > 0) return customFormationMinutes;
+  }
+  return getFixedServiceMinutes(normalizedCode);
 }
 
 function getServiceMinutes(service, periodLabel) {
@@ -296,7 +307,7 @@ export async function renderSummaryView() {
               }
             }
 
-            const fixedMinutes = getFixedServiceMinutes(entry.serviceCode);
+            const fixedMinutes = getEntryFixedMinutes(entry);
             if (fixedMinutes != null) {
               totalMinutes += fixedMinutes;
               if (entry.extra) {

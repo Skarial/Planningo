@@ -26,6 +26,10 @@ function normalizeMissingMinutes(value) {
   return normalizeNonMajorExtraMinutes(value);
 }
 
+function normalizeFormationMinutes(value) {
+  return normalizeNonMajorExtraMinutes(value);
+}
+
 // =======================
 // SERVICES
 // =======================
@@ -89,6 +93,7 @@ export async function savePlanningEntry(entry) {
       majorExtraMinutes: normalizeMajorExtraMinutes(entry.majorExtraMinutes),
       nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(entry.nonMajorExtraMinutes),
       missingMinutes: normalizeMissingMinutes(entry.missingMinutes),
+      formationMinutes: normalizeFormationMinutes(entry.formationMinutes),
     });
     tx.oncomplete = resolve;
     tx.onerror = () => reject(tx.error);
@@ -120,6 +125,7 @@ export async function getPlanningForMonth(monthISO) {
           majorExtraMinutes: normalizeMajorExtraMinutes(cursor.value.majorExtraMinutes),
           nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(cursor.value.nonMajorExtraMinutes),
           missingMinutes: normalizeMissingMinutes(cursor.value.missingMinutes),
+          formationMinutes: normalizeFormationMinutes(cursor.value.formationMinutes),
         });
       }
 
@@ -158,6 +164,7 @@ export async function getPlanningEntriesInRange(startISO, endISO) {
           majorExtraMinutes: normalizeMajorExtraMinutes(cursor.value.majorExtraMinutes),
           nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(cursor.value.nonMajorExtraMinutes),
           missingMinutes: normalizeMissingMinutes(cursor.value.missingMinutes),
+          formationMinutes: normalizeFormationMinutes(cursor.value.formationMinutes),
         });
       }
 
@@ -188,6 +195,7 @@ export async function getPlanningEntry(dateISO) {
         majorExtraMinutes: normalizeMajorExtraMinutes(request.result.majorExtraMinutes),
         nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(request.result.nonMajorExtraMinutes),
         missingMinutes: normalizeMissingMinutes(request.result.missingMinutes),
+        formationMinutes: normalizeFormationMinutes(request.result.formationMinutes),
       });
     };
 

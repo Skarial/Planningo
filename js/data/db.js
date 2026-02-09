@@ -278,6 +278,7 @@ window.savePlanningEntry = async function (entry) {
       majorExtraMinutes: normalizeMajorExtraMinutes(entry.majorExtraMinutes),
       nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(entry.nonMajorExtraMinutes),
       missingMinutes: normalizeMissingMinutes(entry.missingMinutes),
+      formationMinutes: normalizeFormationMinutes(entry.formationMinutes),
     });
   });
 
@@ -327,6 +328,7 @@ function normalizePlanningEntry(entry) {
     majorExtraMinutes: normalizeMajorExtraMinutes(entry.majorExtraMinutes),
     nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(entry.nonMajorExtraMinutes),
     missingMinutes: normalizeMissingMinutes(entry.missingMinutes),
+    formationMinutes: normalizeFormationMinutes(entry.formationMinutes),
   };
 }
 
@@ -345,6 +347,10 @@ function normalizeMajorExtraMinutes(value) {
 }
 
 function normalizeMissingMinutes(value) {
+  return normalizeNonMajorExtraMinutes(value);
+}
+
+function normalizeFormationMinutes(value) {
   return normalizeNonMajorExtraMinutes(value);
 }
 

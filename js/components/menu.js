@@ -291,11 +291,10 @@ export function initMenu() {
     (e) => {
       if (isOpen) return;
       if (!e.touches || e.touches.length === 0) return;
-      if (isInsideScrollableArea(e.target)) return;
-      if (isInteractiveTarget(e.target)) return;
 
       const touch = e.touches[0];
       if (touch.clientX > EDGE_SWIPE_WIDTH) return;
+      if (isInteractiveTarget(e.target)) return;
 
       edgeStartX = touch.clientX;
       edgeStartY = touch.clientY;

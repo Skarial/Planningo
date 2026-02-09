@@ -8,15 +8,18 @@ import { getConfig } from "../data/db.js";
 import { getAllServices, getPlanningEntry, savePlanningEntry } from "../data/storage.js";
 import {
   buildSaveEntryPayload,
+  formatFormationMinutes,
   formatMajorExtraMinutes,
   formatMissingMinutes,
   formatNonMajorExtraMinutes,
+  getInitialFormationMinutes,
   getInitialMajorExtraMinutes,
   getInitialMissingMinutes,
   getInitialNonMajorExtraMinutes,
   getInitialPanierEnabled,
   getInitialServiceCode,
   normalizeServiceCode,
+  parseFormationInputMinutes,
   parseMajorExtraInputMinutes,
   parseMissingInputMinutes,
   parseNonMajorExtraInputMinutes,
@@ -114,6 +117,18 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   input.placeholder = "Code service (ex : 2910, DM, REPOS)";
   input.autocomplete = "off";
 
+  const formationLabel = document.createElement("label");
+  formationLabel.textContent = "Dur\u00E9e formation (heures:minutes)";
+  formationLabel.hidden = true;
+
+  const formationInput = document.createElement("input");
+  formationInput.type = "text";
+  formationInput.className = "settings-input";
+  formationInput.placeholder = "HH:MM (ex : 07:00)";
+  formationInput.inputMode = "text";
+  formationInput.autocomplete = "off";
+  formationInput.hidden = true;
+
   const extraLabel = document.createElement("label");
   extraLabel.textContent = "Heures suppl\u00E9mentaires (minutes)";
 
@@ -179,6 +194,8 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     summary,
     inputLabel,
     input,
+    formationLabel,
+    formationInput,
     extraLabel,
     extraTypeRow,
     extraInput,
@@ -191,10 +208,31 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   root.appendChild(card);
 
   let isPrefilled = false;
-  input.addEventListener("beforeinput", () => {
+  function clearPrefilledServiceOnFirstEntry() {
     if (!isPrefilled) return;
     input.value = "";
     isPrefilled = false;
+  }
+
+  input.addEventListener("beforeinput", (event) => {
+    if (!isPrefilled) return;
+    const inputType = String(event?.inputType || "");
+    if (inputType.startsWith("insert")) {
+      clearPrefilledServiceOnFirstEntry();
+    }
+  });
+
+  // Fallback mobile claviers: certains ne déclenchent pas beforeinput correctement.
+  input.addEventListener("keydown", (event) => {
+    if (!isPrefilled) return;
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (typeof event.key === "string" && event.key.length === 1) {
+      clearPrefilledServiceOnFirstEntry();
+    }
+  });
+
+  input.addEventListener("paste", () => {
+    clearPrefilledServiceOnFirstEntry();
   });
 
   const [entry, servicesCatalog, prefsEntry, saisonEntry, congesEntry] = await Promise.all([
@@ -216,6 +254,8 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   let majorExtraRaw = getInitialMajorExtraMinutes(entry);
   let nonMajorExtraRaw = getInitialNonMajorExtraMinutes(entry);
   let missingRaw = getInitialMissingMinutes(entry);
+  let formationRaw = getInitialFormationMinutes(entry);
+  formationInput.value = formationRaw;
   missingInput.value = missingRaw;
   let selectedExtraType = majorExtraRaw
     ? "major"
@@ -263,6 +303,16 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     updateExtraTypeButtons();
   }
 
+  function syncFormationInputVisibility() {
+    const isFormation = normalizeServiceCode(input.value) === "FORMATION";
+    const visible = isFormation && !isCongesDay;
+    formationLabel.hidden = !visible;
+    formationInput.hidden = !visible;
+    if (visible) {
+      formationInput.value = formationRaw;
+    }
+  }
+
   if (isCongesDay) {
     panierToggle.checked = false;
     panierToggle.disabled = true;
@@ -275,9 +325,13 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     missingInput.disabled = true;
     majorTypeBtn.disabled = true;
     nonMajorTypeBtn.disabled = true;
+    formationRaw = "";
+    formationInput.value = "";
+    formationInput.disabled = true;
   }
 
   syncExtraInputFromState();
+  syncFormationInputVisibility();
 
   function renderSummaryText() {
     const normalizedCode = normalizeServiceCode(input.value);
@@ -289,6 +343,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     const majorMinutes = parseMajorExtraInputMinutes(majorExtraRaw);
     const nonMajorMinutes = parseNonMajorExtraInputMinutes(nonMajorExtraRaw);
     const missingMinutes = parseMissingInputMinutes(missingRaw);
+    const formationMinutes = parseFormationInputMinutes(formationRaw);
     const details = [];
     if (isCongesDay) {
       details.push(
@@ -306,6 +361,10 @@ export async function renderEditDayView(container, { dateISO } = {}) {
 
     if (!isCongesDay && missingMinutes > 0) {
       details.push(`Heures non effectu\u00E9es : ${formatMissingMinutes(missingMinutes)}`);
+    }
+
+    if (normalizedCode === "FORMATION" && formationMinutes > 0) {
+      details.push(`Dur\u00E9e formation : ${formatFormationMinutes(formationMinutes)}`);
     }
 
     summary.textContent = `Service actuel : ${getServiceDisplayName(normalizedCode)}${
@@ -344,16 +403,17 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     if (matches.length === 0) return;
 
     const grid = document.createElement("div");
-    grid.className = "settings-period-grid";
+    grid.className = "guided-lines-grid edit-day-suggestions-grid";
 
     matches.forEach((code) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "settings-btn";
+      btn.className = "guided-btn guided-btn-secondary";
       btn.textContent = getServiceDisplayName(code, { short: true });
       btn.addEventListener("click", () => {
         input.value = code;
         panierToggle.checked = resolvePanierEnabled(code);
+        syncFormationInputVisibility();
         renderSummaryText();
         suggestions.innerHTML = "";
       });
@@ -365,6 +425,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
 
   input.addEventListener("input", () => {
     panierToggle.checked = resolvePanierEnabled(input.value);
+    syncFormationInputVisibility();
     renderSummaryText();
     renderSuggestionsFiltered(input.value);
   });
@@ -374,6 +435,10 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   });
   missingInput.addEventListener("input", () => {
     missingRaw = missingInput.value;
+    renderSummaryText();
+  });
+  formationInput.addEventListener("input", () => {
+    formationRaw = formationInput.value;
     renderSummaryText();
   });
 
@@ -399,6 +464,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
       rawCode: input.value,
       previousEntry,
       panierEnabled: panierToggle.checked,
+      rawFormationMinutes: formationRaw,
       rawMajorExtraMinutes: selectedExtraType === "major" ? majorExtraRaw : "",
       rawNonMajorExtraMinutes:
         selectedExtraType === "nonMajor" ? nonMajorExtraRaw : "",

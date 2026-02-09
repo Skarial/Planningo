@@ -7,18 +7,22 @@
 import { assert, test } from "../run-tests.js";
 import {
   buildSaveEntryPayload,
+  formatFormationMinutes,
   formatMajorExtraMinutes,
   formatMissingMinutes,
   formatNonMajorExtraMinutes,
+  getInitialFormationMinutes,
   getInitialMajorExtraMinutes,
   getInitialMissingMinutes,
   getInitialNonMajorExtraMinutes,
   getInitialPanierEnabled,
   getInitialServiceCode,
+  normalizeFormationMinutes,
   normalizeMajorExtraMinutes,
   normalizeMissingMinutes,
   normalizeNonMajorExtraMinutes,
   normalizeServiceCode,
+  parseFormationInputMinutes,
   parseMajorExtraInputMinutes,
   parseMissingInputMinutes,
   parseNonMajorExtraInputMinutes,
@@ -59,12 +63,25 @@ test("day-edit normalize/parse missing minutes", () => {
   assert(formatMissingMinutes(70) === "01:10", "format should be HH:MM");
 });
 
+test("day-edit normalize/parse formation minutes", () => {
+  assert(normalizeFormationMinutes(61.2) === 61, "minutes should be rounded");
+  assert(normalizeFormationMinutes(-3) === 0, "negative minutes should be rejected");
+  assert(parseFormationInputMinutes("07:00") === 420, "HH:MM should be parsed");
+  assert(parseFormationInputMinutes("7h30") === 450, "HhMM should be parsed");
+  assert(parseFormationInputMinutes("420") === 420, "minutes input should be parsed");
+  assert(parseFormationInputMinutes("75,4") === 75, "comma decimal should be parsed");
+  assert(parseFormationInputMinutes("07:70") === 0, "invalid HH:MM should return zero");
+  assert(parseFormationInputMinutes("abc") === 0, "invalid value should return zero");
+  assert(formatFormationMinutes(420) === "07:00", "format should be HH:MM");
+});
+
 test("day-edit buildSaveEntryPayload keeps exact extra rule for REPOS", () => {
   const payload = buildSaveEntryPayload({
     dateISO: "2026-03-12",
     rawCode: "repos",
     previousEntry: { serviceCode: "2911", extra: true },
     panierEnabled: true,
+    rawFormationMinutes: "120",
     rawMajorExtraMinutes: "1",
     rawNonMajorExtraMinutes: "2",
     rawMissingMinutes: "3",
@@ -78,6 +95,7 @@ test("day-edit buildSaveEntryPayload keeps exact extra rule for REPOS", () => {
   assert(payload.majorExtraMinutes === 0, "REPOS should force major extra to zero");
   assert(payload.nonMajorExtraMinutes === 0, "REPOS should force non-major extra to zero");
   assert(payload.missingMinutes === 0, "REPOS should force missing minutes to zero");
+  assert(payload.formationMinutes === 0, "REPOS should force formation minutes to zero");
 });
 
 test("day-edit buildSaveEntryPayload keeps exact extra rule for worked day", () => {
@@ -86,6 +104,7 @@ test("day-edit buildSaveEntryPayload keeps exact extra rule for worked day", () 
     rawCode: "2910",
     previousEntry: { serviceCode: "REPOS", extra: false },
     panierEnabled: true,
+    rawFormationMinutes: "360",
     rawMajorExtraMinutes: "60",
     rawNonMajorExtraMinutes: "90",
     rawMissingMinutes: "30",
@@ -95,12 +114,14 @@ test("day-edit buildSaveEntryPayload keeps exact extra rule for worked day", () 
   assert(fromRepos.majorExtraMinutes === 60, "major extra should be converted in minutes");
   assert(fromRepos.nonMajorExtraMinutes === 90, "non-major extra should be converted in minutes");
   assert(fromRepos.missingMinutes === 30, "missing minutes should be converted in minutes");
+  assert(fromRepos.formationMinutes === 0, "non-formation should keep formation minutes at zero");
 
   const fromExtra = buildSaveEntryPayload({
     dateISO: "2026-03-13",
     rawCode: "2623",
     previousEntry: { serviceCode: "2912", extra: true },
     panierEnabled: true,
+    rawFormationMinutes: "",
     rawMajorExtraMinutes: "",
     rawNonMajorExtraMinutes: "",
     rawMissingMinutes: "",
@@ -110,6 +131,19 @@ test("day-edit buildSaveEntryPayload keeps exact extra rule for worked day", () 
   assert(fromExtra.majorExtraMinutes === 0, "empty value should store zero minutes");
   assert(fromExtra.nonMajorExtraMinutes === 0, "empty value should store zero minutes");
   assert(fromExtra.missingMinutes === 0, "empty value should store zero minutes");
+  assert(fromExtra.formationMinutes === 0, "empty value should store zero minutes");
+
+  const formation = buildSaveEntryPayload({
+    dateISO: "2026-03-13",
+    rawCode: "FORMATION",
+    previousEntry: { serviceCode: "2912", extra: false },
+    panierEnabled: false,
+    rawFormationMinutes: "330",
+    rawMajorExtraMinutes: "",
+    rawNonMajorExtraMinutes: "",
+    rawMissingMinutes: "",
+  });
+  assert(formation.formationMinutes === 330, "formation minutes should be saved");
 });
 
 test("day-edit buildSaveEntryPayload clears service and extra on empty code", () => {
@@ -118,6 +152,7 @@ test("day-edit buildSaveEntryPayload clears service and extra on empty code", ()
     rawCode: "   ",
     previousEntry: { serviceCode: "REPOS", extra: true },
     panierEnabled: true,
+    rawFormationMinutes: "120",
     rawMajorExtraMinutes: "2",
     rawNonMajorExtraMinutes: "3",
     rawMissingMinutes: "4",
@@ -129,6 +164,7 @@ test("day-edit buildSaveEntryPayload clears service and extra on empty code", ()
   assert(payload.majorExtraMinutes === 0, "empty input should force major extra to zero");
   assert(payload.nonMajorExtraMinutes === 0, "empty input should force non-major extra to zero");
   assert(payload.missingMinutes === 0, "empty input should force missing minutes to zero");
+  assert(payload.formationMinutes === 0, "empty input should force formation minutes to zero");
 });
 
 test("day-edit buildSaveEntryPayload enforces conges constraints", () => {
@@ -137,6 +173,7 @@ test("day-edit buildSaveEntryPayload enforces conges constraints", () => {
     rawCode: "2911",
     previousEntry: { serviceCode: "2910", extra: true },
     panierEnabled: true,
+    rawFormationMinutes: "420",
     rawMajorExtraMinutes: "60",
     rawNonMajorExtraMinutes: "90",
     rawMissingMinutes: "30",
@@ -149,6 +186,7 @@ test("day-edit buildSaveEntryPayload enforces conges constraints", () => {
   assert(payload.majorExtraMinutes === 0, "conges day should force major extra to zero");
   assert(payload.nonMajorExtraMinutes === 0, "conges day should force non-major extra to zero");
   assert(payload.missingMinutes === 0, "conges day should force missing minutes to zero");
+  assert(payload.formationMinutes === 0, "conges day should force formation minutes to zero");
 });
 
 test("day-edit shouldMarkAlarmResync matches morning service behavior", () => {
@@ -235,6 +273,17 @@ test("day-edit getInitialMissingMinutes reads stored minutes", () => {
   );
   assert(
     getInitialMissingMinutes({ missingMinutes: 0 }) === "",
+    "zero should map to empty",
+  );
+});
+
+test("day-edit getInitialFormationMinutes reads stored minutes", () => {
+  assert(
+    getInitialFormationMinutes({ formationMinutes: 420 }) === "07:00",
+    "420 minutes should map to \"07:00\"",
+  );
+  assert(
+    getInitialFormationMinutes({ formationMinutes: 0 }) === "",
     "zero should map to empty",
   );
 });

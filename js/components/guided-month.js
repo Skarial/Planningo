@@ -148,6 +148,7 @@ let guidedRestWarningText = "";
 const guidedRestWarningByMonth = new Map();
 let selectedLine = null;
 let groupedSuggestions = null;
+const FORMATION_DEFAULT_MINUTES = 7 * 60;
 
 
 
@@ -555,7 +556,54 @@ export async function showGuidedMonth(forcedDate = null) {
     restWarningNode.hidden = false;
   }
 
+  async function saveCurrentDaySelection(serviceCodeToSave, formationMinutes = 0) {
+    const date = new Date(year, monthIndex, currentDay);
+    const iso = toISODateLocal(date);
 
+    hideRestWarning();
+    let restWarningText = "";
+    if (String(serviceCodeToSave).trim().toUpperCase() !== "REPOS") {
+      const previousWorkedDay = await findPreviousWorkedDayEntry(date);
+      if (previousWorkedDay) {
+        const restCheck = computeDailyRestWarning({
+          previousDateISO: previousWorkedDay.dateISO,
+          previousEntry: previousWorkedDay.entry,
+          currentDateISO: iso,
+          currentServiceCode: serviceCodeToSave,
+          servicesByCode,
+          saisonConfig,
+        });
+        if (restCheck.shouldWarn) {
+          const previousDateFr = formatDateFr(previousWorkedDay.dateISO);
+          const currentDateFr = formatDateFr(iso);
+          const restLabel = formatRestMinutes(restCheck.restMinutes).replace(":", "h");
+          restWarningText =
+            `Repos légal insuffisant\nEntre ${previousDateFr} (${restCheck.previousEndTime || "?"}) et ${currentDateFr} (${restCheck.currentStartTime || "?"})\nRepos constaté: ${restLabel} - Minimum légal: 11h00`;
+        }
+      }
+    }
+
+    await savePlanningEntry({
+      date: iso,
+      serviceCode: serviceCodeToSave,
+      locked: false,
+      extra: false,
+      formationMinutes,
+    });
+    if (alarmSyncEnabled && isMorningServiceCode(serviceCodeToSave)) {
+      markAlarmResyncPending();
+    }
+
+    selectedLine = null;
+    guidedRestWarningText =
+      typeof restWarningText === "string" && restWarningText.trim()
+        ? restWarningText.trim()
+        : "";
+    guidedRestWarningByMonth.set(monthISO, guidedRestWarningText);
+    currentDay++;
+    guidedMonthDay = currentDay;
+    await renderDay();
+  }
 
   async function renderCompletedView() {
     root.classList.add("guided-complete-mode");
@@ -1234,74 +1282,17 @@ export async function showGuidedMonth(forcedDate = null) {
 
 
     btn.onclick = async () => {
-
-
-      const date = new Date(year, monthIndex, currentDay);
-
-
-      const iso = toISODateLocal(date);
-
-
-
-
-
-      //  Conversion TADx  TDx pour lenregistrement
-
-
+      //  Conversion TADx  TDx pour l'enregistrement
       const serviceCodeToSave = code.startsWith("TAD")
-
-
         ? code.replace(/^TAD/, "TD")
-
-
         : code;
 
-
-
-
-
-      hideRestWarning();
-      let restWarningText = "";
-      if (String(serviceCodeToSave).trim().toUpperCase() !== "REPOS") {
-        const previousWorkedDay = await findPreviousWorkedDayEntry(date);
-        if (previousWorkedDay) {
-          const restCheck = computeDailyRestWarning({
-            previousDateISO: previousWorkedDay.dateISO,
-            previousEntry: previousWorkedDay.entry,
-            currentDateISO: iso,
-            currentServiceCode: serviceCodeToSave,
-            servicesByCode,
-            saisonConfig,
-          });
-          if (restCheck.shouldWarn) {
-            const previousDateFr = formatDateFr(previousWorkedDay.dateISO);
-            const currentDateFr = formatDateFr(iso);
-            const restLabel = formatRestMinutes(restCheck.restMinutes).replace(":", "h");
-            restWarningText =
-              `Repos légal insuffisant\nEntre ${previousDateFr} (${restCheck.previousEndTime || "?"}) et ${currentDateFr} (${restCheck.currentStartTime || "?"})\nRepos constaté: ${restLabel} - Minimum légal: 11h00`;
-          }
-        }
+      if (String(serviceCodeToSave).trim().toUpperCase() === "FORMATION") {
+        await saveCurrentDaySelection(serviceCodeToSave, FORMATION_DEFAULT_MINUTES);
+        return;
       }
 
-      await savePlanningEntry({
-        date: iso,
-        serviceCode: serviceCodeToSave,
-        locked: false,
-        extra: false,
-      });
-      if (alarmSyncEnabled && isMorningServiceCode(serviceCodeToSave)) {
-        markAlarmResyncPending();
-      }
-
-      selectedLine = null;
-      guidedRestWarningText =
-        typeof restWarningText === "string" && restWarningText.trim()
-          ? restWarningText.trim()
-          : "";
-      guidedRestWarningByMonth.set(monthISO, guidedRestWarningText);
-      currentDay++;
-      guidedMonthDay = currentDay;
-      await renderDay();
+      await saveCurrentDaySelection(serviceCodeToSave, 0);
     };
 
 
@@ -1313,6 +1304,7 @@ export async function showGuidedMonth(forcedDate = null) {
 
 
 }
+
 
 
 

@@ -26,6 +26,7 @@ import { getPeriodLabel } from "../utils/period-label.js";
 import { computeDailyRestWarning } from "../domain/daily-rest-warning.js";
 import {
   formatMajorExtraMinutes,
+  normalizeFormationMinutes,
   formatMissingMinutes,
   normalizeMajorExtraMinutes,
   normalizeMissingMinutes,
@@ -115,6 +116,16 @@ function shouldAddExtraMinutes(service) {
   if (code === "DM" || code === "DAM" || code === "FORMATION") return false;
   if (code.startsWith("TAD")) return false;
   return true;
+}
+
+function getEntryFixedMinutes(entry) {
+  if (!entry || !entry.serviceCode) return null;
+  const code = String(entry.serviceCode).trim().toUpperCase();
+  if (code === "FORMATION") {
+    const customFormationMinutes = normalizeFormationMinutes(entry.formationMinutes);
+    if (customFormationMinutes > 0) return customFormationMinutes;
+  }
+  return getFixedServiceMinutes(code);
 }
 
 function buildServiceTimeLines(service, periodLabel) {
@@ -606,7 +617,7 @@ export async function renderHome() {
         // Ne pas bloquer le rendu Home si le calcul de warning echoue.
       }
 
-      const fixedMinutes = getFixedServiceMinutes(entry.serviceCode);
+      const fixedMinutes = getEntryFixedMinutes(entry);
       if (fixedMinutes != null) {
         timeRow.hidden = true;
         time.textContent = "";

@@ -60,6 +60,9 @@ body {
   overscroll-behavior: none;
   touch-action: none;
   overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 body {
@@ -77,6 +80,22 @@ textarea {
   font-size: 16px;
   -webkit-appearance: none;
   appearance: none;
+}
+
+/* Bloque la sélection/callout natifs sur l'UI mobile.
+   On garde la sélection active dans les champs éditables. */
+*:not(input):not(textarea):not([contenteditable="true"]) {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
 }
 
 input[type="date"],
@@ -747,6 +766,11 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 
 .guided-lines-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.edit-day-view .edit-day-suggestions-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 420px;
 }
 
 #view-guided-month .guided-lines-grid {
