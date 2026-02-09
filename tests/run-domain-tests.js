@@ -7,8 +7,6 @@
 import "./exchange/setup-env.js";
 import "./domain/periods.test.js";
 import "./domain/conges.test.js";
-import "./domain/activation.test.js";
-import "./domain/activation-cohort.test.js";
 import "./domain/storage.memory.test.js";
 import "./domain/alarm-plan.test.js";
 import "./domain/alarm-auto-import.test.js";

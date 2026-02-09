@@ -6,7 +6,7 @@
 
 // js/data/import-db.js
 
-import { openDB, setConfig } from "./db.js";
+import { openDB } from "./db.js";
 
 // =======================
 // STORES CONNUS
@@ -34,8 +34,6 @@ export async function importDatabase(exportData) {
     const records = normalizedData.stores[storeName] || [];
     await restoreStore(db, storeName, records);
   }
-
-  await restoreStore(db, "config", [{ key: "imported_ok", value: "true" }]);
 
   db.close();
 
@@ -205,4 +203,3 @@ export async function importAllData() {
     input.click();
   });
 }
-

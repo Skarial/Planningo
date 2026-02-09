@@ -8,19 +8,11 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.75";
+export const APP_VERSION = "2.0.76";
 
 import {
   DB_VERSION,
-  countConfigEntries,
-  getConfig,
-  setConfig,
 } from "./data/db.js";
-import { showActivationScreen } from "./components/activationScreen.js";
-import {
-  resolveActivationGate,
-  resolveHasExistingConfig,
-} from "./domain/activation.js";
 
 import { registerServiceWorker } from "./sw/sw-register.js";
 
@@ -41,11 +33,6 @@ import { installRuntimeDebugLogging } from "./debug/runtime-log.js";
 const CONTROLLED_RELOAD_KEY = "planningo_controlled_reload";
 const SW_DIAGNOSTIC_KEY = "planningo_sw_diag";
 const SW_RELOAD_FALLBACK_MS = 4500;
-const ACTIVATION_COHORT_EXCLUDED_CONFIG_KEYS = [
-  "user_cohort",
-  "migration_service_formation_v1",
-  "migration_service_formation_v1_in_progress",
-];
 let viewportObserversBound = false;
 let swReloadInFlight = false;
 let appRouteBindingsReady = false;
@@ -101,48 +88,15 @@ async function initApp() {
     history.scrollRestoration = "manual";
   }
 
-  // 0 Activation (bloquante)
-  const activation = await getConfig("activation_ok");
-  const imported = await getConfig("imported_ok");
-  const cohort = await getConfig("user_cohort");
-  let configEntryCount = 0;
-  let countConfigFailed = false;
-  try {
-    configEntryCount = await countConfigEntries({
-      excludeKeys: ACTIVATION_COHORT_EXCLUDED_CONFIG_KEYS,
-    });
-  } catch {
-    countConfigFailed = true;
-    console.warn("[Activation] config count failed; applying legacy-safe mode");
-  }
-  const activationGate = resolveActivationGate({
-    cohortValue: cohort?.value,
-    activationValue: activation?.value,
-    importedValue: imported?.value,
-    hasExistingConfig: resolveHasExistingConfig(
-      configEntryCount,
-      countConfigFailed,
-    ),
-  });
-
-  if (activationGate.shouldPersistCohort) {
-    await setConfig("user_cohort", activationGate.cohort);
-  }
-
-  if (activationGate.shouldShowActivation) {
-    await showActivationScreen();
-    return;
-  }
-
-  // 1 Date active (source unique)
+  // 0 Date active (source unique)
   if (!getActiveDateISO()) {
     setActiveDateISO(toISODateLocal(new Date()));
   }
 
-  // 1b Banner version (si changement)
+  // 0b Banner version (si changement)
   notifyVersionChange();
 
-  // 2 UI principale
+  // 1 UI principale
   initMenu();
   bindAppRouteListeners();
   renderRouteFromLocation();
@@ -151,10 +105,10 @@ async function initApp() {
     stabilizeViewportAfterControlledReload();
   }
 
-  // 3 Services non bloquants
+  // 2 Services non bloquants
   initServicesIfNeeded();
 
-  // 4 Service Worker + bannire
+  // 3 Service Worker + bannire
   await registerServiceWorker(showUpdateBanner);
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.addEventListener("controllerchange", () => {
@@ -162,13 +116,13 @@ async function initApp() {
     });
   }
 
-  // 4b Debug : version DB (console uniquement)
+  // 3b Debug : version DB (console uniquement)
   console.info(`[DB] version ${DB_VERSION}`);
 
-  // 5 Bloquer le "pull-to-refresh" mobile
+  // 4 Bloquer le "pull-to-refresh" mobile
   disablePullToRefresh();
 
-  // 6 Bloquer zoom natif (double tap / pinch)
+  // 5 Bloquer zoom natif (double tap / pinch)
   disableNativeZoom();
   disableFullscreen();
 
@@ -631,6 +585,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 
