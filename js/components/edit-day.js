@@ -299,7 +299,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     extraInput.placeholder =
       selectedExtraType === "major"
         ? "Nombre de minutes majorees (ex : 60)"
-        : "Nombre de minutes non majorees (ex : 90)";
+        : "Nombre de minutes non majorees (ex : 60)";
     updateExtraTypeButtons();
   }
 
