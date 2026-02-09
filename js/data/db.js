@@ -410,3 +410,18 @@ export async function setConfig(key, value) {
   });
 }
 
+export async function countConfigEntries(options = {}) {
+  const excludeKeys = Array.isArray(options.excludeKeys)
+    ? options.excludeKeys.map((key) => String(key))
+    : [];
+  const { db } = await openDB();
+  const keys = await executeQuery(db, STORES.CONFIG, (store) => store.getAllKeys());
+  if (!Array.isArray(keys)) return 0;
+  if (excludeKeys.length === 0) return keys.length;
+
+  const excluded = new Set(excludeKeys);
+  return keys.reduce((count, key) => {
+    return excluded.has(String(key)) ? count : count + 1;
+  }, 0);
+}
+

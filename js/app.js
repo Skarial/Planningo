@@ -8,10 +8,19 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.70";
+export const APP_VERSION = "2.0.73";
 
-import { DB_VERSION, getConfig } from "./data/db.js";
+import {
+  DB_VERSION,
+  countConfigEntries,
+  getConfig,
+  setConfig,
+} from "./data/db.js";
 import { showActivationScreen } from "./components/activationScreen.js";
+import {
+  resolveActivationGate,
+  resolveHasExistingConfig,
+} from "./domain/activation.js";
 
 import { registerServiceWorker } from "./sw/sw-register.js";
 
@@ -87,7 +96,30 @@ async function initApp() {
   // 0 Activation (bloquante)
   const activation = await getConfig("activation_ok");
   const imported = await getConfig("imported_ok");
-  if (activation?.value !== "true" && imported?.value !== "true") {
+  const cohort = await getConfig("user_cohort");
+  let configEntryCount = 0;
+  let countConfigFailed = false;
+  try {
+    configEntryCount = await countConfigEntries({ excludeKeys: ["user_cohort"] });
+  } catch {
+    countConfigFailed = true;
+    console.warn("[Activation] config count failed; applying legacy-safe mode");
+  }
+  const activationGate = resolveActivationGate({
+    cohortValue: cohort?.value,
+    activationValue: activation?.value,
+    importedValue: imported?.value,
+    hasExistingConfig: resolveHasExistingConfig(
+      configEntryCount,
+      countConfigFailed,
+    ),
+  });
+
+  if (activationGate.shouldPersistCohort) {
+    await setConfig("user_cohort", activationGate.cohort);
+  }
+
+  if (activationGate.shouldShowActivation) {
     await showActivationScreen();
     return;
   }
@@ -564,6 +596,9 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
+
+
 
 
 
