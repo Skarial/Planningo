@@ -77,6 +77,35 @@ test("daily-rest-warning does not warn when rest is at least 11h", () => {
   assert(result.restMinutes === 720, "expected 12h of rest");
 });
 
+test("daily-rest-warning does not warn when rest is exactly 11h", () => {
+  const servicesByCode = makeServicesByCode([
+    {
+      code: "2400",
+      periodes: [
+        { libelle: "Période principale", plages: [{ debut: "12:00", fin: "18:00" }] },
+      ],
+    },
+    {
+      code: "2401",
+      periodes: [
+        { libelle: "Période principale", plages: [{ debut: "05:00", fin: "13:00" }] },
+      ],
+    },
+  ]);
+
+  const result = computeDailyRestWarning({
+    previousDateISO: "2026-03-10",
+    previousEntry: { serviceCode: "2400" },
+    currentDateISO: "2026-03-11",
+    currentServiceCode: "2401",
+    servicesByCode,
+    saisonConfig: null,
+  });
+
+  assert(result.shouldWarn === false, "rest == 11h should not warn");
+  assert(result.restMinutes === 660, "expected 11h of rest");
+});
+
 test("daily-rest-warning stays silent when bounds are missing", () => {
   const result = computeDailyRestWarning({
     previousDateISO: "2026-03-10",

@@ -67,6 +67,7 @@ Aucun commit ne doit être effectué si un point est en échec.
 - [ ] Aucun code mort ou temporaire laissé en place
 - [ ] Les noms de variables et fonctions sont explicites
 - [ ] Aucun `console.log` résiduel
+- [ ] Vérifier les modifications automatiques de version sur `js/app.js` et `service-worker.js` avant push
 
 ## Tests
 
@@ -84,4 +85,3 @@ Aucun commit ne doit être effectué si un point est en échec.
 
 Un commit effectué sans validation complète de cette checklist
 est considéré comme invalide.
-

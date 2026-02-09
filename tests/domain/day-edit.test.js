@@ -67,7 +67,9 @@ test("day-edit normalize/parse formation minutes", () => {
   assert(normalizeFormationMinutes(61.2) === 61, "minutes should be rounded");
   assert(normalizeFormationMinutes(-3) === 0, "negative minutes should be rejected");
   assert(parseFormationInputMinutes("07:00") === 420, "HH:MM should be parsed");
+  assert(parseFormationInputMinutes("7h") === 420, "Hh without minutes should be parsed");
   assert(parseFormationInputMinutes("7h30") === 450, "HhMM should be parsed");
+  assert(parseFormationInputMinutes("7 h 05") === 425, "HhMM with spaces should be parsed");
   assert(parseFormationInputMinutes("420") === 420, "minutes input should be parsed");
   assert(parseFormationInputMinutes("75,4") === 75, "comma decimal should be parsed");
   assert(parseFormationInputMinutes("07:70") === 0, "invalid HH:MM should return zero");
@@ -146,6 +148,22 @@ test("day-edit buildSaveEntryPayload keeps exact extra rule for worked day", () 
   assert(formation.formationMinutes === 330, "formation minutes should be saved");
 });
 
+test("day-edit buildSaveEntryPayload keeps empty formation duration at zero", () => {
+  const payload = buildSaveEntryPayload({
+    dateISO: "2026-03-16",
+    rawCode: "FORMATION",
+    previousEntry: { serviceCode: "FORMATION", extra: false },
+    panierEnabled: false,
+    rawFormationMinutes: " ",
+    rawMajorExtraMinutes: "",
+    rawNonMajorExtraMinutes: "",
+    rawMissingMinutes: "",
+  });
+
+  assert(payload.serviceCode === "FORMATION", "service should stay FORMATION");
+  assert(payload.formationMinutes === 0, "empty formation input should stay at zero");
+});
+
 test("day-edit buildSaveEntryPayload clears service and extra on empty code", () => {
   const payload = buildSaveEntryPayload({
     dateISO: "2026-03-14",
@@ -192,8 +210,10 @@ test("day-edit buildSaveEntryPayload enforces conges constraints", () => {
 test("day-edit shouldMarkAlarmResync matches morning service behavior", () => {
   assert(shouldMarkAlarmResync("DM") === true, "DM should be morning");
   assert(shouldMarkAlarmResync("2911") === true, "odd numeric service should be morning");
+  assert(shouldMarkAlarmResync(" 2911 ") === true, "trimmed odd service should be morning");
   assert(shouldMarkAlarmResync("DAM") === false, "DAM should not be morning");
   assert(shouldMarkAlarmResync("2910") === false, "even numeric service should not be morning");
+  assert(shouldMarkAlarmResync("FORMATION") === false, "text services should not be morning");
 });
 
 test("day-edit getInitialServiceCode returns current service", () => {
