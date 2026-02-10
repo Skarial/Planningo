@@ -65,7 +65,7 @@
 
 #tetribus #header h1 {
   font-size: 20px;
-  color: #e86f23;
+  color: #f3701e;
 }
 
 #tetribus #score,
@@ -78,7 +78,7 @@
 #tetribus #score-value,
 #tetribus #level-value {
   font-weight: bold;
-  color: #ff8a3a;
+  color: #f3701e;
 }
 
 #tetribus #tetribus-back {
@@ -121,7 +121,7 @@
   width: 18px;
   height: 18px;
   display: block;
-  background-color: #ff8a3a;
+  background-color: #f3701e;
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
@@ -242,7 +242,7 @@
 }
 
 #tetribus #restart-btn {
-  background: #ff8a3a;
+  background: #f3701e;
   color: #ffffff;
   border: none;
   padding: 15px 35px;

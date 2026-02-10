@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.82";
+export const APP_VERSION = "2.0.83";
 
 import {
   DB_VERSION,
@@ -430,7 +430,7 @@ function showVersionBanner(prevVersion, nextVersion) {
         <span>Version ${prevVersion} -> ${nextVersion}</span>
       </div>
       <div class="update-actions">
-        <button class="btn-primary" id="version-reload">Recharger</button>
+        <button class="btn-primary" id="version-reload">Mettre à jour</button>
         <button class="btn-secondary" id="version-dismiss">OK</button>
       </div>
     </div>
@@ -585,6 +585,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 

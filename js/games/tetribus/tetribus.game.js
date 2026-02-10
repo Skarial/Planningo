@@ -105,7 +105,7 @@ export const Tetribus = {
     },
     {
       name: "L",
-      color: "#f0a000",
+      color: "#f3701e",
       shapes: [
         [
           [0, 0, 1],

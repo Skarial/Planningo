@@ -1,10 +1,10 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    1. VARIABLES & BASE
    ========================================================================== */
 
 :root {
-  --color-accent: #e86f23;
-  --color-accent-dark: #cf5d14;
+  --color-accent: #f3701e;
+  --color-accent-dark: #f3701e;
   --color-ink: #1d1d1d;
   --color-muted: #8b8b8b;
   --color-soft: #b8b8b8;
@@ -13,7 +13,7 @@
   --color-service: #2f2f2f;
   --color-time: #7a8298;
   --color-duration: #5b8c5a;
-  --color-weekday: #d7854b;
+  --color-weekday: #f3701e;
   --color-home-info: #8fb3ff;
 
   --bg-body: #d7d7d7;
@@ -82,8 +82,8 @@ textarea {
   appearance: none;
 }
 
-/* Bloque la sélection/callout natifs sur l'UI mobile.
-   On garde la sélection active dans les champs éditables. */
+/* Bloque la sÃ©lection/callout natifs sur l'UI mobile.
+   On garde la sÃ©lection active dans les champs Ã©ditables. */
 *:not(input):not(textarea):not([contenteditable="true"]) {
   -webkit-user-select: none;
   user-select: none;
@@ -121,7 +121,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 /* ==========================================================================
-   2. SCROLL AUTORISÉ
+   2. SCROLL AUTORISÃ‰
    ========================================================================== */
 
 #view-home {
@@ -147,7 +147,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 /* ==========================================================================
-   3. HEADER FIXE (MENU + ÉDITER)
+   3. HEADER FIXE (MENU + Ã‰DITER)
    ========================================================================== */
 
 .home-header {
@@ -163,7 +163,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   padding-top: 12px;
 }
 
-/* Bouton Éditer */
+/* Bouton Ã‰diter */
 #edit-btn {
   font-size: 1rem;
   font-weight: 600;
@@ -189,7 +189,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 /* ==========================================================================
-   4. NAVIGATION MOIS (FLÈCHES)
+   4. NAVIGATION MOIS (FLÃˆCHES)
    ========================================================================== */
 .month-nav {
   display: flex;
@@ -277,7 +277,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 /* ==========================================================================
-   5. HEADER JOUR ACTIF — MAQUETTE
+   5. HEADER JOUR ACTIF â€” MAQUETTE
    ========================================================================== */
 
 .day-header {
@@ -527,7 +527,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 
 
 /* ==========================================================================
-   5bis. ÉDITION JOUR — PANNEAU DE SUGGESTIONS
+   5bis. Ã‰DITION JOUR â€” PANNEAU DE SUGGESTIONS
    ========================================================================== */
 
 .edit-panel {
@@ -606,7 +606,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 /* ==========================================================================
-   6. GUIDED MONTH — SAISIE DU PLANNING
+   6. GUIDED MONTH â€” SAISIE DU PLANNING
    ========================================================================== */
 
 #view-guided-month {
@@ -1761,7 +1761,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   display: flex;
 }
 /* =========================
-   HOME — CALENDRIER CIRCULAIRE
+   HOME â€” CALENDRIER CIRCULAIRE
    ========================= */
 
 .home-month {
@@ -1847,7 +1847,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   margin-top: 18px;
 }
 /* ==========================================================================
-   MENU LATÉRAL — ISOLATION STRICTE (CORRECTION)
+   MENU LATÃ‰RAL â€” ISOLATION STRICTE (CORRECTION)
    ========================================================================== */
 
 /* Overlay */
@@ -2338,7 +2338,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 /* ==========================================================
-   NOTIFICATION MISE À JOUR (TOP FLOATING)
+   NOTIFICATION MISE Ã€ JOUR (TOP FLOATING)
    ========================================================== */
 
 .update-banner {
@@ -2886,3 +2886,4 @@ body.menu-open #consult-toggle {
 
 
 
+
