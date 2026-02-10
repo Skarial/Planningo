@@ -15,6 +15,8 @@
   --color-duration: #5b8c5a;
   --color-weekday: #f3701e;
   --color-home-info: #8fb3ff;
+  --color-day-selected: #cf885f;
+  --color-day-button: #3a3a3a;
 
   --bg-body: #d7d7d7;
   --border-color: #c2c2c2;
@@ -1787,7 +1789,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   font-weight: 600;
   line-height: 1;
 
-  background: #3a3a3a;
+  background: var(--color-day-button);
   color: #ffffff;
 
   cursor: pointer;
@@ -1810,7 +1812,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 .day-circle.active {
-  background: #cf885f;
+  background: var(--color-day-selected);
   color: #ffffff;
 }
 
@@ -2407,15 +2409,15 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 
 .update-actions #version-reload,
 .update-actions #update-reload {
-  background: #cf885f;
+  background: var(--color-day-selected);
   color: #ffffff;
-  border: 1px solid #cf885f;
+  border: 1px solid var(--color-day-selected);
 }
 
 .update-actions #version-dismiss {
-  background: #3a3a3a;
+  background: var(--color-day-button);
   color: #ffffff;
-  border: 1px solid #3a3a3a;
+  border: 1px solid var(--color-day-button);
 }
 
 .update-actions button:active {
