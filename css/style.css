@@ -1400,11 +1400,12 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 .edit-day-view .settings-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 14px;
+  margin-top: 6px;
 }
 
 .edit-day-view .edit-day-card {
-  gap: 10px;
+  gap: 14px;
 }
 
 .edit-day-view .edit-day-summary-block {
@@ -1436,7 +1437,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 .edit-day-view .edit-day-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 14px;
 }
 
 .edit-day-view .edit-day-section-title {
@@ -1467,6 +1468,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+  margin-bottom: 2px;
 }
 
 .edit-day-view .edit-day-chip-input {
@@ -1579,7 +1581,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 .edit-day-view .edit-day-panier-help[data-panier-on="true"] {
-  display: block;
+  display: none;
 }
 
 .edit-day-view .settings-actions .settings-btn {

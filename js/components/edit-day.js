@@ -246,7 +246,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   const panierDetails = document.createElement("p");
   panierDetails.className = "edit-day-help edit-day-panier-help";
   panierDetails.dataset.panierOn = "false";
-  panierDetails.textContent = "Panier activ\u00E9";
+  panierDetails.textContent = "";
 
   const suggestions = document.createElement("div");
   suggestions.className = "settings-periods";
@@ -269,9 +269,9 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   serviceSection.append(serviceTitle, inputLabel, input, formationLabel, formationInput, suggestions);
   hoursSection.append(hoursTitle, extraTypeLabel, extraTypeRow, extraLabel, extraInput);
   missingSection.append(missingHelp, missingInput);
-  optionsSection.append(optionsTitle, panierRow, panierDetails);
+  optionsSection.append(panierRow, panierDetails);
 
-  card.append(summary, serviceSection, hoursSection, missingSection, optionsSection, actions);
+  card.append(summary, serviceSection, optionsSection, hoursSection, missingSection, actions);
   root.appendChild(card);
 
   let isPrefilled = false;
@@ -417,6 +417,9 @@ export async function renderEditDayView(container, { dateISO } = {}) {
       summaryLine3.innerHTML =
         "Heures suppl\u00E9mentaires major\u00E9es : <strong>00:00</strong>";
       summaryLine4.innerHTML = "Heures d\u00E9duites : <strong>00:00</strong>";
+      summaryLine2.hidden = true;
+      summaryLine3.hidden = true;
+      summaryLine4.hidden = true;
       syncPanierDetailsState();
       return;
     }
@@ -445,6 +448,9 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     summaryLine4.innerHTML = `Heures d\u00E9duites : <strong>${formatMissingMinutes(missingMinutes)}</strong>${
       details.length > 0 ? ` - ${details.join(" - ")}` : ""
     }`;
+    summaryLine2.hidden = !panierToggle.checked;
+    summaryLine3.hidden = (isMajorType ? majorMinutes : nonMajorMinutes) <= 0;
+    summaryLine4.hidden = missingMinutes <= 0;
     syncPanierDetailsState();
   }
 
