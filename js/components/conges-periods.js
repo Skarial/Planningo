@@ -43,11 +43,11 @@ export async function renderCongesPeriodsView() {
 
   const title = document.createElement("div");
   title.className = "settings-title";
-  title.textContent = "Cong\u00e9s & p\u00e9riodes";
+  title.textContent = "Congés & période";
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
-  subtitle.textContent = "G\u00e9rer vos cong\u00e9s et la p\u00e9riode saisonni\u00e8re";
+  subtitle.textContent = "Gérer vos congés et la période saisonnière";
 
   header.append(title, subtitle);
 
@@ -60,7 +60,7 @@ export async function renderCongesPeriodsView() {
     btn.type = "button";
     btn.className = "tabs-btn";
     btn.dataset.tab = tab;
-    btn.textContent = tab === "conges" ? "Cong\u00e9s" : "P\u00e9riodes";
+    btn.textContent = tab === "conges" ? "Congés" : "Période";
     tabs.appendChild(btn);
     tabButtons[tab] = btn;
   });
@@ -203,4 +203,7 @@ export async function renderCongesPeriodsView() {
 
   setActive(0);
 }
+
+
+
 
