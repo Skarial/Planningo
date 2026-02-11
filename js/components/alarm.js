@@ -384,7 +384,7 @@ export async function renderAlarmView(options = {}) {
   labelOffset.textContent = "Avance (minutes)";
   const inputOffset = document.createElement("input");
   inputOffset.type = "number";
-  inputOffset.min = "0";
+  inputOffset.min = String(LIMITS.offsetMin);
   inputOffset.max = String(LIMITS.offsetMax);
   inputOffset.step = "2";
 
@@ -770,7 +770,6 @@ export async function renderAlarmView(options = {}) {
     runImport();
   }
 }
-
 
 
 

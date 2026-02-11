@@ -124,9 +124,6 @@ export function getServiceSuggestions({
   result.FORMATION.sort((a, b) =>
     a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
   );
-  result.FORMATION.sort((a, b) =>
-    a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
-  );
   result.TAD.sort((a, b) =>
     a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
   );

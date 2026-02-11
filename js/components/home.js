@@ -35,6 +35,7 @@ import {
   resolvePanierEnabled,
 } from "../domain/day-edit.js";
 import { getHolidayNameForDate } from "../domain/holidays-fr.js";
+import { isBaseMorningServiceCode } from "../domain/morning-service.js";
 import {
   dismissAlarmResyncNotice,
   isAlarmResyncDismissed,
@@ -98,21 +99,7 @@ function formatDuration(minutes) {
 }
 
 function isMorningServiceCode(serviceCode) {
-  if (typeof serviceCode !== "string" && typeof serviceCode !== "number") {
-    return false;
-  }
-  const normalized = String(serviceCode).trim().toUpperCase();
-  if (!normalized) return false;
-  if (normalized === "DM") return true;
-  if (normalized === "DAM") return false;
-  const tadMatch = normalized.match(/^(?:TAD|TD)\s*(\d+)$/);
-  if (tadMatch) {
-    const tadNumber = Number(tadMatch[1]);
-    return Number.isInteger(tadNumber) && [1, 3, 5].includes(tadNumber);
-  }
-  if (!/^\d{3,}$/.test(normalized)) return false;
-  const value = Number(normalized);
-  return Number.isInteger(value) && value % 2 === 1;
+  return isBaseMorningServiceCode(serviceCode);
 }
 
 function shouldAddExtraMinutes(service) {

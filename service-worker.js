@@ -57,6 +57,7 @@ const ESSENTIAL_ASSETS = [
   "./js/domain/conges.js",
   "./js/domain/day-status.js",
   "./js/domain/holidays-fr.js",
+  "./js/domain/morning-service.js",
   "./js/domain/periods.js",
   "./js/domain/service-model.js",
   "./js/domain/service-panier.js",
@@ -208,6 +209,7 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
+
 
 
 

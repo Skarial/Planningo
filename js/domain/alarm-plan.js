@@ -5,6 +5,12 @@
 */
 
 // js/domain/alarm-plan.js
+import {
+  getServiceCodeVariants,
+  isBaseMorningServiceCode,
+  isTadServiceCode,
+  normalizeServiceCode,
+} from "./morning-service.js";
 
 function parseTimeToMinutes(value) {
   if (typeof value !== "string") return null;
@@ -80,31 +86,6 @@ function formatOffsetLabel(minutes) {
 const FALLBACK_START_MINUTES_BY_CODE = {
   DM: 5 * 60 + 45,
 };
-const TAD_MORNING_NUMBERS = new Set([1, 3, 5]);
-
-function parseTadNumber(value) {
-  const normalized = String(value || "").trim().toUpperCase();
-  const match = normalized.match(/^(?:TAD|TD)\s*(\d+)$/);
-  if (!match) return null;
-  const number = Number(match[1]);
-  if (!Number.isInteger(number)) return null;
-  return number;
-}
-
-function getServiceCodeVariants(rawCode) {
-  const normalized = String(rawCode || "").trim().toUpperCase();
-  if (!normalized) return [];
-  const variants = new Set([normalized, normalized.replace(/\s+/g, "")]);
-  const tadNumber = parseTadNumber(normalized);
-  if (tadNumber != null) {
-    variants.add(`TAD${tadNumber}`);
-    variants.add(`TAD ${tadNumber}`);
-    variants.add(`TD${tadNumber}`);
-    variants.add(`TD ${tadNumber}`);
-  }
-  return Array.from(variants);
-}
-
 function getServiceStartMinutes(service, periodLabel) {
   if (!service || !Array.isArray(service.periodes)) return null;
 
@@ -137,17 +118,11 @@ function getServiceStartMinutes(service, periodLabel) {
 }
 
 function isMorningServiceCode(serviceCode, service, periodLabel) {
-  if (typeof serviceCode !== "string" && typeof serviceCode !== "number") {
-    return false;
-  }
-  const normalized = String(serviceCode).trim().toUpperCase();
+  const normalized = normalizeServiceCode(serviceCode);
+  if (!isBaseMorningServiceCode(normalized)) return false;
   if (normalized === "DM") return true;
-  if (normalized === "DAM") return false;
-  const tadNumber = parseTadNumber(normalized);
-  if (tadNumber != null) {
-    return TAD_MORNING_NUMBERS.has(tadNumber);
-  }
-  // Ignore line-only values like "21"/"23": we only accept real service codes.
+  if (isTadServiceCode(normalized)) return true;
+  // Ignore line-only values like "21"/"23": we only accept real numeric service codes.
   if (!/^\d{3,}$/.test(normalized)) return false;
   const value = Number(normalized);
   if (!Number.isInteger(value)) return false;
