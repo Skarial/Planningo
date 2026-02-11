@@ -115,6 +115,13 @@ function formatOffsetLabel(minutes) {
   return `${m}min`;
 }
 
+function formatDisplayDate(dateISO) {
+  const value = String(dateISO || "");
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return value;
+  return `${match[3]}-${match[2]}-${match[1]}`;
+}
+
 function isAndroidDevice() {
   try {
     return /android/i.test(String(navigator?.userAgent || ""));
@@ -189,7 +196,7 @@ function createStatus() {
       clearTimeout(status.__timer);
       status.__timer = setTimeout(() => {
         status.hidden = true;
-      }, 2600);
+      }, 7000);
     },
   };
 }
@@ -507,15 +514,6 @@ export async function renderAlarmView(options = {}) {
     <p>Ensuite, utiliséz <strong>Importer dans Réveil</strong> pour envoyer le fichier vers l'application Réveil.</p>
   `;
 
-  const noticeRememberLabel = document.createElement("label");
-  noticeRememberLabel.className = "alarm-notice-remember";
-  const noticeRemember = document.createElement("input");
-  noticeRemember.type = "checkbox";
-  noticeRemember.checked = true;
-  const noticeRememberText = document.createElement("span");
-  noticeRememberText.textContent = "Ne plus afficher";
-  noticeRememberLabel.append(noticeRemember, noticeRememberText);
-
   const noticeCloseBtn = document.createElement("button");
   noticeCloseBtn.type = "button";
   noticeCloseBtn.className = "settings-btn primary";
@@ -524,7 +522,6 @@ export async function renderAlarmView(options = {}) {
   noticeModal.append(
     noticeTitle,
     noticeBody,
-    noticeRememberLabel,
     noticeCloseBtn,
   );
   noticeOverlay.appendChild(noticeModal);
@@ -535,9 +532,7 @@ export async function renderAlarmView(options = {}) {
   }
 
   function closeNotice() {
-    if (noticeRemember.checked) {
-      setAlarmNoticeSeen();
-    }
+    setAlarmNoticeSeen();
     noticeOverlay.classList.add("hidden");
   }
 
@@ -648,15 +643,26 @@ export async function renderAlarmView(options = {}) {
         return;
       }
       if (planCheck.count === 0) {
+        const startDisplay = formatDisplayDate(startISO);
+        const endDisplay = formatDisplayDate(endISO);
         status.show(
-          `Aucune alarme générée entre ${startISO} et ${endISO}. Vérifiez le planning et les services du matin.`,
+          `Aucune alarme générée entre ${startDisplay} et ${endDisplay}. Vérifiez le planning et les services du matin.`,
         );
         return;
       }
       const nextAlarm = plan.alarms[0];
-      status.show(
-        `Prochaine alarme : ${nextAlarm.serviceDate} à ${nextAlarm.serviceStart} (déclenchement ${nextAlarm.alarmAt}).`,
-      );
+      const alarmAtDate = new Date(nextAlarm.alarmAt);
+      const alarmDateISO = Number.isNaN(alarmAtDate.getTime())
+        ? String(nextAlarm.alarmAt).slice(0, 10)
+        : toISODateLocal(alarmAtDate);
+      const alarmDateParts = String(alarmDateISO).split("-");
+      const alarmDate = alarmDateParts.length === 3
+        ? `${alarmDateParts[2]}-${alarmDateParts[1]}-${alarmDateParts[0]}`
+        : alarmDateISO;
+      const alarmTime = Number.isNaN(alarmAtDate.getTime())
+        ? String(nextAlarm.alarmAt).slice(11, 16)
+        : `${String(alarmAtDate.getHours()).padStart(2, "0")}:${String(alarmAtDate.getMinutes()).padStart(2, "0")}`;
+      status.show(`Prochaine alarme : ${alarmDate} à ${alarmTime}.`);
     } catch {
       status.show("Erreur pendant la vérification du plan.");
     }
@@ -690,8 +696,10 @@ export async function renderAlarmView(options = {}) {
         return;
       }
       if (planCheck.count === 0) {
+        const startDisplay = formatDisplayDate(startISO);
+        const endDisplay = formatDisplayDate(endISO);
         status.show(
-          `Aucune alarme à importer entre ${startISO} et ${endISO}. Vérifiez le planning et les services du matin.`,
+          `Aucune alarme à importer entre ${startDisplay} et ${endDisplay}. Vérifiez le planning et les services du matin.`,
         );
         clearAlarmResyncPending();
         return;
@@ -729,6 +737,11 @@ export async function renderAlarmView(options = {}) {
     runImport();
   }
 }
+
+
+
+
+
 
 
 

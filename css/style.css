@@ -1157,15 +1157,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   line-height: 1.45;
   color: #2d2d2d;
 }
-
-.alarm-notice-remember {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: var(--color-muted);
-}
-
+`n
 body.onboarding-lock {
   overscroll-behavior: none;
 }
@@ -2951,6 +2943,8 @@ body.menu-open #consult-toggle {
 .month-nav.month-nav-with-today {
   gap: 18px;
 }
+
+
 
 
 
