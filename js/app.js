@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.93";
+export const APP_VERSION = "2.0.94";
 
 import {
   DB_VERSION,
@@ -127,11 +127,6 @@ async function initApp() {
   // 5 Bloquer zoom natif (double tap / pinch)
   disableNativeZoom();
   disableFullscreen();
-
-  // Toast migration (si necessaire)
-  window.addEventListener("db:migrated", () => {
-    showToast("Migration terminée");
-  });
 }
 
 function renderRouteFromLocation() {
@@ -587,6 +582,8 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
+
 
 
 

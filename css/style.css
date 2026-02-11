@@ -1172,7 +1172,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   z-index: 10100;
   background: rgba(20, 24, 31, 0.52);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   padding:
     calc(18px + var(--safe-top))
