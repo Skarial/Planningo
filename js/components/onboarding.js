@@ -196,12 +196,7 @@ export async function showOnboardingIfNeeded() {
     await showGuidedMonth();
   }
 
-  async function skipImmediately() {
-    removeOnboarding(overlay, previousOverflow, spotlightTargets);
-    await markSeenSafely();
-  }
-
-  skipBtn.addEventListener("click", skipImmediately);
+  skipBtn.addEventListener("click", finishAndGoGuided);
   prevBtn.addEventListener("click", async () => {
     if (stepIndex <= 0) return;
     stepIndex -= 1;
@@ -218,4 +213,5 @@ export async function showOnboardingIfNeeded() {
 
   await renderStep();
 }
+
 
