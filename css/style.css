@@ -1086,6 +1086,50 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 
+.alarm-view .alarm-install-toggle {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.alarm-view .alarm-checks-toggle {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.alarm-view .alarm-install-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alarm-view .alarm-install-panel[hidden] {
+  display: none;
+}
+
+.alarm-view .alarm-checks-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alarm-view .alarm-checks-panel[hidden] {
+  display: none;
+}
+
 .alarm-view .alarm-diagnostics-panel {
   display: flex;
   flex-direction: column;

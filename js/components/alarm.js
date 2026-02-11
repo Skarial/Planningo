@@ -412,6 +412,15 @@ export async function renderAlarmView(options = {}) {
   sectionInstallTitle.className = "alarm-section-title";
   sectionInstallTitle.textContent = "Installation";
 
+  const installToggleBtn = document.createElement("button");
+  installToggleBtn.type = "button";
+  installToggleBtn.className = "alarm-install-toggle";
+  installToggleBtn.textContent = "Afficher l'installation ▾";
+
+  const installPanel = document.createElement("div");
+  installPanel.className = "alarm-install-panel";
+  installPanel.hidden = true;
+
   const installApkBtn = document.createElement("button");
   installApkBtn.className = "settings-btn";
   installApkBtn.type = "button";
@@ -437,6 +446,13 @@ export async function renderAlarmView(options = {}) {
   const sectionChecksTitle = document.createElement("h3");
   sectionChecksTitle.className = "alarm-section-title";
   sectionChecksTitle.textContent = "Vérifications";
+  const checksToggleBtn = document.createElement("button");
+  checksToggleBtn.type = "button";
+  checksToggleBtn.className = "alarm-checks-toggle";
+  checksToggleBtn.textContent = "Afficher les vérifications ▾";
+  const checksPanel = document.createElement("div");
+  checksPanel.className = "alarm-checks-panel";
+  checksPanel.hidden = true;
   const checksActions = document.createElement("div");
   checksActions.className = "alarm-check-actions";
 
@@ -470,17 +486,19 @@ export async function renderAlarmView(options = {}) {
     actionBtn,
   );
 
-  sectionInstall.append(sectionInstallTitle, installApkBtn);
+  installPanel.append(installApkBtn);
+  sectionInstall.append(sectionInstallTitle, installToggleBtn, installPanel);
 
   checksActions.append(previewBtn);
   diagnosticsPanel.append(diagnoseBtn, diagnosticsList);
-  sectionChecks.append(
-    sectionChecksTitle,
+  checksPanel.append(
     checksActions,
+    status.node,
     diagnosticsToggleBtn,
     diagnosticsPanel,
     reliabilityHint,
   );
+  sectionChecks.append(sectionChecksTitle, checksToggleBtn, checksPanel);
 
   const footerActions = document.createElement("div");
   footerActions.className = "alarm-footer-actions";
@@ -491,7 +509,6 @@ export async function renderAlarmView(options = {}) {
     sectionInstall,
     sectionChecks,
     footerActions,
-    status.node,
   );
   root.append(header, card);
   view.appendChild(root);
@@ -676,6 +693,22 @@ export async function renderAlarmView(options = {}) {
       : "Afficher le diagnostic ▾";
   });
 
+  checksToggleBtn.addEventListener("click", () => {
+    const isHidden = checksPanel.hidden;
+    checksPanel.hidden = !isHidden;
+    checksToggleBtn.textContent = isHidden
+      ? "Masquer les vérifications ▴"
+      : "Afficher les vérifications ▾";
+  });
+
+  installToggleBtn.addEventListener("click", () => {
+    const isHidden = installPanel.hidden;
+    installPanel.hidden = !isHidden;
+    installToggleBtn.textContent = isHidden
+      ? "Masquer l'installation ▴"
+      : "Afficher l'installation ▾";
+  });
+
   diagnoseBtn.addEventListener("click", () => {
     renderDiagnostics();
     status.show("Diagnostic mis à jour.");
@@ -737,9 +770,6 @@ export async function renderAlarmView(options = {}) {
     runImport();
   }
 }
-
-
-
 
 
 
