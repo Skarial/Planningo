@@ -1166,6 +1166,61 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   color: var(--color-muted);
 }
 
+.onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10100;
+  background: rgba(20, 24, 31, 0.52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    calc(18px + var(--safe-top))
+    calc(18px + var(--safe-right))
+    calc(18px + var(--safe-bottom))
+    calc(18px + var(--safe-left));
+}
+
+.onboarding-modal {
+  width: min(100%, 520px);
+  background: #f6f6f6;
+  border: 1px solid #dddddd;
+  border-radius: 14px;
+  box-shadow: 0 20px 36px rgba(0, 0, 0, 0.24);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.onboarding-badge {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.onboarding-title {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--color-ink);
+}
+
+.onboarding-body {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #3f4b61;
+}
+
+.onboarding-actions {
+  margin-top: 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
 .tabs-view {
   height: 100%;
   display: flex;
