@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.95";
+export const APP_VERSION = "2.0.96";
 
 import {
   DB_VERSION,
@@ -101,14 +101,15 @@ async function initApp() {
   initMenu();
   bindAppRouteListeners();
   renderRouteFromLocation();
+
+  // Charger le catalogue avant l'onboarding pour garder toutes les suggestions.
+  await initServicesIfNeeded();
+
   await showOnboardingIfNeeded();
   prewarmSecondaryViews();
   if (consumeControlledReloadMarker()) {
     stabilizeViewportAfterControlledReload();
   }
-
-  // 2 Services non bloquants
-  initServicesIfNeeded();
 
   // 3 Service Worker + bannire
   await registerServiceWorker(showUpdateBanner);
@@ -582,6 +583,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 

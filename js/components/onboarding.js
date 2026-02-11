@@ -19,35 +19,61 @@ const ONBOARDING_SEEN_KEY = "onboarding_seen_v3";
 const ONBOARDING_STEPS = [
   {
     title: "Saisie guidée",
-    body: "Commencez ici pour remplir le mois. Cette vue est guidée avec des suggestions pour aller plus vite.",
+    body: "Commencez par saisir votre premier service ici. Touchez un type et/ou une ligne pour remplir rapidement votre mois.",
     view: "guided",
   },
   {
     title: "Mon planning",
-    body: "Cette vue permet de consulter les jours en sélectionnant une date sur le calendrier.",
+    body: "Touchez une date pour voir ou modifier un jour précis de votre planning.",
     view: "home",
   },
   {
     title: "Modifier un jour",
-    body: "Depuis le bloc Informations du jour, ouvrez Modifier pour ajuster un changement de planning pour ce jour.",
+    body: "Utilisez « Modifier » pour corriger un service, ajouter des heures sup ou un panier.",
     view: "edit-day",
   },
   {
     title: "Congés & période",
-    body: "Ici, vous saisissez les dates de congés. Elles s'implémentent directement dans le planning.",
+    body: "Entrez vos dates de congés ici. Elles se placent automatiquement dans le planning.",
     view: "conges-periods",
   },
   {
     title: "Changement de téléphone",
-    body: "En cas de changement de téléphone, exportez vos données depuis l'ancien. Après installation sur le nouveau téléphone, cliquez sur Importer pour retrouver le planning en l'état.",
+    body: "Sauvegardez ici vos données pour les restaurer sur un nouveau téléphone.",
     view: "phone-change",
   },
 ];
 
-function removeOnboarding(overlay, previousOverflow) {
+const STEP_SPOTLIGHT_SELECTORS = {
+  guided: [
+    "#view-guided-month .guided-section-label",
+    "#view-guided-month .guided-primary-grid",
+    "#view-guided-month .guided-lines-grid",
+  ],
+};
+
+function clearSpotlight(targets) {
+  targets.forEach((node) => node.classList.remove("onboarding-spotlight"));
+  targets.length = 0;
+}
+
+function applySpotlight(step, targets) {
+  clearSpotlight(targets);
+  const selectors = STEP_SPOTLIGHT_SELECTORS[step.view] || [];
+  selectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((node) => {
+      node.classList.add("onboarding-spotlight");
+      targets.push(node);
+    });
+  });
+}
+
+function removeOnboarding(overlay, previousOverflow, spotlightTargets) {
+  clearSpotlight(spotlightTargets);
   if (overlay && overlay.parentNode) {
     overlay.parentNode.removeChild(overlay);
   }
+  document.body.classList.remove("onboarding-lock");
   document.body.style.overflow = previousOverflow;
 }
 
@@ -137,9 +163,11 @@ export async function showOnboardingIfNeeded() {
   overlay.appendChild(card);
 
   const previousOverflow = document.body.style.overflow;
+  document.body.classList.add("onboarding-lock");
   document.body.style.overflow = "hidden";
   document.body.appendChild(overlay);
 
+  const spotlightTargets = [];
   let stepIndex = 0;
 
   async function renderStep() {
@@ -151,19 +179,29 @@ export async function showOnboardingIfNeeded() {
     nextBtn.textContent =
       stepIndex === ONBOARDING_STEPS.length - 1 ? "Terminer" : "Suivant";
     await showStepView(step);
+    applySpotlight(step, spotlightTargets);
   }
 
-  async function finish() {
+  async function markSeenSafely() {
     try {
       await setConfig(ONBOARDING_SEEN_KEY, true);
     } catch {
       // No-op: l'onboarding ne doit jamais bloquer l'usage de l'app.
     }
-    removeOnboarding(overlay, previousOverflow);
+  }
+
+  async function finishAndGoGuided() {
+    removeOnboarding(overlay, previousOverflow, spotlightTargets);
+    await markSeenSafely();
     await showGuidedMonth();
   }
 
-  skipBtn.addEventListener("click", finish);
+  async function skipImmediately() {
+    removeOnboarding(overlay, previousOverflow, spotlightTargets);
+    await markSeenSafely();
+  }
+
+  skipBtn.addEventListener("click", skipImmediately);
   prevBtn.addEventListener("click", async () => {
     if (stepIndex <= 0) return;
     stepIndex -= 1;
@@ -171,7 +209,7 @@ export async function showOnboardingIfNeeded() {
   });
   nextBtn.addEventListener("click", async () => {
     if (stepIndex >= ONBOARDING_STEPS.length - 1) {
-      await finish();
+      await finishAndGoGuided();
       return;
     }
     stepIndex += 1;
@@ -180,3 +218,4 @@ export async function showOnboardingIfNeeded() {
 
   await renderStep();
 }
+

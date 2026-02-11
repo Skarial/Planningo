@@ -1166,11 +1166,15 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   color: var(--color-muted);
 }
 
+body.onboarding-lock {
+  overscroll-behavior: none;
+}
+
 .onboarding-overlay {
   position: fixed;
   inset: 0;
   z-index: 10100;
-  background: rgba(20, 24, 31, 0.52);
+  background: rgba(20, 24, 31, 0.14);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -1179,9 +1183,12 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     calc(18px + var(--safe-right))
     calc(18px + var(--safe-bottom))
     calc(18px + var(--safe-left));
+
+  pointer-events: none;
 }
 
 .onboarding-modal {
+  pointer-events: auto;
   width: min(100%, 520px);
   background: #f6f6f6;
   border: 1px solid #dddddd;
@@ -1219,6 +1226,16 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
+}
+
+.onboarding-spotlight {
+  position: relative;
+  z-index: 1;
+  border-radius: 12px;
+  outline: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 0 4px rgba(243, 112, 30, 0.36),
+    0 14px 28px rgba(0, 0, 0, 0.35);
 }
 
 .tabs-view {
@@ -2934,15 +2951,31 @@ body.menu-open #consult-toggle {
 .month-nav.month-nav-with-today {
   gap: 18px;
 }
-
-
-
-
-
-
-
-
-
-
-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
