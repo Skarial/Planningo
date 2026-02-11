@@ -503,7 +503,7 @@ export async function renderAlarmView(options = {}) {
   noticeBody.innerHTML = `
     <p><strong>Important</strong> : le réveil intelligent s'occupe uniquement des <strong>services du matin</strong>.</p>
     <p><strong>Règle utilisée</strong> : <strong>DM</strong> et codes service numériques impairs (ex : DM, 2001, 2101).</p>
-    <p><strong>Avance (minutes)</strong> : nombre de minutes avant le début du service.</p>
+    <p><strong>Avance (minutes)</strong> : nombre de minutes où le réveil va sonner avant le début du service.</p>
     <p>Ensuite, utiliséz <strong>Importer dans Réveil</strong> pour envoyer le fichier vers l'application Réveil.</p>
   `;
 
@@ -729,6 +729,7 @@ export async function renderAlarmView(options = {}) {
     runImport();
   }
 }
+
 
 
 
