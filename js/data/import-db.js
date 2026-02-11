@@ -179,21 +179,35 @@ export async function importAllData() {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "application/json";
+    let settled = false;
+    const settle = (result) => {
+      if (settled) return;
+      settled = true;
+      resolve(result);
+    };
+
+    input.addEventListener("cancel", () => settle(false));
 
     input.onchange = async () => {
       const confirmed = confirm(
         "L'import remplacera toutes les donnees existantes. Continuer ",
       );
-      if (!confirmed) return;
+      if (!confirmed) {
+        settle(false);
+        return;
+      }
 
       const file = input.files[0];
-      if (!file) return;
+      if (!file) {
+        settle(false);
+        return;
+      }
 
       try {
         const text = await file.text();
         const data = JSON.parse(text);
         await importDatabase(data);
-        resolve();
+        settle(true);
       } catch (err) {
         alert("Fichier de sauvegarde invalide");
         reject(err);

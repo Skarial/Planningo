@@ -28,8 +28,8 @@ const ESSENTIAL_ASSETS = [
   "./service-worker.js",
   "./css/style.css",
   "./css/tetribus.css",
-  "./assets/icons/icon-192.png",
-  "./assets/icons/icon-512.png",
+  "./assets/icons/icon-192-v4.png",
+  "./assets/icons/icon-512-v4.png",
   "./assets/images/breakfast.png",
   "./js/app.js",
   "./js/router.js",
@@ -37,8 +37,6 @@ const ESSENTIAL_ASSETS = [
   "./js/utils.js",
   "./js/debug/runtime-log.js",
   "./js/components/menu.js",
-  "./js/adapters/activation.web.js",
-  "./js/components/activationScreen.js",
   "./js/data/db.js",
   "./js/data/device.js",
   "./js/data/import-db.js",
@@ -56,7 +54,6 @@ const ESSENTIAL_ASSETS = [
   "./js/state/month-calendar-state.js",
   "./js/state/month-navigation.js",
   "./js/state/ui-mode.js",
-  "./js/domain/activation.js",
   "./js/domain/conges.js",
   "./js/domain/day-status.js",
   "./js/domain/holidays-fr.js",
@@ -211,6 +208,7 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
+
 
 
 

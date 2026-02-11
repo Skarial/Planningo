@@ -77,7 +77,11 @@ export function openDB() {
           }
           resolve({ db, didMigrate });
         })
-        .catch((error) => reject(error));
+        .catch((error) => {
+          // Fail-safe: allow retry on next openDB() call if migration failed once.
+          migrationPromise = null;
+          reject(error);
+        });
     };
     request.onerror = () => reject(request.error);
   });
@@ -265,76 +269,16 @@ export async function addService(service) {
 // =======================
 
 window.savePlanningEntry = async function (entry) {
-  const { db } = await openDB();
-
-  await executeTransaction(db, STORES.PLANNING, "readwrite", (store) => {
-    store.put({
-      date: entry.date,
-      serviceCode: entry.serviceCode,
-      locked: entry.locked ?? false,
-      extra: entry.extra ?? false,
-      panierOverride:
-        typeof entry.panierOverride === "boolean" ? entry.panierOverride : null,
-      majorExtraMinutes: normalizeMajorExtraMinutes(entry.majorExtraMinutes),
-      nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(entry.nonMajorExtraMinutes),
-      missingMinutes: normalizeMissingMinutes(entry.missingMinutes),
-      formationMinutes: normalizeFormationMinutes(entry.formationMinutes),
-    });
-  });
-
-  // nettoyage aprs criture
-  await enforceMaxMonthsRetention(36);
+  // Legacy global kept for compatibility: delegate to canonical storage path.
+  const { savePlanningEntry } = await import("./storage.js");
+  await savePlanningEntry(entry);
 };
 
 window.getPlanningForMonth = async function (monthISO) {
-  const { db } = await openDB();
-
-  return new Promise((resolve, reject) => {
-    const tx = createTransaction(db, STORES.PLANNING, "readonly");
-    const store = tx.objectStore(STORES.PLANNING);
-    const results = [];
-
-    store.openCursor().onsuccess = (event) => {
-      const cursor = event.target.result;
-
-      if (!cursor) {
-        resolve(sortPlanningResults(results));
-        return;
-      }
-
-      if (isDateInMonth(cursor.key, monthISO)) {
-        results.push(normalizePlanningEntry(cursor.value));
-      }
-
-      cursor.continue();
-    };
-
-    tx.onerror = () => reject(tx.error);
-  });
+  // Legacy global kept for compatibility: delegate to canonical storage path.
+  const { getPlanningForMonth } = await import("./storage.js");
+  return getPlanningForMonth(monthISO);
 };
-
-function isDateInMonth(dateKey, monthISO) {
-  return dateKey.startsWith(monthISO);
-}
-
-function normalizePlanningEntry(entry) {
-  return {
-    date: entry.date,
-    serviceCode: entry.serviceCode ?? "REPOS",
-    locked: entry.locked ?? false,
-    extra: entry.extra ?? false,
-    panierOverride:
-      typeof entry.panierOverride === "boolean" ? entry.panierOverride : null,
-    majorExtraMinutes: normalizeMajorExtraMinutes(entry.majorExtraMinutes),
-    nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(entry.nonMajorExtraMinutes),
-    missingMinutes: normalizeMissingMinutes(entry.missingMinutes),
-    formationMinutes: normalizeFormationMinutes(entry.formationMinutes),
-  };
-}
-
-function sortPlanningResults(results) {
-  return results.sort((a, b) => a.date.localeCompare(b.date));
-}
 
 function normalizeNonMajorExtraMinutes(value) {
   const numeric = Number(value);
@@ -382,7 +326,7 @@ window.lockPastMonths = async function () {
   });
 };
 
-async function enforceMaxMonthsRetention(maxMonths = 13) {
+export async function enforceMaxMonthsRetention(maxMonths = 13) {
   const { db } = await openDB();
 
   return new Promise((resolve, reject) => {

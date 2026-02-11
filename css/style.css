@@ -1201,7 +1201,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   line-height: 1.45;
   color: #2d2d2d;
 }
-`n
+
 body.onboarding-lock {
   overscroll-behavior: none;
 }

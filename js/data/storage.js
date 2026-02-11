@@ -6,7 +6,7 @@
 
 // Storage.js
 
-import { openDB, STORES } from "./db.js";
+import { enforceMaxMonthsRetention, openDB, STORES } from "./db.js";
 
 function normalizePanierOverride(value) {
   return typeof value === "boolean" ? value : null;
@@ -82,7 +82,7 @@ export async function savePlanningEntry(entry) {
     });
   }
 
-  return new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.PLANNING, "readwrite");
     tx.objectStore(STORES.PLANNING).put({
       date: entry.date,
@@ -98,6 +98,8 @@ export async function savePlanningEntry(entry) {
     tx.oncomplete = resolve;
     tx.onerror = () => reject(tx.error);
   });
+
+  await enforceMaxMonthsRetention(36);
 }
 
 export async function getPlanningForMonth(monthISO) {
