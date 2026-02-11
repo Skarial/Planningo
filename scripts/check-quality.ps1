@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 function Add-Failure {
   param(
@@ -17,7 +17,7 @@ function Show-Step {
 
 $script:failures = @()
 
-Show-Step "Vérification syntaxe JS (node --check)"
+Show-Step "Verification syntaxe JS (node --check)"
 $jsFiles = Get-ChildItem -Path "./js" -Recurse -Filter "*.js" | Sort-Object FullName
 foreach ($file in $jsFiles) {
   & node --check $file.FullName 2>$null
@@ -29,10 +29,16 @@ if ($script:failures.Count -eq 0) {
   Write-Host "OK - syntaxe JS"
 }
 
-Show-Step "Exécution tests domaine"
+Show-Step "Execution tests domaine"
 & node --input-type=module -e "import('./tests/run-domain-tests.js')" 2>&1 | Write-Host
 if ($LASTEXITCODE -ne 0) {
-  Add-Failure "Tests domaine en échec."
+  Add-Failure "Tests domaine en echec."
+}
+
+Show-Step "Execution tests UI/PWA smoke"
+& node --input-type=module -e "import('./tests/run-ui-pwa-tests.js')" 2>&1 | Write-Host
+if ($LASTEXITCODE -ne 0) {
+  Add-Failure "Tests UI/PWA en echec."
 }
 
 Show-Step "Scan anti-patterns"
@@ -45,22 +51,22 @@ foreach ($hit in $instantBehaviorHits) {
 
 $inlineResizeHits = $allJsFiles | Select-String -Pattern "window\.addEventListener\(\s*['""]resize['""]\s*,\s*\(\)\s*=>"
 foreach ($hit in $inlineResizeHits) {
-  Add-Failure "Listener resize inline potentiellement non nettoyé -> $($hit.Path):$($hit.LineNumber)"
+  Add-Failure "Listener resize inline potentiellement non nettoye -> $($hit.Path):$($hit.LineNumber)"
 }
 
 $conflictScope = Get-ChildItem -Recurse -File -Include "*.js","*.css","*.html","*.md","service-worker.js"
 $conflictHits = $conflictScope | Select-String -Pattern "^(<<<<<<< |>>>>>>> |=======$)"
 foreach ($hit in $conflictHits) {
-  Add-Failure "Marqueur de conflit détecté -> $($hit.Path):$($hit.LineNumber)"
+  Add-Failure "Marqueur de conflit detecte -> $($hit.Path):$($hit.LineNumber)"
 }
 
 if ($script:failures.Count -gt 0) {
   Write-Host ""
-  Write-Host "❌ Vérification qualité KO:" -ForegroundColor Red
+  Write-Host "Verification qualite KO:" -ForegroundColor Red
   $script:failures | ForEach-Object { Write-Host " - $_" -ForegroundColor Red }
   exit 1
 }
 
 Write-Host ""
-Write-Host "✅ Vérification qualité OK." -ForegroundColor Green
+Write-Host "Verification qualite OK." -ForegroundColor Green
 exit 0
