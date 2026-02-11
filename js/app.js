@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.90";
+export const APP_VERSION = "2.0.91";
 
 import {
   DB_VERSION,
@@ -28,6 +28,7 @@ import {
   showHome,
 } from "./router.js";
 import { initMenu } from "./components/menu.js";
+import { showOnboardingIfNeeded } from "./components/onboarding.js";
 import { installRuntimeDebugLogging } from "./debug/runtime-log.js";
 
 const CONTROLLED_RELOAD_KEY = "planningo_controlled_reload";
@@ -100,6 +101,7 @@ async function initApp() {
   initMenu();
   bindAppRouteListeners();
   renderRouteFromLocation();
+  await showOnboardingIfNeeded();
   prewarmSecondaryViews();
   if (consumeControlledReloadMarker()) {
     stabilizeViewportAfterControlledReload();
@@ -585,6 +587,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 
