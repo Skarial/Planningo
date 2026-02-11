@@ -28,8 +28,8 @@ const ESSENTIAL_ASSETS = [
   "./service-worker.js",
   "./css/style.css",
   "./css/tetribus.css",
-  "./assets/icons/icon-192-v4.png",
-  "./assets/icons/icon-512-v4.png",
+  "./assets/icons/icon-192-v5.png",
+  "./assets/icons/icon-512-v5.png",
   "./assets/images/breakfast.png",
   "./js/app.js",
   "./js/router.js",
@@ -208,6 +208,7 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
+
 
 
 
