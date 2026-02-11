@@ -60,6 +60,11 @@ function isMorningServiceCode(serviceCode) {
   if (!normalized) return false;
   if (normalized === "DM") return true;
   if (normalized === "DAM") return false;
+  const tadMatch = normalized.match(/^(?:TAD|TD)\s*(\d+)$/);
+  if (tadMatch) {
+    const tadNumber = Number(tadMatch[1]);
+    return Number.isInteger(tadNumber) && [1, 3, 5].includes(tadNumber);
+  }
   if (!/^\d{3,}$/.test(normalized)) return false;
   return Number(normalized) % 2 === 1;
 }

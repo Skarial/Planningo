@@ -192,6 +192,59 @@ test("alarm-plan ignore DAM (apres-midi)", () => {
   assert(plan.alarms.length === 0, "DAM ne doit pas produire d'alarme");
 });
 
+test("alarm-plan traite TAD 1/3/5 comme services du matin", () => {
+  const services = [
+    {
+      code: "TAD 1",
+      periodes: [
+        {
+          libelle: "P",
+          plages: [{ debut: "06:45", fin: "13:15" }],
+        },
+      ],
+    },
+  ];
+
+  const plan = buildAlarmPlan({
+    entries: [{ date: "2026-02-10", serviceCode: "TD1" }],
+    services,
+    periodLabelForDate: () => "P",
+    rules: { offsetMinutes: 90 },
+    now: new Date("2026-02-01T00:00:00"),
+  });
+
+  assert(plan.alarms.length === 1, "TAD 1 doit produire une alarme");
+  assert(plan.alarms[0].serviceStart === "06:45", "Heure TAD 1 attendue");
+  assert(
+    plan.alarms[0].alarmAt.includes("T05:15"),
+    "Alarme TAD 1 attendue a 05:15 avec offset 90",
+  );
+});
+
+test("alarm-plan ignore TAD 2/4/6 (apres-midi)", () => {
+  const services = [
+    {
+      code: "TAD 2",
+      periodes: [
+        {
+          libelle: "P",
+          plages: [{ debut: "13:00", fin: "20:15" }],
+        },
+      ],
+    },
+  ];
+
+  const plan = buildAlarmPlan({
+    entries: [{ date: "2026-02-10", serviceCode: "TAD2" }],
+    services,
+    periodLabelForDate: () => "P",
+    rules: { offsetMinutes: 90 },
+    now: new Date("2026-02-01T00:00:00"),
+  });
+
+  assert(plan.alarms.length === 0, "TAD 2 ne doit pas produire d'alarme");
+});
+
 test("alarm-plan ignore un numero de ligne (2 chiffres)", () => {
   const services = [
     {

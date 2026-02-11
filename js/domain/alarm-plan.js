@@ -80,6 +80,30 @@ function formatOffsetLabel(minutes) {
 const FALLBACK_START_MINUTES_BY_CODE = {
   DM: 5 * 60 + 45,
 };
+const TAD_MORNING_NUMBERS = new Set([1, 3, 5]);
+
+function parseTadNumber(value) {
+  const normalized = String(value || "").trim().toUpperCase();
+  const match = normalized.match(/^(?:TAD|TD)\s*(\d+)$/);
+  if (!match) return null;
+  const number = Number(match[1]);
+  if (!Number.isInteger(number)) return null;
+  return number;
+}
+
+function getServiceCodeVariants(rawCode) {
+  const normalized = String(rawCode || "").trim().toUpperCase();
+  if (!normalized) return [];
+  const variants = new Set([normalized, normalized.replace(/\s+/g, "")]);
+  const tadNumber = parseTadNumber(normalized);
+  if (tadNumber != null) {
+    variants.add(`TAD${tadNumber}`);
+    variants.add(`TAD ${tadNumber}`);
+    variants.add(`TD${tadNumber}`);
+    variants.add(`TD ${tadNumber}`);
+  }
+  return Array.from(variants);
+}
 
 function getServiceStartMinutes(service, periodLabel) {
   if (!service || !Array.isArray(service.periodes)) return null;
@@ -119,6 +143,10 @@ function isMorningServiceCode(serviceCode, service, periodLabel) {
   const normalized = String(serviceCode).trim().toUpperCase();
   if (normalized === "DM") return true;
   if (normalized === "DAM") return false;
+  const tadNumber = parseTadNumber(normalized);
+  if (tadNumber != null) {
+    return TAD_MORNING_NUMBERS.has(tadNumber);
+  }
   // Ignore line-only values like "21"/"23": we only accept real service codes.
   if (!/^\d{3,}$/.test(normalized)) return false;
   const value = Number(normalized);
@@ -164,11 +192,14 @@ export function buildAlarmPlan(options = {}) {
     return plan;
   }
 
-  const servicesByCode = new Map(
-    services
-      .filter((service) => service && service.code)
-      .map((service) => [String(service.code).trim().toUpperCase(), service]),
-  );
+  const servicesByCode = new Map();
+  services
+    .filter((service) => service && service.code)
+    .forEach((service) => {
+      getServiceCodeVariants(service.code).forEach((variant) => {
+        servicesByCode.set(variant, service);
+      });
+    });
 
   const nowMs = (now instanceof Date ? now : new Date(now)).getTime();
   const alarms = [];
@@ -177,7 +208,10 @@ export function buildAlarmPlan(options = {}) {
     if (!entry || !entry.date || !entry.serviceCode) continue;
 
     const serviceCode = String(entry.serviceCode).trim().toUpperCase();
-    const service = servicesByCode.get(serviceCode) || null;
+    const service =
+      getServiceCodeVariants(serviceCode)
+        .map((variant) => servicesByCode.get(variant))
+        .find(Boolean) || null;
 
     const periodLabel =
       typeof periodLabelForDate === "function"

@@ -209,9 +209,14 @@ test("day-edit buildSaveEntryPayload enforces conges constraints", () => {
 
 test("day-edit shouldMarkAlarmResync matches morning service behavior", () => {
   assert(shouldMarkAlarmResync("DM") === true, "DM should be morning");
+  assert(shouldMarkAlarmResync("TAD1") === true, "TAD1 should be morning");
+  assert(shouldMarkAlarmResync("TAD 3") === true, "TAD 3 should be morning");
+  assert(shouldMarkAlarmResync("TD5") === true, "TD5 should be morning");
   assert(shouldMarkAlarmResync("2911") === true, "odd numeric service should be morning");
   assert(shouldMarkAlarmResync(" 2911 ") === true, "trimmed odd service should be morning");
   assert(shouldMarkAlarmResync("DAM") === false, "DAM should not be morning");
+  assert(shouldMarkAlarmResync("TAD2") === false, "TAD2 should not be morning");
+  assert(shouldMarkAlarmResync("TD 4") === false, "TD 4 should not be morning");
   assert(shouldMarkAlarmResync("2910") === false, "even numeric service should not be morning");
   assert(shouldMarkAlarmResync("FORMATION") === false, "text services should not be morning");
 });
