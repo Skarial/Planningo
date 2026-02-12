@@ -8,10 +8,7 @@
     />
 
     <title>Planningo</title>
-    <meta
-      name="description"
-      content="Planningo, gestion personnelle du planning de service"
-    />
+    <meta name="description" content="Planningo, gestion personnelle du planning de service" />
 
     <!-- PWA -->
     <meta name="theme-color" content="#ffffff" />
@@ -44,7 +41,7 @@
       ></button>
       <div id="menu-overlay"></div>
 
-                  <!-- MENU LATÉRAL (HORS FLUX) -->
+      <!-- MENU LATÉRAL (HORS FLUX) -->
       <nav id="side-menu" aria-hidden="true">
         <button id="menu-close" aria-label="Fermer le menu"></button>
         <div id="side-menu-scroll">
@@ -72,7 +69,6 @@
               <span class="menu-icon icon-summary"></span>
               Statistiques
             </button>
-
           </div>
 
           <div class="menu-section">
@@ -87,7 +83,7 @@
               <span class="menu-icon icon-sliders"></span>
               Suggestions
             </button>
-            
+
             <button id="menu-alarm" type="button">
               <span class="menu-icon icon-alarm"></span>
               Réveil intelligent <span class="menu-badge">Android</span>
@@ -134,7 +130,6 @@
               Mentions légales
             </button>
           </div>
-
         </div>
       </nav>
 
@@ -164,10 +159,7 @@
 
     <script>
       document.addEventListener("contextmenu", function (e) {
-        if (
-          e.target.closest(".menu-long-press") ||
-          e.target.closest("#view-tetribus")
-        ) {
+        if (e.target.closest(".menu-long-press") || e.target.closest("#view-tetribus")) {
           e.preventDefault();
         }
       });
@@ -177,7 +169,7 @@
         function (e) {
           e.preventDefault();
         },
-        { passive: false }
+        { passive: false },
       );
 
       document.addEventListener(
@@ -185,7 +177,7 @@
         function (e) {
           e.preventDefault();
         },
-        { passive: false }
+        { passive: false },
       );
 
       document.addEventListener(
@@ -193,10 +185,8 @@
         function (e) {
           e.preventDefault();
         },
-        { passive: false }
+        { passive: false },
       );
     </script>
   </body>
 </html>
-
-

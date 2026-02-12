@@ -143,10 +143,7 @@ function migrateLegacyServiceToFormation(tx) {
 
 function ensureServiceCodeMigration(db) {
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(
-      [STORES.CONFIG, STORES.PLANNING, STORES.SERVICES],
-      "readwrite",
-    );
+    const tx = db.transaction([STORES.CONFIG, STORES.PLANNING, STORES.SERVICES], "readwrite");
     const configStore = tx.objectStore(STORES.CONFIG);
     const planningStore = tx.objectStore(STORES.PLANNING);
     const servicesStore = tx.objectStore(STORES.SERVICES);
@@ -398,4 +395,3 @@ export async function countConfigEntries(options = {}) {
     return excluded.has(String(key)) ? count : count + 1;
   }, 0);
 }
-

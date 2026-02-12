@@ -13,4 +13,3 @@ export function getAlarmAutoImportOptions() {
 export function shouldAutoImportAlarm(options) {
   return options?.autoImport === true;
 }
-

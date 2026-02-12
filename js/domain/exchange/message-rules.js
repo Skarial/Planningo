@@ -20,11 +20,7 @@ export function validateSendMessage(input) {
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     return {
       ok: false,
-      error: buildError(
-        "MESSAGE_INVALID_TYPE",
-        "Payload invalide: objet attendu",
-        "message",
-      ),
+      error: buildError("MESSAGE_INVALID_TYPE", "Payload invalide: objet attendu", "message"),
     };
   }
 
@@ -56,11 +52,7 @@ export function validateSendMessage(input) {
   if (body.length === 0) {
     return {
       ok: false,
-      error: buildError(
-        "MESSAGE_BODY_REQUIRED",
-        "body est requis",
-        "body",
-      ),
+      error: buildError("MESSAGE_BODY_REQUIRED", "body est requis", "body"),
     };
   }
 

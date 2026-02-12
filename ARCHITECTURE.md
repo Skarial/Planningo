@@ -32,58 +32,58 @@ service-worker.js
 manifest.webmanifest
 
 css/
-  style.css
-  tetribus.css
+style.css
+tetribus.css
 
 js/
-  app.js
-  router.js
-  utils.js
+app.js
+router.js
+utils.js
 
-  components/
-    home.js
-    home-month-calendar.js
-    guided-month.js
-    tetribus.js
-    menu.js
+components/
+home.js
+home-month-calendar.js
+guided-month.js
+tetribus.js
+menu.js
 
-  domain/
-    conges.js
-    day-status.js
-    periods.js
-    service-model.js
-    service-suggestions.js
-    services-availability.js
+domain/
+conges.js
+day-status.js
+periods.js
+service-model.js
+service-suggestions.js
+services-availability.js
 
-  data/
-    db.js
-    storage.js
-    device.js
-    export-db.js
-    import-db.js
-    services.js
-    services-init.js
-    services-catalog.js
+data/
+db.js
+storage.js
+device.js
+export-db.js
+import-db.js
+services.js
+services-init.js
+services-catalog.js
 
-  state/
-    active-date.js
-    home-mode.js
-    month-calendar-state.js
-    month-navigation.js
-    ui-mode.js
+state/
+active-date.js
+home-mode.js
+month-calendar-state.js
+month-navigation.js
+ui-mode.js
 
-  sw/
-    sw-register.js
+sw/
+sw-register.js
 
-  games/
-    tetribus/
-      tetribus.game.js
-      tetribus.render.js
+games/
+tetribus/
+tetribus.game.js
+tetribus.render.js
 
 docs/
-  SAUVEGARDE_RESTAURATION.md
-  SERVICE_WORKER.md
-  CONTEXTE_METIER.md
+SAUVEGARDE_RESTAURATION.md
+SERVICE_WORKER.md
+CONTEXTE_METIER.md
 
 ---
 
@@ -100,7 +100,6 @@ Ordre strict :
    - initialisation des services
    - enregistrement du Service Worker
    - surveillance des mises a jour
-
 
 ---
 
@@ -184,6 +183,7 @@ Separation stricte :
 Aucune logique metier n'est implementee dans l'interface.
 
 Conges :
+
 - Support de plusieurs periodes de conges
 - Format de config : { periods: [{ start: "jj/mm/aaaa", end: "jj/mm/aaaa" }] }
 - Compatibilite maintenue avec l'ancien format { start, end }
@@ -283,4 +283,3 @@ Ce comportement est contractuel et ne doit jamais etre contourne par l'interface
 - Donnees locales uniquement
 - Comportement deterministe
 - Code lisible et structure
-

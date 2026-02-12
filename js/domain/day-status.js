@@ -35,4 +35,3 @@ export function getDayStatus({ service, date, today }) {
 
   return DAY_STATUS.FUTURE_EMPTY;
 }
-

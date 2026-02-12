@@ -179,12 +179,7 @@ export async function loginExchangeAction({ email, password }) {
   };
 }
 
-export async function registerExchangeAction({
-  prenom,
-  nom,
-  email,
-  password,
-}) {
+export async function registerExchangeAction({ prenom, nom, email, password }) {
   patchState({
     status: "loading",
     error: null,

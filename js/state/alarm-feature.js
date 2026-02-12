@@ -24,9 +24,7 @@ function safeGetStorageValue(key) {
 
 function hasLegacyAlarmSignals(rulesValue) {
   const hasRules =
-    rulesValue &&
-    typeof rulesValue === "object" &&
-    Object.keys(rulesValue).length > 0;
+    rulesValue && typeof rulesValue === "object" && Object.keys(rulesValue).length > 0;
   const hasNoticeSeen = safeGetStorageValue(ALARM_NOTICE_SEEN_KEY) === "1";
   const hasResyncFlag =
     safeGetStorageValue(ALARM_RESYNC_PENDING_KEY) === "1" ||
@@ -64,4 +62,3 @@ export async function setAlarmSyncEnabled(enabled) {
   await setConfig(ALARM_SYNC_ENABLED_KEY, nextValue);
   return nextValue;
 }
-

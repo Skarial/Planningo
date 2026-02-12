@@ -51,8 +51,5 @@ test("exchange message-rules - clientMessageId max length", () => {
   });
 
   assert(result.ok === false, "too long clientMessageId should fail");
-  assert(
-    result.error.code === "MESSAGE_CLIENT_ID_TOO_LONG",
-    "error code mismatch",
-  );
+  assert(result.error.code === "MESSAGE_CLIENT_ID_TOO_LONG", "error code mismatch");
 });

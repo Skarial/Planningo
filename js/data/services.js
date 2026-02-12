@@ -37,10 +37,7 @@ function serviceHasActivePeriode(service, activePeriode) {
   if (!Array.isArray(service.periodes)) return false;
 
   return service.periodes.some(
-    (p) =>
-      p.libelle === activePeriode &&
-      Array.isArray(p.plages) &&
-      p.plages.length > 0,
+    (p) => p.libelle === activePeriode && Array.isArray(p.plages) && p.plages.length > 0,
   );
 }
 
@@ -125,4 +122,3 @@ export async function suggestServices({
       type: item.service.type,
     }));
 }
-

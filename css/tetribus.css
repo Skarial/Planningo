@@ -176,9 +176,7 @@
   height: 72px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    radial-gradient(circle at 30% 30%, #2a2a2a, #141414 60%),
-    #141414;
+  background: radial-gradient(circle at 30% 30%, #2a2a2a, #141414 60%), #141414;
   color: #f1f1f1;
   font-size: 0;
   font-weight: 600;
@@ -294,5 +292,3 @@
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18" stroke="black" stroke-width="4" stroke-linecap="round"/><line x1="18" y1="6" x2="6" y2="18" stroke="black" stroke-width="4" stroke-linecap="round"/></svg>');
   box-shadow: 0 0 0 2px rgba(102, 208, 138, 0.15);
 }
-
-

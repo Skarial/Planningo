@@ -20,10 +20,7 @@ function normalizeConversationId(value) {
 }
 
 function generateClientMessageId() {
-  if (
-    globalThis.crypto &&
-    typeof globalThis.crypto.randomUUID === "function"
-  ) {
+  if (globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") {
     return globalThis.crypto.randomUUID();
   }
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -47,8 +44,7 @@ function createMessageItem(message, participantsMap) {
   li.className = "settings-period";
   const sender = document.createElement("div");
   sender.className = "settings-period-title";
-  const senderUserId =
-    typeof message?.senderUserId === "string" ? message.senderUserId.trim() : "";
+  const senderUserId = typeof message?.senderUserId === "string" ? message.senderUserId.trim() : "";
   const senderDisplayName =
     senderUserId &&
     participantsMap &&

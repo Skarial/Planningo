@@ -1,9 +1,13 @@
-﻿/*
-  Copyright (c) 2026 Jordan
-  All Rights Reserved.
-  See LICENSE for terms.
-*/
-
+﻿/*
+
+  Copyright (c) 2026 Jordan
+
+  All Rights Reserved.
+
+  See LICENSE for terms.
+
+*/
+
 // tests/domain/storage.memory.test.js
 import { test, assert } from "../run-tests.js";
 import {
@@ -45,4 +49,3 @@ test("storageExportAll / storageImportAll", async () => {
   assert((await storageGet("a")) === 1);
   assert((await storageGet("b")) === 2);
 });
-

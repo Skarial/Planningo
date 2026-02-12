@@ -113,8 +113,7 @@ function isQueueableNetworkError(error) {
 function dedupePendingByClientMessageId(items) {
   const map = new Map();
   cloneArray(items).forEach((item) => {
-    const key =
-      typeof item?.clientMessageId === "string" ? item.clientMessageId.trim() : "";
+    const key = typeof item?.clientMessageId === "string" ? item.clientMessageId.trim() : "";
     if (!key) return;
     map.set(key, item);
   });
@@ -126,9 +125,7 @@ function removePendingByClientMessageId(conversationId, clientMessageId) {
   if (!key) return;
 
   const current = cloneArray(state.pendingByConversation[conversationId]);
-  const next = current.filter(
-    (item) => (item?.clientMessageId || "").trim() !== key,
-  );
+  const next = current.filter((item) => (item?.clientMessageId || "").trim() !== key);
   patchConversation(conversationId, { pending: next });
 }
 
@@ -157,9 +154,7 @@ export function enqueuePendingMessage(conversationId, payload) {
     return validated;
   }
 
-  const currentPending = cloneArray(
-    state.pendingByConversation[normalizedConversationId],
-  );
+  const currentPending = cloneArray(state.pendingByConversation[normalizedConversationId]);
   currentPending.push(validated.value);
   const deduped = dedupePendingByClientMessageId(currentPending);
 
@@ -237,17 +232,13 @@ export async function sendMessageAction(conversationId, payload) {
     return validated;
   }
 
-  const response = await sendExchangeMessage(
-    normalizedConversationId,
-    validated.value,
-    { token: getExchangeToken() },
-  );
+  const response = await sendExchangeMessage(normalizedConversationId, validated.value, {
+    token: getExchangeToken(),
+  });
 
   if (!response.ok) {
     if (isQueueableNetworkError(response.error)) {
-      const currentPending = cloneArray(
-        state.pendingByConversation[normalizedConversationId],
-      );
+      const currentPending = cloneArray(state.pendingByConversation[normalizedConversationId]);
       currentPending.push(validated.value);
       patchConversation(normalizedConversationId, {
         pending: dedupePendingByClientMessageId(currentPending),
@@ -263,10 +254,7 @@ export async function sendMessageAction(conversationId, payload) {
     return response;
   }
 
-  removePendingByClientMessageId(
-    normalizedConversationId,
-    validated.value.clientMessageId,
-  );
+  removePendingByClientMessageId(normalizedConversationId, validated.value.clientMessageId);
   patchConversation(normalizedConversationId, {
     status: "ready",
     error: null,
@@ -298,11 +286,9 @@ export async function flushPendingMessages(conversationId) {
 
   while (remaining.length > 0) {
     const message = remaining[0];
-    const response = await sendExchangeMessage(
-      normalizedConversationId,
-      message,
-      { token: getExchangeToken() },
-    );
+    const response = await sendExchangeMessage(normalizedConversationId, message, {
+      token: getExchangeToken(),
+    });
 
     if (!response.ok) {
       patchConversation(normalizedConversationId, {

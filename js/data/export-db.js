@@ -82,4 +82,3 @@ export async function exportAllData() {
 
   URL.revokeObjectURL(url);
 }
-

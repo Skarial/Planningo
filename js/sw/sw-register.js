@@ -30,14 +30,12 @@ function swDiagLog(...args) {
 function sendDiagnosticFlagToWorkers(registration) {
   const enabled = isServiceWorkerDiagnosticEnabled();
   const message = { type: "SW_DIAGNOSTIC_SET", enabled };
-  [registration.active, registration.installing, registration.waiting].forEach(
-    (worker) => {
-      if (!worker) return;
-      try {
-        worker.postMessage(message);
-      } catch {}
-    },
-  );
+  [registration.active, registration.installing, registration.waiting].forEach((worker) => {
+    if (!worker) return;
+    try {
+      worker.postMessage(message);
+    } catch {}
+  });
 }
 
 export function registerServiceWorker(onUpdateAvailable) {
@@ -49,9 +47,7 @@ export function registerServiceWorker(onUpdateAvailable) {
 
   window.addEventListener("load", async () => {
     try {
-      swRegistration = await navigator.serviceWorker.register(
-        "./service-worker.js",
-      );
+      swRegistration = await navigator.serviceWorker.register("./service-worker.js");
 
       swDiagLog("registered", {
         scope: swRegistration.scope,
@@ -91,10 +87,7 @@ export function registerServiceWorker(onUpdateAvailable) {
             state: newWorker.state,
           });
           sendDiagnosticFlagToWorkers(swRegistration);
-          if (
-            newWorker.state === "installed" &&
-            navigator.serviceWorker.controller
-          ) {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
             notifyIfWaiting("installed-statechange");
           }
         });
@@ -120,5 +113,3 @@ export function registerServiceWorker(onUpdateAvailable) {
 export function getServiceWorkerRegistration() {
   return swRegistration;
 }
-
-

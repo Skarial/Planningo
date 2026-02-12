@@ -54,13 +54,10 @@ export const TetribusRender = {
         // Scurit : cellule mal forme
         if (!color) continue;
 
-        const hasLeft =
-          x > 0 && grid[y][x - 1] !== 0 && grid[y][x - 1].color === color;
+        const hasLeft = x > 0 && grid[y][x - 1] !== 0 && grid[y][x - 1].color === color;
 
         const hasRight =
-          x < grid[y].length - 1 &&
-          grid[y][x + 1] !== 0 &&
-          grid[y][x + 1].color === color;
+          x < grid[y].length - 1 && grid[y][x + 1] !== 0 && grid[y][x + 1].color === color;
 
         this.drawCell(x, y, color, hasLeft, hasRight, lineNumber);
       }
@@ -75,14 +72,7 @@ export const TetribusRender = {
           const hasLeft = shape[y][x - 1];
           const hasRight = shape[y][x + 1];
 
-          this.drawCell(
-            piece.x + x,
-            piece.y + y,
-            piece.color,
-            hasLeft,
-            hasRight,
-            piece.lineNumber,
-          );
+          this.drawCell(piece.x + x, piece.y + y, piece.color, hasLeft, hasRight, piece.lineNumber);
         }
       }
     }
@@ -179,4 +169,3 @@ export const TetribusRender = {
     }
   },
 };
-

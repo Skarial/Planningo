@@ -176,8 +176,7 @@ export async function showOnboardingIfNeeded() {
     title.textContent = step.title;
     body.textContent = step.body;
     prevBtn.hidden = stepIndex === 0;
-    nextBtn.textContent =
-      stepIndex === ONBOARDING_STEPS.length - 1 ? "Terminer" : "Suivant";
+    nextBtn.textContent = stepIndex === ONBOARDING_STEPS.length - 1 ? "Terminer" : "Suivant";
     await showStepView(step);
     applySpotlight(step, spotlightTargets);
   }
@@ -213,5 +212,3 @@ export async function showOnboardingIfNeeded() {
 
   await renderStep();
 }
-
-

@@ -21,11 +21,7 @@ function parseISODate(input) {
   const month = Number(mm) - 1;
   const day = Number(dd);
   const date = new Date(year, month, day);
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month ||
-    date.getDate() !== day
-  ) {
+  if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
     return null;
   }
   date.setHours(0, 0, 0, 0);
@@ -55,9 +51,7 @@ export function isSeasonConfigured(saisonConfig) {
  * - saison configure      SEASONAL
  */
 export function getPeriodState(saisonConfig) {
-  return isSeasonConfigured(saisonConfig)
-    ? PERIOD_STATE.SEASONAL
-    : PERIOD_STATE.DEFAULT;
+  return isSeasonConfigured(saisonConfig) ? PERIOD_STATE.SEASONAL : PERIOD_STATE.DEFAULT;
 }
 
 export function isDateInSeason(saisonConfig, date) {
@@ -76,8 +70,5 @@ export function isDateInSeason(saisonConfig, date) {
 }
 
 export function getPeriodStateForDate(saisonConfig, date) {
-  return isDateInSeason(saisonConfig, date)
-    ? PERIOD_STATE.SEASONAL
-    : PERIOD_STATE.DEFAULT;
+  return isDateInSeason(saisonConfig, date) ? PERIOD_STATE.SEASONAL : PERIOD_STATE.DEFAULT;
 }
-

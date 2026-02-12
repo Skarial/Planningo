@@ -22,9 +22,7 @@ function buildUrl(path) {
   const base = EXCHANGE_API_BASE_URL.endsWith("/")
     ? EXCHANGE_API_BASE_URL
     : `${EXCHANGE_API_BASE_URL}/`;
-  const normalizedPath = targetPath.startsWith("/")
-    ? targetPath.slice(1)
-    : targetPath;
+  const normalizedPath = targetPath.startsWith("/") ? targetPath.slice(1) : targetPath;
   return new URL(normalizedPath, base).toString();
 }
 
@@ -61,8 +59,7 @@ function normalizeServerError(payload, status) {
       ? serverError.code.trim()
       : fallback.code;
   const message =
-    typeof serverError.message === "string" &&
-    serverError.message.trim().length > 0
+    typeof serverError.message === "string" && serverError.message.trim().length > 0
       ? serverError.message.trim()
       : fallback.message;
 
@@ -139,9 +136,8 @@ export async function exchangeFetch(path, options = {}) {
   }
 
   const controller = new AbortController();
-  const timeout = Number.isFinite(timeoutMs) && timeoutMs > 0
-    ? timeoutMs
-    : EXCHANGE_DEFAULT_TIMEOUT_MS;
+  const timeout =
+    Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : EXCHANGE_DEFAULT_TIMEOUT_MS;
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {

@@ -8,11 +8,9 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.107";
+export const APP_VERSION = "2.0.108";
 
-import {
-  DB_VERSION,
-} from "./data/db.js";
+import { DB_VERSION } from "./data/db.js";
 
 import { registerServiceWorker } from "./sw/sw-register.js";
 
@@ -446,7 +444,6 @@ function showVersionBanner(prevVersion, nextVersion) {
   });
 }
 
-
 function showUpdateBanner(registration) {
   if (!registration?.waiting) {
     swDiagLog("update banner skipped (no waiting worker)");
@@ -487,10 +484,7 @@ function showUpdateBanner(registration) {
   let fallbackTimer = null;
 
   const cleanup = () => {
-    navigator.serviceWorker.removeEventListener(
-      "controllerchange",
-      onControllerChange,
-    );
+    navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
     if (fallbackTimer !== null) {
       clearTimeout(fallbackTimer);
       fallbackTimer = null;
@@ -518,10 +512,7 @@ function showUpdateBanner(registration) {
     reloadButton.disabled = true;
     dismissButton.disabled = true;
 
-    navigator.serviceWorker.addEventListener(
-      "controllerchange",
-      onControllerChange,
-    );
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
 
     fallbackTimer = setTimeout(() => {
       swDiagLog("controllerchange timeout fallback", {
@@ -570,8 +561,7 @@ function prewarmSecondaryViews() {
     ];
 
     modules.reduce(
-      (promise, load) =>
-        promise.then(() => load().catch(() => {})),
+      (promise, load) => promise.then(() => load().catch(() => {})),
       Promise.resolve(),
     );
   };
@@ -583,135 +573,4 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

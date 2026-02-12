@@ -11,9 +11,7 @@
 let fileData = {};
 
 export async function storageGet(key) {
-  return Object.prototype.hasOwnProperty.call(fileData, key)
-     fileData[key]
-    : null;
+  return Object.prototype.hasOwnProperty.call(fileData, key) ? fileData[key] : null;
 }
 
 export async function storageSet(key, value) {
@@ -40,4 +38,3 @@ export async function storageImportAll(data) {
   }
   fileData = JSON.parse(JSON.stringify(data));
 }
-

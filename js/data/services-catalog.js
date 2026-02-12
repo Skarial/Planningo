@@ -2455,4 +2455,3 @@ export const SERVICES_CATALOG = [
     ],
   },
 ];
-

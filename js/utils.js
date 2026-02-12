@@ -42,15 +42,7 @@ export function getDayNameFR(date) {
 }
 
 export function getDayNameFullFR(date) {
-  return [
-    "dimanche",
-    "lundi",
-    "mardi",
-    "mercredi",
-    "jeudi",
-    "vendredi",
-    "samedi",
-  ][date.getDay()];
+  return ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"][date.getDay()];
 }
 
 export function getAllDaysOfMonth(year, monthIndex) {
@@ -66,9 +58,7 @@ export function getAllDaysOfMonth(year, monthIndex) {
 }
 
 export function getWeekNumberISO(date) {
-  const d = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
-  );
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
@@ -79,8 +69,7 @@ export function isMonthLocked(year, monthIndex) {
   const today = new Date();
 
   return (
-    year < today.getFullYear() ||
-    (year === today.getFullYear() && monthIndex < today.getMonth())
+    year < today.getFullYear() || (year === today.getFullYear() && monthIndex < today.getMonth())
   );
 }
 

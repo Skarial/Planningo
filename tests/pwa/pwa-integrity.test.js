@@ -26,22 +26,18 @@ function extractEssentialAssets() {
   const source = readRootFile("service-worker.js");
   const match = source.match(/const ESSENTIAL_ASSETS = \[(?<list>[\s\S]*?)\];/);
   assert(match, "ESSENTIAL_ASSETS introuvable dans service-worker.js");
-  return Array.from(match.groups.list.matchAll(/"(\.\/[^"]+)"/g)).map(
-    (entry) => entry[1],
-  );
+  return Array.from(match.groups.list.matchAll(/"(\.\/[^"]+)"/g)).map((entry) => entry[1]);
 }
 
 function extractModuleEntrypointsFromIndex() {
   const html = readRootFile("index.html");
-  return Array.from(
-    html.matchAll(/<script[^>]*type="module"[^>]*src="([^"]+)"/g),
-  ).map((entry) => entry[1]);
+  return Array.from(html.matchAll(/<script[^>]*type="module"[^>]*src="([^"]+)"/g)).map(
+    (entry) => entry[1],
+  );
 }
 
 function resolveImportPath(importerRelativePath, specifier) {
-  const importerAbsoluteDir = path.dirname(
-    path.join(ROOT_DIR, importerRelativePath),
-  );
+  const importerAbsoluteDir = path.dirname(path.join(ROOT_DIR, importerRelativePath));
   let resolved = path.resolve(importerAbsoluteDir, specifier);
   if (!path.extname(resolved)) {
     resolved = `${resolved}.js`;
@@ -51,9 +47,7 @@ function resolveImportPath(importerRelativePath, specifier) {
 
 function buildStartupStaticImportGraph(entrypoints) {
   const importPattern = /^\s*import\s+(?:[^'"]+from\s+)?['"](\.[^'"]+)['"]/gm;
-  const stack = entrypoints.map((entry) =>
-    path.resolve(ROOT_DIR, entry.replace(/^\.\//, "")),
-  );
+  const stack = entrypoints.map((entry) => path.resolve(ROOT_DIR, entry.replace(/^\.\//, "")));
   const visited = new Set();
 
   while (stack.length > 0) {
@@ -81,18 +75,12 @@ test("pwa-integrity - essential assets exist and are unique", () => {
   assert(assets.length > 0, "ESSENTIAL_ASSETS ne doit pas etre vide");
 
   const unique = new Set(assets);
-  assert(
-    unique.size === assets.length,
-    "ESSENTIAL_ASSETS contient des doublons",
-  );
+  assert(unique.size === assets.length, "ESSENTIAL_ASSETS contient des doublons");
 
   for (const asset of assets) {
     const relativePath = asset.replace(/^\.\//, "");
     const absolutePath = path.join(ROOT_DIR, relativePath);
-    assert(
-      fs.existsSync(absolutePath),
-      `Asset manquant dans ESSENTIAL_ASSETS: ${asset}`,
-    );
+    assert(fs.existsSync(absolutePath), `Asset manquant dans ESSENTIAL_ASSETS: ${asset}`);
   }
 });
 
@@ -106,10 +94,7 @@ test("pwa-integrity - startup import graph is fully precached", () => {
   const essential = new Set(extractEssentialAssets());
 
   const missing = startupGraph.filter((modulePath) => !essential.has(modulePath));
-  assert(
-    missing.length === 0,
-    `Modules de demarrage absents du precache: ${missing.join(", ")}`,
-  );
+  assert(missing.length === 0, `Modules de demarrage absents du precache: ${missing.join(", ")}`);
 });
 
 test("pwa-integrity - manifest icons are valid and precached", () => {
@@ -123,9 +108,6 @@ test("pwa-integrity - manifest icons are valid and precached", () => {
     assert(src.startsWith("./"), `Icone manifest invalide: ${src}`);
     const absolutePath = path.join(ROOT_DIR, src.replace(/^\.\//, ""));
     assert(fs.existsSync(absolutePath), `Icone manifest manquante: ${src}`);
-    assert(
-      essential.has(src),
-      `Icone manifest absente du precache SW: ${src}`,
-    );
+    assert(essential.has(src), `Icone manifest absente du precache SW: ${src}`);
   }
 });

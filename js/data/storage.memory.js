@@ -38,4 +38,3 @@ export async function storageImportAll(data) {
     memory.set(key, value);
   }
 }
-

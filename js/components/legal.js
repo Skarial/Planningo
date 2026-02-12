@@ -22,8 +22,7 @@ export async function renderLegalView() {
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
-  subtitle.textContent =
-    "Consultez les droits, restrictions et informations de contact.";
+  subtitle.textContent = "Consultez les droits, restrictions et informations de contact.";
 
   header.append(title, subtitle);
 
@@ -54,7 +53,6 @@ export async function renderLegalView() {
     const text = await res.text();
     pre.textContent = text.trim();
   } catch (err) {
-    pre.textContent =
-      "Le texte de licence est disponible à la racine du projet (LICENSE).";
+    pre.textContent = "Le texte de licence est disponible à la racine du projet (LICENSE).";
   }
 }

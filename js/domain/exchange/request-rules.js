@@ -17,11 +17,7 @@ function isValidDateISO(value) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const [y, m, d] = value.split("-").map(Number);
   const date = new Date(Date.UTC(y, m - 1, d));
-  return (
-    date.getUTCFullYear() === y &&
-    date.getUTCMonth() === m - 1 &&
-    date.getUTCDate() === d
-  );
+  return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
 }
 
 function proposalSignature(proposal) {
@@ -35,21 +31,13 @@ function proposalSignature(proposal) {
   ].join("|");
 }
 
-export function validateCreateExchangeRequest(
-  input,
-  options = {},
-) {
-  const maxCounterProposals =
-    options.maxCounterProposals ?? EXCHANGE_MAX_COUNTER_PROPOSALS;
+export function validateCreateExchangeRequest(input, options = {}) {
+  const maxCounterProposals = options.maxCounterProposals ?? EXCHANGE_MAX_COUNTER_PROPOSALS;
 
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     return {
       ok: false,
-      error: buildError(
-        "REQUEST_INVALID_TYPE",
-        "Payload invalide: objet attendu",
-        "request",
-      ),
+      error: buildError("REQUEST_INVALID_TYPE", "Payload invalide: objet attendu", "request"),
     };
   }
 
@@ -64,10 +52,7 @@ export function validateCreateExchangeRequest(
     };
   }
 
-  const normalizedOfferedService = normalizeServiceValue(
-    input.offeredService,
-    "offeredService",
-  );
+  const normalizedOfferedService = normalizeServiceValue(input.offeredService, "offeredService");
   if (!normalizedOfferedService.ok) {
     return normalizedOfferedService;
   }

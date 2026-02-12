@@ -51,10 +51,7 @@ export function installFetchMock(routes) {
     ? routes.map((route) => ({
         ...route,
         method: normalizeMethod(route?.method),
-        times:
-          route && typeof route.times === "number" && route.times > 0
-            ? route.times
-            : 1,
+        times: route && typeof route.times === "number" && route.times > 0 ? route.times : 1,
       }))
     : [];
   const calls = [];

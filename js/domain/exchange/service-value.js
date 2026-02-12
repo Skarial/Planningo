@@ -10,9 +10,7 @@ export const EXCHANGE_SERVICE_KIND = Object.freeze({
   FREE_TEXT: "FREE_TEXT",
 });
 
-export const EXCHANGE_SERVICE_KINDS = Object.freeze(
-  Object.values(EXCHANGE_SERVICE_KIND),
-);
+export const EXCHANGE_SERVICE_KINDS = Object.freeze(Object.values(EXCHANGE_SERVICE_KIND));
 
 function buildError(code, message, field) {
   return { code, message, field };
@@ -36,11 +34,7 @@ export function normalizeServiceValue(input, fieldPrefix = "service") {
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     return {
       ok: false,
-      error: buildError(
-        "SERVICE_INVALID_TYPE",
-        "Service invalide: objet attendu",
-        fieldPrefix,
-      ),
+      error: buildError("SERVICE_INVALID_TYPE", "Service invalide: objet attendu", fieldPrefix),
     };
   }
 

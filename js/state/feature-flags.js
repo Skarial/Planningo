@@ -59,10 +59,8 @@ function syncExchangesUiFlagFromQuery(locationLike, storageLike) {
 }
 
 export function isExchangesUiEnabled(options = {}) {
-  const locationLike =
-    options.location !== undefined ? options.location : globalThis.location;
-  const storageLike =
-    options.storage !== undefined ? options.storage : globalThis.localStorage;
+  const locationLike = options.location !== undefined ? options.location : globalThis.location;
+  const storageLike = options.storage !== undefined ? options.storage : globalThis.localStorage;
 
   syncExchangesUiFlagFromQuery(locationLike, storageLike);
 

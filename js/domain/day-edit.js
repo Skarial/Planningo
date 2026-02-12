@@ -163,21 +163,13 @@ export function buildSaveEntryPayload({
       ? effectivePanierEnabled
       : null;
   const nonMajorExtraMinutes =
-    code && !isRepos && !isConges
-      ? parseNonMajorExtraInputMinutes(rawNonMajorExtraMinutes)
-      : 0;
+    code && !isRepos && !isConges ? parseNonMajorExtraInputMinutes(rawNonMajorExtraMinutes) : 0;
   const majorExtraMinutes =
-    code && !isRepos && !isConges
-      ? parseMajorExtraInputMinutes(rawMajorExtraMinutes)
-      : 0;
+    code && !isRepos && !isConges ? parseMajorExtraInputMinutes(rawMajorExtraMinutes) : 0;
   const missingMinutes =
-    code && !isRepos && !isConges
-      ? parseMissingInputMinutes(rawMissingMinutes)
-      : 0;
+    code && !isRepos && !isConges ? parseMissingInputMinutes(rawMissingMinutes) : 0;
   const formationMinutes =
-    code === "FORMATION" && !isConges
-      ? parseFormationInputMinutes(rawFormationMinutes)
-      : 0;
+    code === "FORMATION" && !isConges ? parseFormationInputMinutes(rawFormationMinutes) : 0;
 
   return {
     date: dateISO,

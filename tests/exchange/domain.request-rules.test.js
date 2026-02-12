@@ -95,8 +95,5 @@ test("exchange request-rules - offeredDateISO must be valid", () => {
 
   const result = validateCreateExchangeRequest(payload);
   assert(result.ok === false, "invalid offeredDateISO should fail");
-  assert(
-    result.error.code === "REQUEST_OFFERED_DATE_INVALID",
-    "offered date error code mismatch",
-  );
+  assert(result.error.code === "REQUEST_OFFERED_DATE_INVALID", "offered date error code mismatch");
 });

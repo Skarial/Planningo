@@ -51,9 +51,7 @@ export function canChooseConversation(conversation, role) {
 
 export function canAcceptConversation(conversation) {
   if (!isObject(conversation)) return false;
-  if (
-    normalizeStatus(conversation.status) !== EXCHANGE_CONVERSATION_STATUS.LOCKED
-  ) {
+  if (normalizeStatus(conversation.status) !== EXCHANGE_CONVERSATION_STATUS.LOCKED) {
     return false;
   }
   return !(toBool(conversation.acceptedByA) && toBool(conversation.acceptedByB));
@@ -74,11 +72,7 @@ export function applyChoose(conversation, nowISO) {
   if (!isValidNowISO(nowISO)) {
     return {
       ok: false,
-      error: buildError(
-        "CONVERSATION_NOW_ISO_REQUIRED",
-        "nowISO est requis",
-        "nowISO",
-      ),
+      error: buildError("CONVERSATION_NOW_ISO_REQUIRED", "nowISO est requis", "nowISO"),
     };
   }
 
@@ -122,22 +116,14 @@ export function applyAccept(conversation, who, nowISO) {
   if (normalizedWho !== "A" && normalizedWho !== "B") {
     return {
       ok: false,
-      error: buildError(
-        "CONVERSATION_ACCEPT_WHO_INVALID",
-        "who doit etre A ou B",
-        "who",
-      ),
+      error: buildError("CONVERSATION_ACCEPT_WHO_INVALID", "who doit etre A ou B", "who"),
     };
   }
 
   if (!isValidNowISO(nowISO)) {
     return {
       ok: false,
-      error: buildError(
-        "CONVERSATION_NOW_ISO_REQUIRED",
-        "nowISO est requis",
-        "nowISO",
-      ),
+      error: buildError("CONVERSATION_NOW_ISO_REQUIRED", "nowISO est requis", "nowISO"),
     };
   }
 

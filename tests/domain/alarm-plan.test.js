@@ -32,10 +32,7 @@ test("alarm-plan genere une alarme pour un service impair", () => {
 
   assert(plan.alarms.length === 1, "Alarme attendue");
   assert(plan.alarms[0].serviceStart === "09:12", "Heure service incorrecte");
-  assert(
-    plan.alarms[0].alarmAt.includes("T07:42"),
-    "Heure alarme incorrecte",
-  );
+  assert(plan.alarms[0].alarmAt.includes("T07:42"), "Heure alarme incorrecte");
 });
 
 test("alarm-plan ignore les services pairs", () => {
@@ -162,10 +159,7 @@ test("alarm-plan force DM matin meme avec une heure saisie incoherente", () => {
 
   assert(plan.alarms.length === 1, "DM doit produire une alarme");
   assert(plan.alarms[0].serviceStart === "05:45", "DM doit rester a 05:45");
-  assert(
-    plan.alarms[0].alarmAt.includes("T04:15"),
-    "Alarme DM attendue a 04:15 avec offset 90",
-  );
+  assert(plan.alarms[0].alarmAt.includes("T04:15"), "Alarme DM attendue a 04:15 avec offset 90");
 });
 
 test("alarm-plan ignore DAM (apres-midi)", () => {
@@ -215,10 +209,7 @@ test("alarm-plan traite TAD 1/3/5 comme services du matin", () => {
 
   assert(plan.alarms.length === 1, "TAD 1 doit produire une alarme");
   assert(plan.alarms[0].serviceStart === "06:45", "Heure TAD 1 attendue");
-  assert(
-    plan.alarms[0].alarmAt.includes("T05:15"),
-    "Alarme TAD 1 attendue a 05:15 avec offset 90",
-  );
+  assert(plan.alarms[0].alarmAt.includes("T05:15"), "Alarme TAD 1 attendue a 05:15 avec offset 90");
 });
 
 test("alarm-plan ignore TAD 2/4/6 (apres-midi)", () => {

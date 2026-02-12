@@ -1,6 +1,5 @@
 # Compatibilite logiciel - Planningo
 
-
 ## Objectif
 
 Ce document definit les environnements logiciels supportes, toleres et non supportes pour l'application Planningo.
@@ -150,4 +149,3 @@ sans modification du domain ni des regles metier.
 Toute evolution future devra respecter ces garanties.
 
 Toute configuration hors de ce perimetre n'est pas garantie comme fonctionnelle.
-

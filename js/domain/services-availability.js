@@ -25,4 +25,3 @@ export function isServiceAllowed(service, seasonConfigured) {
   // Par dfaut : autoris
   return true;
 }
-

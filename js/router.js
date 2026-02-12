@@ -177,9 +177,7 @@ export async function showGuidedMonth() {
   const view = activateView("guided-month");
   if (!view) return;
 
-  const { showGuidedMonth: renderGuidedMonth } = await import(
-    "./components/guided-month.js"
-  );
+  const { showGuidedMonth: renderGuidedMonth } = await import("./components/guided-month.js");
   if (currentView !== "guided-month") return;
   renderGuidedMonth();
 }
@@ -207,9 +205,7 @@ export async function showSeasonView() {
 export async function showCongesPeriodsView() {
   const view = activateView("conges-periods");
   if (!view) return;
-  const { renderCongesPeriodsView } = await import(
-    "./components/conges-periods.js"
-  );
+  const { renderCongesPeriodsView } = await import("./components/conges-periods.js");
   if (currentView !== "conges-periods") return;
   renderCongesPeriodsView();
 }
@@ -307,9 +303,7 @@ export async function showExchangesView() {
   try {
     const view = activateView("exchanges");
     if (!view) return;
-    const { renderExchangesView } = await import(
-      "./components/exchange/exchanges-view.js"
-    );
+    const { renderExchangesView } = await import("./components/exchange/exchanges-view.js");
     if (currentView !== "exchanges") return;
     renderExchangesView(view);
   } catch (error) {

@@ -98,8 +98,7 @@ export async function renderResetView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className =
-    "settings-view settings-page-variant settings-card-spacing-lg reset-view";
+  root.className = "settings-view settings-page-variant settings-card-spacing-lg reset-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
@@ -119,8 +118,7 @@ export async function renderResetView() {
 
   const warning = document.createElement("div");
   warning.className = "settings-note";
-  warning.textContent =
-    "Les Réinitialisations sont définitives. Maintenez pour confirmer.";
+  warning.textContent = "Les Réinitialisations sont définitives. Maintenez pour confirmer.";
 
   const labelMonth = document.createElement("label");
   labelMonth.textContent = "Mois à réinitialiser";
@@ -136,14 +134,14 @@ export async function renderResetView() {
   resetMonthBtn.type = "button";
   resetMonthBtn.id = "reset-confirm-month";
   resetMonthBtn.innerHTML =
-    "<span>Maintenir pour réinitialiser le mois</span><div class=\"hold-progress\"></div>";
+    '<span>Maintenir pour réinitialiser le mois</span><div class="hold-progress"></div>';
 
   const resetAllBtn = document.createElement("button");
   resetAllBtn.className = "settings-btn danger holdable";
   resetAllBtn.type = "button";
   resetAllBtn.id = "reset-all";
   resetAllBtn.innerHTML =
-    "<span>Maintenir pour tout réinitialiser</span><div class=\"hold-progress\"></div>";
+    '<span>Maintenir pour tout réinitialiser</span><div class="hold-progress"></div>';
 
   const status = createStatus();
 
@@ -177,4 +175,3 @@ export async function renderResetView() {
     null,
   );
 }
-

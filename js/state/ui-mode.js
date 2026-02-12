@@ -31,4 +31,3 @@ export function subscribeUiMode(listener) {
 function notifyUiModeChange() {
   listeners.forEach((fn) => fn(currentMode));
 }
-

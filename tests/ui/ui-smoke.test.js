@@ -31,26 +31,15 @@ test("ui-smoke - index contains all primary view sections", () => {
   ];
 
   for (const id of requiredViewIds) {
-    assert(
-      html.includes(`id="${id}"`),
-      `Section principale manquante dans index.html: ${id}`,
-    );
+    assert(html.includes(`id="${id}"`), `Section principale manquante dans index.html: ${id}`);
   }
 });
 
 test("ui-smoke - onboarding keeps 5-step critical flow", () => {
   const source = readRootFile("js/components/onboarding.js");
-  const stepViews = Array.from(source.matchAll(/view:\s*"([^"]+)"/g)).map(
-    (entry) => entry[1],
-  );
+  const stepViews = Array.from(source.matchAll(/view:\s*"([^"]+)"/g)).map((entry) => entry[1]);
 
-  const expectedViews = [
-    "guided",
-    "home",
-    "edit-day",
-    "conges-periods",
-    "phone-change",
-  ];
+  const expectedViews = ["guided", "home", "edit-day", "conges-periods", "phone-change"];
 
   assert(
     stepViews.length === expectedViews.length,

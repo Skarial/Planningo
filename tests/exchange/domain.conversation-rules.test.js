@@ -34,10 +34,7 @@ test("exchange conversation-rules - applyChoose locks conversation", () => {
   const result = applyChoose(conversation, nowISO);
 
   assert(result.ok === true, "applyChoose should succeed");
-  assert(
-    result.value.status === EXCHANGE_CONVERSATION_STATUS.LOCKED,
-    "status should be locked",
-  );
+  assert(result.value.status === EXCHANGE_CONVERSATION_STATUS.LOCKED, "status should be locked");
   assert(result.value.lockedAt === nowISO, "lockedAt mismatch");
   assert(result.value.acceptedByA === false, "acceptedByA should reset");
   assert(result.value.acceptedByB === false, "acceptedByB should reset");
@@ -59,10 +56,7 @@ test("exchange conversation-rules - applyAccept closes when both accepted", () =
   const second = applyAccept(first.value, "B", "2026-02-08T10:02:00.000Z");
   assert(second.ok === true, "second accept should succeed");
   assert(second.bothAccepted === true, "bothAccepted should be true");
-  assert(
-    second.value.status === EXCHANGE_CONVERSATION_STATUS.CLOSED,
-    "status should be closed",
-  );
+  assert(second.value.status === EXCHANGE_CONVERSATION_STATUS.CLOSED, "status should be closed");
 });
 
 test("exchange conversation-rules - applyAccept rejects invalid role", () => {
@@ -75,8 +69,5 @@ test("exchange conversation-rules - applyAccept rejects invalid role", () => {
 
   const result = applyAccept(conversation, "C", "2026-02-08T10:03:00.000Z");
   assert(result.ok === false, "invalid role should fail");
-  assert(
-    result.error.code === "CONVERSATION_ACCEPT_WHO_INVALID",
-    "error code mismatch",
-  );
+  assert(result.error.code === "CONVERSATION_ACCEPT_WHO_INVALID", "error code mismatch");
 });

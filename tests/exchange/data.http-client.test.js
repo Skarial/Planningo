@@ -59,13 +59,10 @@ test("exchange http-client - maps 401/403/409/410/429", async () => {
   );
 
   for (const item of cases) {
-    const result = await exchangeFetch(
-      `https://exchange.test/mock/s${item.status}`,
-      {
-        method: "GET",
-        authRequired: false,
-      },
-    );
+    const result = await exchangeFetch(`https://exchange.test/mock/s${item.status}`, {
+      method: "GET",
+      authRequired: false,
+    });
     assert(result.ok === false, `status ${item.status} should fail`);
     assert(result.error.code === item.code, `status ${item.status} code mismatch`);
   }

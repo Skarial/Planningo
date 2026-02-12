@@ -17,4 +17,3 @@
   - Nettoyage automatique du rappel après import réussi.
 - UX:
   - Remplacement des `alert(...)` du flux de réponse Exchange par des toasts globaux.
-

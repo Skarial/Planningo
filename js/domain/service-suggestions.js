@@ -59,7 +59,11 @@ export function getServiceSuggestions({
       return;
     }
 
-    if (inSeason && !["DM", "DAM", "FORMATION"].includes(upperCode) && !upperCode.startsWith("TAD")) {
+    if (
+      inSeason &&
+      !["DM", "DAM", "FORMATION"].includes(upperCode) &&
+      !upperCode.startsWith("TAD")
+    ) {
       const periodes = Array.isArray(service.periodes) ? service.periodes : [];
       const hasSeason = periodes.some((p) => p && p.libelle === SEASON_LABEL);
       const hasMain = periodes.some((p) => p && p.libelle === MAIN_LABEL);
@@ -115,18 +119,10 @@ export function getServiceSuggestions({
   });
 
   // tri stable
-  result.DM.sort((a, b) =>
-    a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
-  );
-  result.DAM.sort((a, b) =>
-    a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
-  );
-  result.FORMATION.sort((a, b) =>
-    a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
-  );
-  result.TAD.sort((a, b) =>
-    a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
-  );
+  result.DM.sort((a, b) => a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }));
+  result.DAM.sort((a, b) => a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }));
+  result.FORMATION.sort((a, b) => a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }));
+  result.TAD.sort((a, b) => a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }));
   Object.keys(result.LIGNES).forEach((line) => {
     result.LIGNES[line].sort((a, b) =>
       a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" }),
@@ -135,4 +131,3 @@ export function getServiceSuggestions({
 
   return result;
 }
-

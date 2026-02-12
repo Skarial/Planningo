@@ -23,4 +23,3 @@ test("alarm auto-import guard rejects missing flag", () => {
     "autoImport false should be rejected",
   );
 });
-

@@ -14,9 +14,7 @@ const state = {
 function cloneState() {
   return {
     selectedConversationId: state.selectedConversationId,
-    selectedParticipants: state.selectedParticipants
-      ? { ...state.selectedParticipants }
-      : null,
+    selectedParticipants: state.selectedParticipants ? { ...state.selectedParticipants } : null,
   };
 }
 
@@ -79,10 +77,7 @@ export function selectExchangeConversation(conversationId) {
   };
 }
 
-export function selectExchangeConversationWithParticipants(
-  conversationId,
-  participantsMap,
-) {
+export function selectExchangeConversationWithParticipants(conversationId, participantsMap) {
   if (typeof conversationId !== "string") {
     return {
       ok: false,
@@ -106,11 +101,7 @@ export function selectExchangeConversationWithParticipants(
     };
   }
 
-  if (
-    !participantsMap ||
-    typeof participantsMap !== "object" ||
-    Array.isArray(participantsMap)
-  ) {
+  if (!participantsMap || typeof participantsMap !== "object" || Array.isArray(participantsMap)) {
     return {
       ok: false,
       error: {
@@ -124,8 +115,7 @@ export function selectExchangeConversationWithParticipants(
   const normalizedParticipants = {};
   Object.entries(participantsMap).forEach(([rawUserId, rawDisplayName]) => {
     const userId = typeof rawUserId === "string" ? rawUserId.trim() : "";
-    const displayName =
-      typeof rawDisplayName === "string" ? rawDisplayName.trim() : "";
+    const displayName = typeof rawDisplayName === "string" ? rawDisplayName.trim() : "";
     if (userId && displayName) {
       normalizedParticipants[userId] = displayName;
     }

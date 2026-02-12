@@ -68,11 +68,7 @@ export function initMenu() {
 
   function isInteractiveTarget(target) {
     if (!target || !target.closest) return false;
-    return Boolean(
-      target.closest(
-        "input, textarea, select, button, a, [contenteditable='true']",
-      ),
-    );
+    return Boolean(target.closest("input, textarea, select, button, a, [contenteditable='true']"));
   }
 
   // =======================
@@ -529,4 +525,3 @@ export function initMenu() {
 
   // Version affiche supprime avec le footer du menu
 }
-

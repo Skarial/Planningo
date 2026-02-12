@@ -33,8 +33,7 @@ export async function renderConsultDateView() {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className =
-    "settings-view settings-page-variant settings-card-spacing-lg consult-date-view";
+  root.className = "settings-view settings-page-variant settings-card-spacing-lg consult-date-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
@@ -45,8 +44,7 @@ export async function renderConsultDateView() {
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
-  subtitle.textContent =
-    "Choisissez une date pour afficher le planning du jour.";
+  subtitle.textContent = "Choisissez une date pour afficher le planning du jour.";
 
   header.append(title, subtitle);
 

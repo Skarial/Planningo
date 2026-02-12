@@ -66,4 +66,3 @@ export function renderHomeMonthCalendar(container, deps) {
   wrapper.appendChild(grid);
   container.appendChild(wrapper);
 }
-

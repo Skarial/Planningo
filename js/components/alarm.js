@@ -19,10 +19,7 @@ import { getPeriodLabel } from "../utils/period-label.js";
 import { toISODateLocal } from "../utils.js";
 import { clearAlarmResyncPending } from "../state/alarm-resync.js";
 import { shouldAutoImportAlarm } from "../state/alarm-auto-import.js";
-import {
-  getAlarmSyncEnabled,
-  setAlarmSyncEnabled,
-} from "../state/alarm-feature.js";
+import { getAlarmSyncEnabled, setAlarmSyncEnabled } from "../state/alarm-feature.js";
 
 const RULES_KEY = "alarm_rules";
 const ALARM_NOTICE_SEEN_KEY = "planningo_alarm_notice_seen";
@@ -77,11 +74,7 @@ function parseISODateLocal(dateISO) {
   const [y, m, d] = parts;
   if (!y || !m || !d) return null;
   const date = new Date(y, m - 1, d);
-  if (
-    date.getFullYear() !== y ||
-    date.getMonth() !== m - 1 ||
-    date.getDate() !== d
-  ) {
+  if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {
     return null;
   }
   return date;
@@ -93,13 +86,8 @@ function clampNumber(value, min, max) {
 }
 
 function normalizeRules(input) {
-  const offset = clampNumber(
-    Number(input?.offsetMinutes),
-    LIMITS.offsetMin,
-    LIMITS.offsetMax,
-  );
-  const offsetMinutes =
-    offset != null ? Math.round(offset) : DEFAULT_RULES.offsetMinutes;
+  const offset = clampNumber(Number(input?.offsetMinutes), LIMITS.offsetMin, LIMITS.offsetMax);
+  const offsetMinutes = offset != null ? Math.round(offset) : DEFAULT_RULES.offsetMinutes;
 
   const horizonDays = DEFAULT_RULES.horizonDays;
 
@@ -134,12 +122,8 @@ function getAlarmEnvironmentDiagnostics() {
   const canClipboardWrite = Boolean(
     navigator?.clipboard && typeof navigator.clipboard.writeText === "function",
   );
-  const canNavigatorShare = Boolean(
-    navigator?.share && typeof navigator.share === "function",
-  );
-  const canFileShare = Boolean(
-    navigator?.canShare && typeof navigator.canShare === "function",
-  );
+  const canNavigatorShare = Boolean(navigator?.share && typeof navigator.share === "function");
+  const canFileShare = Boolean(navigator?.canShare && typeof navigator.canShare === "function");
 
   return {
     isAndroid: isAndroidDevice(),
@@ -256,12 +240,7 @@ async function sharePlan(plan) {
     file = null;
   }
 
-  if (
-    file &&
-    navigator.share &&
-    navigator.canShare &&
-    navigator.canShare({ files: [file] })
-  ) {
+  if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
       await navigator.share({
         files: [file],
@@ -347,8 +326,7 @@ export async function renderAlarmView(options = {}) {
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className =
-    "settings-view settings-page-variant settings-card-spacing-md alarm-view";
+  root.className = "settings-view settings-page-variant settings-card-spacing-md alarm-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
@@ -504,12 +482,7 @@ export async function renderAlarmView(options = {}) {
   footerActions.className = "alarm-footer-actions";
   footerActions.append(helpBtn);
 
-  card.append(
-    sectionSettings,
-    sectionInstall,
-    sectionChecks,
-    footerActions,
-  );
+  card.append(sectionSettings, sectionInstall, sectionChecks, footerActions);
   root.append(header, card);
   view.appendChild(root);
   const noticeOverlay = document.createElement("div");
@@ -536,11 +509,7 @@ export async function renderAlarmView(options = {}) {
   noticeCloseBtn.className = "settings-btn primary";
   noticeCloseBtn.textContent = "J'ai compris";
 
-  noticeModal.append(
-    noticeTitle,
-    noticeBody,
-    noticeCloseBtn,
-  );
+  noticeModal.append(noticeTitle, noticeBody, noticeCloseBtn);
   noticeOverlay.appendChild(noticeModal);
   view.appendChild(noticeOverlay);
 
@@ -601,11 +570,7 @@ export async function renderAlarmView(options = {}) {
     if (!enabled) {
       clearAlarmResyncPending();
     }
-    status.show(
-      enabled
-        ? "Rappels reveil actives."
-        : "Rappels reveil désactivés.",
-    );
+    status.show(enabled ? "Rappels reveil actives." : "Rappels reveil désactivés.");
   });
 
   let currentRules = await loadRules();
@@ -673,9 +638,10 @@ export async function renderAlarmView(options = {}) {
         ? String(nextAlarm.alarmAt).slice(0, 10)
         : toISODateLocal(alarmAtDate);
       const alarmDateParts = String(alarmDateISO).split("-");
-      const alarmDate = alarmDateParts.length === 3
-        ? `${alarmDateParts[2]}-${alarmDateParts[1]}-${alarmDateParts[0]}`
-        : alarmDateISO;
+      const alarmDate =
+        alarmDateParts.length === 3
+          ? `${alarmDateParts[2]}-${alarmDateParts[1]}-${alarmDateParts[0]}`
+          : alarmDateISO;
       const alarmTime = Number.isNaN(alarmAtDate.getTime())
         ? String(nextAlarm.alarmAt).slice(11, 16)
         : `${String(alarmAtDate.getHours()).padStart(2, "0")}:${String(alarmAtDate.getMinutes()).padStart(2, "0")}`;
@@ -742,20 +708,13 @@ export async function renderAlarmView(options = {}) {
       const method = directImported ? "app" : await sharePlan(plan);
       const count = planCheck.count;
       const suffix =
-        method === "app"
-          ? "importé dans Réveil"
-          : method === "share"
-            ? "partagé"
-            : "téléchargé";
+        method === "app" ? "importé dans Réveil" : method === "share" ? "partagé" : "téléchargé";
       status.show(
         `Plan ${suffix} (${count} alarme${count > 1 ? "s" : ""}) - ${startISO} à ${endISO}.`,
       );
       clearAlarmResyncPending();
     } catch (err) {
-      const msg =
-        err && err.name === "AbortError"
-          ? "Partage annulé."
-          : "Erreur de génération.";
+      const msg = err && err.name === "AbortError" ? "Partage annulé." : "Erreur de génération.";
       status.show(msg);
     } finally {
       actionBtn.textContent = prevText;
@@ -770,8 +729,3 @@ export async function renderAlarmView(options = {}) {
     runImport();
   }
 }
-
-
-
-
-

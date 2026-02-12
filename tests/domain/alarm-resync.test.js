@@ -47,4 +47,3 @@ test("alarm-resync clear resets pending and dismissed", () => {
   assert(isAlarmResyncPending() === false, "pending should be false");
   assert(isAlarmResyncDismissed() === false, "dismissed should be false");
 });
-

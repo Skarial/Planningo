@@ -63,6 +63,3 @@ export async function renderPhoneChangeView() {
     await importAllData();
   });
 }
-
-
-

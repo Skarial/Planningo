@@ -19,11 +19,7 @@ function parseISODateLocal(dateISO) {
   const month = Number(mm) - 1;
   const day = Number(dd);
   const date = new Date(year, month, day);
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month ||
-    date.getDate() !== day
-  ) {
+  if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
     return null;
   }
   date.setHours(0, 0, 0, 0);
@@ -88,10 +84,7 @@ function resolveMatchingPeriod(service, periodLabel) {
         periode.plages.length > 0,
     ) ||
     service.periodes.find(
-      (periode) =>
-        periode &&
-        Array.isArray(periode.plages) &&
-        periode.plages.length > 0,
+      (periode) => periode && Array.isArray(periode.plages) && periode.plages.length > 0,
     ) ||
     null
   );

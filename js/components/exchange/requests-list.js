@@ -55,9 +55,7 @@ function askCounterProposalIndex(counterProposals) {
     })
     .join("\n");
 
-  const raw = prompt(
-    `Choisir une contre-proposition (1-${counterProposals.length}) :\n${choices}`,
-  );
+  const raw = prompt(`Choisir une contre-proposition (1-${counterProposals.length}) :\n${choices}`);
   if (raw == null) return null;
 
   const idx = Number(raw);
@@ -84,9 +82,7 @@ async function handleRespondToRequest(request) {
     return;
   }
 
-  const counterProposals = Array.isArray(request?.counterProposals)
-    ? request.counterProposals
-    : [];
+  const counterProposals = Array.isArray(request?.counterProposals) ? request.counterProposals : [];
   if (counterProposals.length === 0) {
     showToast("Aucune contre-proposition");
     return;
@@ -130,13 +126,10 @@ async function handleRespondToRequest(request) {
   }
 
   const owner = request?.owner || {};
-  const ownerPrenom =
-    typeof owner.prenom === "string" ? owner.prenom.trim() : "";
+  const ownerPrenom = typeof owner.prenom === "string" ? owner.prenom.trim() : "";
   const ownerNom = typeof owner.nom === "string" ? owner.nom.trim() : "";
-  const currentUserPrenom =
-    typeof currentUser.prenom === "string" ? currentUser.prenom.trim() : "";
-  const currentUserNom =
-    typeof currentUser.nom === "string" ? currentUser.nom.trim() : "";
+  const currentUserPrenom = typeof currentUser.prenom === "string" ? currentUser.prenom.trim() : "";
+  const currentUserNom = typeof currentUser.nom === "string" ? currentUser.nom.trim() : "";
 
   const participantsMap = {};
   const ownerDisplayName = `${ownerPrenom} ${ownerNom}`.trim();
@@ -178,9 +171,7 @@ function createRequestItem(request) {
 
   const proposals = document.createElement("div");
   proposals.className = "settings-note";
-  const count = Array.isArray(request?.counterProposals)
-    ? request.counterProposals.length
-    : 0;
+  const count = Array.isArray(request?.counterProposals) ? request.counterProposals.length : 0;
   proposals.textContent = `Contre-propositions: ${count}`;
   item.appendChild(proposals);
 
@@ -236,8 +227,7 @@ export function renderExchangeRequestsList(container) {
     if (currentState.status === "loading") {
       statusText.textContent = "Chargement...";
     } else if (currentState.status === "error") {
-      statusText.textContent =
-        currentState.error?.message || "Erreur de chargement";
+      statusText.textContent = currentState.error?.message || "Erreur de chargement";
     } else if (currentState.status === "ready") {
       statusText.textContent = `Page ${currentState.page}`;
     } else {

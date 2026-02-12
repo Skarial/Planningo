@@ -65,10 +65,7 @@ function getServiceMinutes(service, periodLabel) {
         periode.plages.length > 0,
     ) ||
     service.periodes.find(
-      (periode) =>
-        periode &&
-        Array.isArray(periode.plages) &&
-        periode.plages.length > 0,
+      (periode) => periode && Array.isArray(periode.plages) && periode.plages.length > 0,
     );
 
   if (!matchingPeriod || !Array.isArray(matchingPeriod.plages)) {
@@ -103,19 +100,14 @@ function getServicePlageCount(service, periodLabel) {
         periode.plages.length > 0,
     ) ||
     service.periodes.find(
-      (periode) =>
-        periode &&
-        Array.isArray(periode.plages) &&
-        periode.plages.length > 0,
+      (periode) => periode && Array.isArray(periode.plages) && periode.plages.length > 0,
     );
 
   if (!matchingPeriod || !Array.isArray(matchingPeriod.plages)) {
     return 0;
   }
 
-  return matchingPeriod.plages.filter(
-    (plage) => plage && plage.debut && plage.fin,
-  ).length;
+  return matchingPeriod.plages.filter((plage) => plage && plage.debut && plage.fin).length;
 }
 
 function parseISO(input) {
@@ -125,11 +117,7 @@ function parseISO(input) {
   const [y, m, d] = parts.map(Number);
   if (!y || !m || !d) return null;
   const date = new Date(y, m - 1, d);
-  if (
-    date.getFullYear() !== y ||
-    date.getMonth() !== m - 1 ||
-    date.getDate() !== d
-  ) {
+  if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {
     return null;
   }
   date.setHours(0, 0, 0, 0);
@@ -293,11 +281,8 @@ export async function renderSummaryView() {
               if (entry.startTime && entry.endTime) {
                 halfSundayDays++;
               } else {
-                const service =
-                  serviceMap.get(entry.serviceCode.toUpperCase()) || null;
-                const label = getPeriodLabel(
-                  getPeriodStateForDate(saisonConfig, cursor),
-                );
+                const service = serviceMap.get(entry.serviceCode.toUpperCase()) || null;
+                const label = getPeriodLabel(getPeriodStateForDate(saisonConfig, cursor));
                 const plageCount = getServicePlageCount(service, label);
                 if (plageCount >= 2) {
                   fullSundayDays++;
@@ -315,9 +300,7 @@ export async function renderSummaryView() {
               }
             } else {
               const service = serviceMap.get(entry.serviceCode.toUpperCase()) || null;
-              const label = getPeriodLabel(
-                getPeriodStateForDate(saisonConfig, cursor),
-              );
+              const label = getPeriodLabel(getPeriodStateForDate(saisonConfig, cursor));
               const minutes = getServiceMinutes(service, label);
               totalMinutes += minutes;
               if (entry.extra) {
@@ -325,9 +308,7 @@ export async function renderSummaryView() {
               }
             }
 
-            const dayMajorExtraMinutes = normalizeMajorExtraMinutes(
-              entry.majorExtraMinutes,
-            );
+            const dayMajorExtraMinutes = normalizeMajorExtraMinutes(entry.majorExtraMinutes);
             if (dayMajorExtraMinutes > 0) {
               majorExtraMinutes += dayMajorExtraMinutes;
               extraMinutes += dayMajorExtraMinutes;
@@ -362,40 +343,37 @@ export async function renderSummaryView() {
 
     const totalDuration = formatDuration(Math.max(0, totalMinutes)).replace(":", " : ");
     const extraDuration = formatDuration(extraMinutes).replace(":", " : ");
-const rows = [
-  ["Demi dimanche travaill\u00e9", halfSundayDays],
-  ["Dimanche complet travaill\u00e9", fullSundayDays],
-  ["Jours f\u00e9ri\u00e9s travaill\u00e9s", workedHolidayDays],
-  ["Nombre de paniers", panierCount],
-  ["Jours de repos", reposDays],
-  ["Jours de cong\u00e9s", congesDays],
-];
+    const rows = [
+      ["Demi dimanche travaill\u00e9", halfSundayDays],
+      ["Dimanche complet travaill\u00e9", fullSundayDays],
+      ["Jours f\u00e9ri\u00e9s travaill\u00e9s", workedHolidayDays],
+      ["Nombre de paniers", panierCount],
+      ["Jours de repos", reposDays],
+      ["Jours de cong\u00e9s", congesDays],
+    ];
 
-if (extraMinutes > 0) {
-  rows.push(["Heures supplémentaires", extraDuration]);
-}
+    if (extraMinutes > 0) {
+      rows.push(["Heures supplémentaires", extraDuration]);
+    }
 
-rows.push(["Total jours travaillés", workedDays]);
-rows.push(["Total heures travaillées", totalDuration]);
+    rows.push(["Total jours travaillés", workedDays]);
+    rows.push(["Total heures travaillées", totalDuration]);
 
-const filteredRows = rows.filter(([label, value]) => {
-  if (label === "Total jours travaillés") return true;
-  if (label === "Total heures travaillées") return true;
-  if (typeof value === "number") return value !== 0;
-  if (typeof value === "string") {
-    const normalized = value.replace(/\s/g, "");
-    return normalized !== "00:00";
-  }
-  return true;
-});
+    const filteredRows = rows.filter(([label, value]) => {
+      if (label === "Total jours travaillés") return true;
+      if (label === "Total heures travaillées") return true;
+      if (typeof value === "number") return value !== 0;
+      if (typeof value === "string") {
+        const normalized = value.replace(/\s/g, "");
+        return normalized !== "00:00";
+      }
+      return true;
+    });
 
     filteredRows.forEach(([label, value], idx) => {
       const row = document.createElement("div");
       row.className = "summary-row";
-      if (
-        label === "Total jours travaillés" ||
-        label === "Total heures travaillées"
-      ) {
+      if (label === "Total jours travaillés" || label === "Total heures travaillées") {
         row.classList.add("summary-total");
       }
       row.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
@@ -405,7 +383,3 @@ const filteredRows = rows.filter(([label, value]) => {
 
   runBtn.addEventListener("click", computeAndRender);
 }
-
-
-
-

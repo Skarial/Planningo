@@ -30,4 +30,3 @@ import "./domain/month-calendar-state.test.js";
 
 await runAllTests();
 summary();
-

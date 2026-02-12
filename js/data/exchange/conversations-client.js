@@ -49,26 +49,19 @@ export async function listExchangeConversations(options = {}) {
   });
 }
 
-export async function chooseExchangeConversation(
-  conversationId,
-  payload,
-  options = {},
-) {
+export async function chooseExchangeConversation(conversationId, payload, options = {}) {
   const validatedId = validateConversationId(conversationId);
   if (!validatedId.ok) {
     return validatedId;
   }
 
   const token = resolveToken(options.token);
-  return exchangeFetch(
-    `/exchanges/conversations/${encodeURIComponent(validatedId.value)}/choose`,
-    {
-      method: "POST",
-      body: payload,
-      authRequired: true,
-      token,
-    },
-  );
+  return exchangeFetch(`/exchanges/conversations/${encodeURIComponent(validatedId.value)}/choose`, {
+    method: "POST",
+    body: payload,
+    authRequired: true,
+    token,
+  });
 }
 
 export async function acceptExchangeConversation(conversationId, options = {}) {
@@ -78,21 +71,14 @@ export async function acceptExchangeConversation(conversationId, options = {}) {
   }
 
   const token = resolveToken(options.token);
-  return exchangeFetch(
-    `/exchanges/conversations/${encodeURIComponent(validatedId.value)}/accept`,
-    {
-      method: "POST",
-      authRequired: true,
-      token,
-    },
-  );
+  return exchangeFetch(`/exchanges/conversations/${encodeURIComponent(validatedId.value)}/accept`, {
+    method: "POST",
+    authRequired: true,
+    token,
+  });
 }
 
-export async function sendExchangeMessage(
-  conversationId,
-  payload,
-  options = {},
-) {
+export async function sendExchangeMessage(conversationId, payload, options = {}) {
   const validatedId = validateConversationId(conversationId);
   if (!validatedId.ok) {
     return validatedId;

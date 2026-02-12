@@ -95,4 +95,3 @@ export function renderFeedbackView() {
   root.append(header, card);
   view.appendChild(root);
 }
-

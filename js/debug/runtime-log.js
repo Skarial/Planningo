@@ -39,8 +39,7 @@ function getCurrentRoute() {
 }
 
 function getScreenSnapshot() {
-  const orientationType =
-    (screen.orientation && screen.orientation.type) || null;
+  const orientationType = (screen.orientation && screen.orientation.type) || null;
   const visualViewportHeight = window.visualViewport?.height ?? null;
 
   return {
@@ -49,8 +48,7 @@ function getScreenSnapshot() {
     visualViewportHeight,
     pixelRatio: window.devicePixelRatio ?? null,
     orientation: orientationType,
-    appVh:
-      document.documentElement.style.getPropertyValue("--app-vh") || null,
+    appVh: document.documentElement.style.getPropertyValue("--app-vh") || null,
     userAgent: navigator.userAgent || null,
   };
 }
@@ -94,12 +92,7 @@ function onWindowError(event) {
   // Resource loading errors arrive as generic Event with target.
   if (event?.target && event.target !== window) {
     const target = event.target;
-    const source =
-      target.src ||
-      target.href ||
-      target.currentSrc ||
-      target.tagName ||
-      "resource";
+    const source = target.src || target.href || target.currentSrc || target.tagName || "resource";
     recordRuntimeIssue("resource-error", { source: String(source) });
     return;
   }

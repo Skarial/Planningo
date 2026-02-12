@@ -4,10 +4,7 @@
   See LICENSE for terms.
 */
 
-import {
-  EXCHANGE_STORAGE_TOKEN_EXPIRES_AT_KEY,
-  EXCHANGE_STORAGE_TOKEN_KEY,
-} from "./config.js";
+import { EXCHANGE_STORAGE_TOKEN_EXPIRES_AT_KEY, EXCHANGE_STORAGE_TOKEN_KEY } from "./config.js";
 import { exchangeFetch } from "./http-client.js";
 
 function asTrimmedString(value) {

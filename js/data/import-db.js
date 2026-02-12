@@ -112,12 +112,10 @@ function normalizeExportData(rawData) {
     !Array.isArray(data.stores.config) &&
     typeof data.stores.config === "object"
   ) {
-    data.stores.config = Object.entries(data.stores.config).map(
-      ([key, value]) => ({
-        key,
-        value,
-      }),
-    );
+    data.stores.config = Object.entries(data.stores.config).map(([key, value]) => ({
+      key,
+      value,
+    }));
   }
 
   if (Array.isArray(data.stores.planning)) {
@@ -189,9 +187,7 @@ export async function importAllData() {
     input.addEventListener("cancel", () => settle(false));
 
     input.onchange = async () => {
-      const confirmed = confirm(
-        "L'import remplacera toutes les donnees existantes. Continuer ",
-      );
+      const confirmed = confirm("L'import remplacera toutes les donnees existantes. Continuer ");
       if (!confirmed) {
         settle(false);
         return;

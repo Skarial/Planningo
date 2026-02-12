@@ -32,4 +32,3 @@ export function subscribeActiveDate(fn) {
     subscribers.add(fn);
   }
 }
-

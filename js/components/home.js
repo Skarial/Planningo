@@ -18,7 +18,12 @@ import { getPlanningEntry, getPlanningForMonth } from "../data/storage.js";
 import { getActiveDateISO, setActiveDateISO } from "../state/active-date.js";
 
 import { isDateInConges } from "../domain/conges.js";
-import { formatMinutesAsDuration, getFixedServiceMinutes, getServiceDisplayName, toISODateLocal } from "../utils.js";
+import {
+  formatMinutesAsDuration,
+  getFixedServiceMinutes,
+  getServiceDisplayName,
+  toISODateLocal,
+} from "../utils.js";
 import { getConfig } from "../data/db.js";
 import { initMonthFromDateISO } from "../state/month-navigation.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
@@ -57,9 +62,7 @@ async function findPreviousWorkedDayEntry(currentDate, congesConfig) {
     const iso = toISODateLocal(probe);
     const entry = await getPlanningEntry(iso);
     const code =
-      entry && typeof entry.serviceCode === "string"
-        ? entry.serviceCode.trim().toUpperCase()
-        : "";
+      entry && typeof entry.serviceCode === "string" ? entry.serviceCode.trim().toUpperCase() : "";
     if (!code || code === "REPOS") continue;
     return { dateISO: iso, entry };
   }
@@ -137,10 +140,7 @@ function buildServiceTimeLines(service, periodLabel) {
         periode.plages.length > 0,
     ) ||
     service.periodes.find(
-      (periode) =>
-        periode &&
-        Array.isArray(periode.plages) &&
-        periode.plages.length > 0,
+      (periode) => periode && Array.isArray(periode.plages) && periode.plages.length > 0,
     );
 
   if (!matchingPeriod || !Array.isArray(matchingPeriod.plages)) {
@@ -351,9 +351,7 @@ export async function renderHome() {
 
     const month = document.createElement("div");
     month.className = "day-header-month";
-    month.textContent = date
-      .toLocaleDateString("fr-FR", { month: "long" })
-      .toUpperCase();
+    month.textContent = date.toLocaleDateString("fr-FR", { month: "long" }).toUpperCase();
 
     const year = document.createElement("div");
     year.className = "day-header-year";
@@ -510,9 +508,7 @@ export async function renderHome() {
           extraLabel.hidden = true;
         }
 
-        const majorExtraMinutes = normalizeMajorExtraMinutes(
-          entryValue?.majorExtraMinutes,
-        );
+        const majorExtraMinutes = normalizeMajorExtraMinutes(entryValue?.majorExtraMinutes);
         if (majorExtraMinutes > 0) {
           majorExtraLabel.hidden = false;
           majorExtraLabel.textContent = `Heures supplémentaires : ${formatMajorExtraMinutes(majorExtraMinutes)}`;
@@ -541,10 +537,7 @@ export async function renderHome() {
           missingLabel.textContent = "";
         }
 
-        panier.hidden = !resolvePanierEnabled(
-          entryValue?.serviceCode,
-          entryValue?.panierOverride,
-        );
+        panier.hidden = !resolvePanierEnabled(entryValue?.serviceCode, entryValue?.panierOverride);
       }
 
       if (!entry || !entry.serviceCode) {
@@ -581,10 +574,7 @@ export async function renderHome() {
       }
 
       try {
-        const previousWorkedDay = await findPreviousWorkedDayEntry(
-          date,
-          window.__homeCongesConfig,
-        );
+        const previousWorkedDay = await findPreviousWorkedDayEntry(date, window.__homeCongesConfig);
         if (previousWorkedDay) {
           const services = await loadServicesCatalog();
           const servicesByCode = new Map(
@@ -639,14 +629,10 @@ export async function renderHome() {
         const serviceCode = entry.serviceCode.toUpperCase();
         const matchedService = services.find(
           (item) =>
-            item &&
-            typeof item.code === "string" &&
-            item.code.toUpperCase() === serviceCode,
+            item && typeof item.code === "string" && item.code.toUpperCase() === serviceCode,
         );
 
-        const periodLabel = getPeriodLabel(
-          getPeriodStateForDate(window.__homeSaisonConfig, date),
-        );
+        const periodLabel = getPeriodLabel(getPeriodStateForDate(window.__homeSaisonConfig, date));
         const timeInfo = buildServiceTimeLines(matchedService, periodLabel);
 
         if (timeInfo) {
@@ -699,9 +685,7 @@ export async function renderHome() {
 
   const monthISO = getActiveDateISO().slice(0, 7);
   const monthEntries = monthISO ? await getPlanningForMonth(monthISO) : [];
-  const monthMap = new Map(
-    monthEntries.map((entry) => [entry.date, entry]),
-  );
+  const monthMap = new Map(monthEntries.map((entry) => [entry.date, entry]));
 
   renderHomeMonthCalendar(calendarAnchor, {
     getServiceForDateISO: (iso) => monthMap.get(iso) || null,
@@ -717,5 +701,4 @@ export async function renderHome() {
       renderHome();
     },
   });
-
 }

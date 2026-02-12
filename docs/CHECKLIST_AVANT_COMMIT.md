@@ -42,7 +42,6 @@ Aucun commit ne doit être effectué si un point est en échec.
 - [ ] Aucun stockage d’état utilisateur
 - [ ] Gestion des mises à jour basée uniquement sur `registration.waiting`
 
-
 ## 4. Sécurité et régression
 
 - [ ] Aucune donnée utilisateur n’est perdue

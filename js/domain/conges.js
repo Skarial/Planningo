@@ -28,11 +28,7 @@ export function parseFRDate(input) {
   const date = new Date(year, month, day);
 
   // validation relle de la date
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month ||
-    date.getDate() !== day
-  ) {
+  if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
     return null;
   }
 
@@ -151,9 +147,7 @@ export function getGuidedStartDay(year, monthIndex, congesConfig) {
   const monthEnd = new Date(year, monthIndex + 1, 0);
 
   // Cherche une priode qui couvre le dbut du mois
-  const covering = periods.filter(
-    (p) => p.start <= monthStart && p.end >= monthStart,
-  );
+  const covering = periods.filter((p) => p.start <= monthStart && p.end >= monthStart);
 
   if (covering.length === 0) return 1;
 
@@ -195,4 +189,3 @@ export function getCongesDaysISOForMonth(year, monthIndex, congesConfig) {
 
   return days;
 }
-

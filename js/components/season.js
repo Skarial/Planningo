@@ -93,10 +93,7 @@ export async function renderSeasonView(options = {}) {
   saveBtn.addEventListener("click", async () => {
     const start = inputStart.value.trim();
     const end = inputEnd.value.trim();
-    await setConfig(
-      "saison",
-      start && end ? { saisonDebut: start, saisonFin: end } : {},
-    );
+    await setConfig("saison", start && end ? { saisonDebut: start, saisonFin: end } : {});
     window.__homeSaisonConfig = start && end ? { saisonDebut: start, saisonFin: end } : null;
     status.show("Saison enregistrée");
   });

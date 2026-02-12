@@ -76,7 +76,7 @@ Lors d'un import :
 La restauration est totale.
 
 La restauration a priorite absolue sur tout autre mecanisme applicatif,
- y compris l'activation.
+y compris l'activation.
 
 ---
 
@@ -120,7 +120,7 @@ La validite d'un fichier repose notamment sur :
 - La confidentialite repose sur le controle du fichier par l'utilisateur.
 
 La restauration permet volontairement de retablir un etat d'activation,
- y compris sur un autre appareil.
+y compris sur un autre appareil.
 
 Ce choix est assume et fait partie du modele d'usage.
 

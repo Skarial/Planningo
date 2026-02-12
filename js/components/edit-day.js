@@ -59,8 +59,7 @@ function navigateHome() {
 }
 
 export async function renderEditDayView(container, { dateISO } = {}) {
-  const iso =
-    typeof dateISO === "string" ? dateISO.trim().replace(/\//g, "-") : "";
+  const iso = typeof dateISO === "string" ? dateISO.trim().replace(/\//g, "-") : "";
   container.innerHTML = "";
 
   const root = document.createElement("div");
@@ -209,7 +208,8 @@ export async function renderEditDayView(container, { dateISO } = {}) {
 
   const missingHelp = document.createElement("p");
   missingHelp.className = "edit-day-help";
-  missingHelp.textContent = "Minutes \u00E0 soustraire en cas de d\u00E9part anticip\u00E9 (minutes)";
+  missingHelp.textContent =
+    "Minutes \u00E0 soustraire en cas de d\u00E9part anticip\u00E9 (minutes)";
 
   const missingInput = document.createElement("input");
   missingInput.type = "text";
@@ -266,7 +266,14 @@ export async function renderEditDayView(container, { dateISO } = {}) {
 
   actions.append(cancelBtn, saveBtn);
 
-  serviceSection.append(serviceTitle, inputLabel, input, formationLabel, formationInput, suggestions);
+  serviceSection.append(
+    serviceTitle,
+    inputLabel,
+    input,
+    formationLabel,
+    formationInput,
+    suggestions,
+  );
   hoursSection.append(hoursTitle, extraTypeLabel, extraTypeRow, extraLabel, extraInput);
   missingSection.append(missingHelp, missingInput);
   optionsSection.append(panierRow, panierDetails);
@@ -309,10 +316,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     getConfig("saison"),
     getConfig("conges"),
   ]);
-  const isCongesDay = isDateInConges(
-    parseISODateLocal(iso),
-    congesEntry?.value ?? null,
-  );
+  const isCongesDay = isDateInConges(parseISODateLocal(iso), congesEntry?.value ?? null);
 
   const initialCode = getInitialServiceCode(entry);
   input.value = initialCode;
@@ -324,11 +328,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   let formationRaw = getInitialFormationMinutes(entry);
   formationInput.value = formationRaw;
   missingInput.value = missingRaw;
-  let selectedExtraType = majorExtraRaw
-    ? "major"
-    : nonMajorExtraRaw
-      ? "nonMajor"
-      : "major";
+  let selectedExtraType = majorExtraRaw ? "major" : nonMajorExtraRaw ? "nonMajor" : "major";
 
   function updateExtraTypeButtons() {
     const isMajor = selectedExtraType === "major";
@@ -364,8 +364,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   }
 
   function syncExtraInputFromState() {
-    extraInput.value =
-      selectedExtraType === "major" ? majorExtraRaw : nonMajorExtraRaw;
+    extraInput.value = selectedExtraType === "major" ? majorExtraRaw : nonMajorExtraRaw;
     extraInput.placeholder =
       selectedExtraType === "major"
         ? "Nombre de minutes majorees (ex : 60)"
@@ -414,8 +413,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     if (!normalizedCode) {
       summaryLine1.textContent = "Service actuel : aucun";
       summaryLine2.innerHTML = "Panier : <strong>Non</strong>";
-      summaryLine3.innerHTML =
-        "Heures suppl\u00E9mentaires major\u00E9es : <strong>00:00</strong>";
+      summaryLine3.innerHTML = "Heures suppl\u00E9mentaires major\u00E9es : <strong>00:00</strong>";
       summaryLine4.innerHTML = "Heures d\u00E9duites : <strong>00:00</strong>";
       summaryLine2.hidden = true;
       summaryLine3.hidden = true;
@@ -551,8 +549,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
       panierEnabled: panierToggle.checked,
       rawFormationMinutes: formationRaw,
       rawMajorExtraMinutes: selectedExtraType === "major" ? majorExtraRaw : "",
-      rawNonMajorExtraMinutes:
-        selectedExtraType === "nonMajor" ? nonMajorExtraRaw : "",
+      rawNonMajorExtraMinutes: selectedExtraType === "nonMajor" ? nonMajorExtraRaw : "",
       rawMissingMinutes: missingRaw,
       isCongesDay,
     });
@@ -566,4 +563,3 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     navigateHome();
   });
 }
-

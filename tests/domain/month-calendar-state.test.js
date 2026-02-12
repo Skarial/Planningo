@@ -1,9 +1,13 @@
-﻿/*
-  Copyright (c) 2026 Jordan
-  All Rights Reserved.
-  See LICENSE for terms.
-*/
-
+﻿/*
+
+  Copyright (c) 2026 Jordan
+
+  All Rights Reserved.
+
+  See LICENSE for terms.
+
+*/
+
 import { test, assert } from "../run-tests.js";
 import { initMonthFromDateISO } from "../../js/state/month-navigation.js";
 import { getMonthCalendar } from "../../js/state/month-calendar-state.js";
@@ -53,4 +57,3 @@ test("month-calendar-state - jour actif propagé", () => {
   assert(active, "jour actif attendu");
   assert(active.iso === "2026-03-10", "jour actif incorrect");
 });
-

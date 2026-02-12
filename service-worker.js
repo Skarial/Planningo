@@ -77,13 +77,11 @@ const ESSENTIAL_ASSETS = [
 self.addEventListener("install", (event) => {
   swDiagLog("install", { cacheName: CACHE_NAME });
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) =>
-      Promise.allSettled(
-        ESSENTIAL_ASSETS.map((asset) =>
-          cache.add(asset).catch(() => null),
-        ),
+    caches
+      .open(CACHE_NAME)
+      .then((cache) =>
+        Promise.allSettled(ESSENTIAL_ASSETS.map((asset) => cache.add(asset).catch(() => null))),
       ),
-    ),
   );
   // no skipWaiting here
 });
@@ -211,107 +209,4 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

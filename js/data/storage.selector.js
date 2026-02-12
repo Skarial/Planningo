@@ -24,4 +24,3 @@ export function getStorageAdapter() {
       return memory;
   }
 }
-

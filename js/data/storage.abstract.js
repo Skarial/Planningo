@@ -17,4 +17,3 @@ export const storageDelete = adapter.storageDelete;
 export const storageClear = adapter.storageClear;
 export const storageExportAll = adapter.storageExportAll;
 export const storageImportAll = adapter.storageImportAll;
-

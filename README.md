@@ -30,7 +30,7 @@ L'application permet de :
 - saisir et modifier les services (saisie directe + saisie guidee),
 - configurer plusieurs periodes de conges,
 - fonctionner de maniere fiable hors connexion.
- - gerer le service Formation (code interne : FORMATION).
+- gerer le service Formation (code interne : FORMATION).
 
 Le perimetre fonctionnel est volontairement restreint et maitrise.
 

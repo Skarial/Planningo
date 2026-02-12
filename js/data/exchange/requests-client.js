@@ -58,13 +58,10 @@ export async function respondToExchangeRequest(requestId, payload, options = {})
   }
 
   const token = resolveToken(options.token);
-  return exchangeFetch(
-    `/exchanges/requests/${encodeURIComponent(normalizedRequestId)}/respond`,
-    {
-      method: "POST",
-      body: payload,
-      authRequired: true,
-      token,
-    },
-  );
+  return exchangeFetch(`/exchanges/requests/${encodeURIComponent(normalizedRequestId)}/respond`, {
+    method: "POST",
+    body: payload,
+    authRequired: true,
+    token,
+  });
 }

@@ -24,4 +24,3 @@ export function showToast(message, durationMs = 2200) {
     }, 240);
   }, durationMs);
 }
-

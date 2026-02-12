@@ -1,0 +1,18 @@
+{
+  "name": "planningo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint js tests service-worker.js",
+    "lint:fix": "eslint js tests service-worker.js --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.3.0",
+    "prettier": "^3.8.1"
+  }
+}

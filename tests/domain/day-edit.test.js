@@ -232,14 +232,8 @@ test("day-edit getInitialServiceCode returns current service", () => {
 test("day-edit resolvePanierEnabled applies override over default", () => {
   assert(resolvePanierEnabled("2623") === true, "2623 has default panier");
   assert(resolvePanierEnabled("2910") === false, "2910 has no default panier");
-  assert(
-    resolvePanierEnabled("2623", false) === false,
-    "override false must disable panier",
-  );
-  assert(
-    resolvePanierEnabled("2910", true) === true,
-    "override true must enable panier",
-  );
+  assert(resolvePanierEnabled("2623", false) === false, "override false must disable panier");
+  assert(resolvePanierEnabled("2910", true) === true, "override true must enable panier");
 });
 
 test("day-edit getInitialPanierEnabled reads entry override", () => {
@@ -260,11 +254,11 @@ test("day-edit getInitialPanierEnabled reads entry override", () => {
 test("day-edit getInitialNonMajorExtraMinutes reads stored minutes", () => {
   assert(
     getInitialNonMajorExtraMinutes({ nonMajorExtraMinutes: 90 }) === "90",
-    "90 minutes should map to \"90\"",
+    '90 minutes should map to "90"',
   );
   assert(
     getInitialNonMajorExtraMinutes({ nonMajorExtraMinutes: 60 }) === "60",
-    "60 minutes should map to \"60\"",
+    '60 minutes should map to "60"',
   );
   assert(
     getInitialNonMajorExtraMinutes({ nonMajorExtraMinutes: 0 }) === "",
@@ -275,40 +269,31 @@ test("day-edit getInitialNonMajorExtraMinutes reads stored minutes", () => {
 test("day-edit getInitialMajorExtraMinutes reads stored minutes", () => {
   assert(
     getInitialMajorExtraMinutes({ majorExtraMinutes: 90 }) === "90",
-    "90 minutes should map to \"90\"",
+    '90 minutes should map to "90"',
   );
   assert(
     getInitialMajorExtraMinutes({ majorExtraMinutes: 60 }) === "60",
-    "60 minutes should map to \"60\"",
+    '60 minutes should map to "60"',
   );
-  assert(
-    getInitialMajorExtraMinutes({ majorExtraMinutes: 0 }) === "",
-    "zero should map to empty",
-  );
+  assert(getInitialMajorExtraMinutes({ majorExtraMinutes: 0 }) === "", "zero should map to empty");
 });
 
 test("day-edit getInitialMissingMinutes reads stored minutes", () => {
   assert(
     getInitialMissingMinutes({ missingMinutes: 90 }) === "90",
-    "90 minutes should map to \"90\"",
+    '90 minutes should map to "90"',
   );
   assert(
     getInitialMissingMinutes({ missingMinutes: 60 }) === "60",
-    "60 minutes should map to \"60\"",
+    '60 minutes should map to "60"',
   );
-  assert(
-    getInitialMissingMinutes({ missingMinutes: 0 }) === "",
-    "zero should map to empty",
-  );
+  assert(getInitialMissingMinutes({ missingMinutes: 0 }) === "", "zero should map to empty");
 });
 
 test("day-edit getInitialFormationMinutes reads stored minutes", () => {
   assert(
     getInitialFormationMinutes({ formationMinutes: 420 }) === "07:00",
-    "420 minutes should map to \"07:00\"",
+    '420 minutes should map to "07:00"',
   );
-  assert(
-    getInitialFormationMinutes({ formationMinutes: 0 }) === "",
-    "zero should map to empty",
-  );
+  assert(getInitialFormationMinutes({ formationMinutes: 0 }) === "", "zero should map to empty");
 });

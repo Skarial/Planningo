@@ -265,4 +265,3 @@ export async function setConfig(key, value) {
     tx.onerror = () => reject(tx.error);
   });
 }
-

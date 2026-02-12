@@ -29,6 +29,14 @@ if ($script:failures.Count -eq 0) {
   Write-Host "OK - syntaxe JS"
 }
 
+if (Test-Path "./package.json") {
+  Show-Step "Execution ESLint"
+  & npm run -s lint 2>&1 | Write-Host
+  if ($LASTEXITCODE -ne 0) {
+    Add-Failure "ESLint en echec."
+  }
+}
+
 Show-Step "Execution tests domaine"
 & node --input-type=module -e "import('./tests/run-domain-tests.js')" 2>&1 | Write-Host
 if ($LASTEXITCODE -ne 0) {

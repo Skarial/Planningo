@@ -25,4 +25,3 @@ export function setHomeMode(mode) {
 
   currentHomeMode = mode;
 }
-

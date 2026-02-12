@@ -237,11 +237,15 @@ Erreur standard:
 ### Auth
 
 #### `POST /auth/register`
+
 Body:
+
 ```json
 { "prenom": "Jean", "nom": "Dupont", "email": "jean@example.com", "password": "motdepasse" }
 ```
+
 `201`:
+
 ```json
 {
   "token": "opaque_session_token",
@@ -251,18 +255,24 @@ Body:
 ```
 
 #### `POST /auth/login`
+
 Body:
+
 ```json
 { "email": "jean@example.com", "password": "motdepasse" }
 ```
+
 `200`: meme format que register.
 
 #### `POST /auth/logout`
+
 Auth requise. `204`.
 
 #### `GET /me`
+
 Auth requise.
 `200`:
+
 ```json
 {
   "user": { "id": "u_1", "prenom": "Jean", "nom": "Dupont", "email": "jean@example.com" }
@@ -272,8 +282,10 @@ Auth requise.
 ### Requests
 
 #### `GET /exchanges/requests?page=1`
+
 Auth requise. Retourne demandes `open` non expirees.
 `200`:
+
 ```json
 {
   "items": [
@@ -298,8 +310,10 @@ Auth requise. Retourne demandes `open` non expirees.
 ```
 
 #### `POST /exchanges/requests`
+
 Auth requise.
 Body:
+
 ```json
 {
   "offeredDateISO": "2026-02-20",
@@ -312,27 +326,36 @@ Body:
   ]
 }
 ```
+
 `201`:
+
 ```json
 { "requestId": "r_1", "expiresAt": "2026-03-10T12:00:00.000Z" }
 ```
+
 `409` si doublon ouvert.
 
 #### `POST /exchanges/requests/:id/respond`
+
 Auth requise.
 Regles:
+
 - owner ne peut pas repondre (`403`)
 - idempotent via `UNIQUE (request_id, user_a_id, user_b_id)`
-Body:
+  Body:
+
 ```json
 {
   "wantedDateISO": "2026-02-22",
   "wantedService": { "kind": "REST", "code": "REST", "text": null }
 }
 ```
+
 Reponse:
+
 - `201` si cree
 - `200` si deja existante
+
 ```json
 { "conversationId": "c_1", "status": "active", "idempotent": false }
 ```
@@ -340,8 +363,10 @@ Reponse:
 ### Conversations
 
 #### `GET /exchanges/conversations?page=1`
+
 Auth requise. Retourne conversations de l'utilisateur.
 `200`:
+
 ```json
 {
   "items": [
@@ -362,8 +387,10 @@ Auth requise. Retourne conversations de l'utilisateur.
 ```
 
 #### `POST /exchanges/conversations/:id/choose`
+
 Auth requise. A uniquement.
 Body:
+
 ```json
 {
   "chosenProposal": {
@@ -372,44 +399,59 @@ Body:
   }
 }
 ```
+
 Effets:
+
 - conversation cible -> `locked`
 - autres conversations de la demande -> fermees/supprimees
 - demande -> `closed`
-`200`:
+  `200`:
+
 ```json
 { "status": "locked" }
 ```
 
 #### `POST /exchanges/conversations/:id/accept`
+
 Auth requise (A ou B).
 `200`:
+
 ```json
 { "status": "locked", "bothAccepted": false }
 ```
+
 ou
+
 ```json
 { "status": "closed", "bothAccepted": true }
 ```
+
 Si `bothAccepted=true`: suppression definitive (demande + conversations + messages).
 
 #### `POST /exchanges/conversations/:id/message`
+
 Auth requise.
 Body:
+
 ```json
 { "clientMessageId": "cli-msg-123", "body": "Salut, dispo pour valider ?" }
 ```
+
 Idempotent par `(conversation_id, sender_user_id, client_message_id)`:
+
 - `201` creation
 - `200` deja existant
-Reponse:
+  Reponse:
+
 ```json
 { "messageId": "m_1", "createdAt": "2026-02-08T13:02:00.000Z", "idempotent": false }
 ```
 
 #### `GET /exchanges/conversations/:id/messages`
+
 Auth requise + participant.
 `200`:
+
 ```json
 {
   "items": [
@@ -450,6 +492,7 @@ Grace a `ON DELETE CASCADE`, proposals/conversations/messages associes sont supp
 Note: `js/views/` n'existe pas actuellement, il sera cree pour `js/views/exchange/...`.
 
 ### `js/data/exchange/...`
+
 - `js/data/exchange/config.js`: baseURL API, timeout, cles storage token.
 - `js/data/exchange/http-client.js`: wrapper fetch + auth + depot header + erreurs normalisees.
 - `js/data/exchange/auth-client.js`: appels `/auth/register|login|logout|me`.
@@ -457,18 +500,21 @@ Note: `js/views/` n'existe pas actuellement, il sera cree pour `js/views/exchang
 - `js/data/exchange/conversations-client.js`: appels `/exchanges/conversations*` + messages.
 
 ### `js/domain/exchange/...`
+
 - `js/domain/exchange/service-value.js`: validation/normalisation `kind + (code|text)`.
 - `js/domain/exchange/request-rules.js`: validations de demande et contre-propositions.
 - `js/domain/exchange/conversation-rules.js`: transitions `active/locked/closed`.
 - `js/domain/exchange/message-rules.js`: validation message + `clientMessageId`.
 
 ### `js/state/exchange/...`
+
 - `js/state/exchange/auth-state.js`: `currentUser` + statut auth + erreurs.
 - `js/state/exchange/requests-state.js`: liste demandes, filtre, selection, loading/error.
 - `js/state/exchange/conversations-state.js`: liste conversations, selection, loading/error.
 - `js/state/exchange/messages-state.js`: cache messages + queue offline pending + retry.
 
 ### `js/components/exchange/...`
+
 - `js/components/exchange/auth-panel.js`: UI auth exchange.
 - `js/components/exchange/requests-list.js`: UI liste demandes publiques.
 - `js/components/exchange/request-form.js`: UI creation demande.
@@ -476,6 +522,7 @@ Note: `js/views/` n'existe pas actuellement, il sera cree pour `js/views/exchang
 - `js/components/exchange/conversation-thread.js`: UI conversation (messages + actions).
 
 ### `js/views/exchange/...`
+
 - `js/views/exchange/exchange-view.js`: orchestration de la vue Echange.
 - `js/views/exchange/exchange-route.js`: point d'entree routeur pour `#view-exchanges`.
 

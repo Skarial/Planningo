@@ -9,10 +9,7 @@ import {
   getExchangeConversationsState,
   subscribeExchangeConversations,
 } from "../../state/exchange/conversations-state.js";
-import {
-  getExchangeAuthState,
-  subscribeExchangeAuth,
-} from "../../state/exchange/auth-state.js";
+import { getExchangeAuthState, subscribeExchangeAuth } from "../../state/exchange/auth-state.js";
 import { selectExchangeConversationWithParticipants } from "../../state/exchange/selection-state.js";
 
 const unsubscribeByContainer = new WeakMap();
@@ -20,8 +17,7 @@ const unsubscribeByContainer = new WeakMap();
 function resolveOtherUser(item, currentUser) {
   const userA = item?.userA || {};
   const userB = item?.userB || {};
-  const currentUserId =
-    currentUser && typeof currentUser.id === "string" ? currentUser.id : "";
+  const currentUserId = currentUser && typeof currentUser.id === "string" ? currentUser.id : "";
   const userAId = typeof userA.id === "string" ? userA.id : "";
   return currentUserId && currentUserId === userAId ? userB : userA;
 }
@@ -31,8 +27,7 @@ function createConversationItem(item, currentUser) {
   li.className = "settings-period";
 
   const other = resolveOtherUser(item, currentUser);
-  const otherName =
-    `${other?.prenom || ""} ${other?.nom || ""}`.trim() || "Inconnu";
+  const otherName = `${other?.prenom || ""} ${other?.nom || ""}`.trim() || "Inconnu";
 
   const nameLine = document.createElement("div");
   nameLine.className = "settings-period-title";
@@ -49,18 +44,12 @@ function createConversationItem(item, currentUser) {
   openButton.className = "settings-btn primary";
   openButton.textContent = "Ouvrir";
   openButton.addEventListener("click", () => {
-    const userAId =
-      typeof item?.userA?.id === "string" ? item.userA.id.trim() : "";
-    const userBId =
-      typeof item?.userB?.id === "string" ? item.userB.id.trim() : "";
-    const userAPrenom =
-      typeof item?.userA?.prenom === "string" ? item.userA.prenom.trim() : "";
-    const userANom =
-      typeof item?.userA?.nom === "string" ? item.userA.nom.trim() : "";
-    const userBPrenom =
-      typeof item?.userB?.prenom === "string" ? item.userB.prenom.trim() : "";
-    const userBNom =
-      typeof item?.userB?.nom === "string" ? item.userB.nom.trim() : "";
+    const userAId = typeof item?.userA?.id === "string" ? item.userA.id.trim() : "";
+    const userBId = typeof item?.userB?.id === "string" ? item.userB.id.trim() : "";
+    const userAPrenom = typeof item?.userA?.prenom === "string" ? item.userA.prenom.trim() : "";
+    const userANom = typeof item?.userA?.nom === "string" ? item.userA.nom.trim() : "";
+    const userBPrenom = typeof item?.userB?.prenom === "string" ? item.userB.prenom.trim() : "";
+    const userBNom = typeof item?.userB?.nom === "string" ? item.userB.nom.trim() : "";
 
     const participantsMap = {};
     if (userAId) {
@@ -129,11 +118,7 @@ export function renderExchangeConversationsList(container) {
       statusText.textContent = "Chargement...";
     } else if (state.status === "error") {
       statusText.textContent = state.error?.message || "Erreur";
-    } else if (
-      state.status === "ready" &&
-      Array.isArray(state.items) &&
-      state.items.length === 0
-    ) {
+    } else if (state.status === "ready" && Array.isArray(state.items) && state.items.length === 0) {
       statusText.textContent = "Aucune conversation";
     } else {
       statusText.textContent = "";

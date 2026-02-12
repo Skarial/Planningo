@@ -63,11 +63,7 @@ function parseISODate(dateISO) {
   const month = Number(mm) - 1;
   const day = Number(dd);
   const date = new Date(year, month, day);
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month ||
-    date.getDate() !== day
-  ) {
+  if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
     return null;
   }
   date.setHours(0, 0, 0, 0);
@@ -98,10 +94,7 @@ function getServiceStartMinutes(service, periodLabel) {
         periode.plages.length > 0,
     ) ||
     service.periodes.find(
-      (periode) =>
-        periode &&
-        Array.isArray(periode.plages) &&
-        periode.plages.length > 0,
+      (periode) => periode && Array.isArray(periode.plages) && periode.plages.length > 0,
     );
 
   if (!matchingPeriod || !Array.isArray(matchingPeriod.plages)) {
@@ -145,8 +138,7 @@ export function buildAlarmPlan(options = {}) {
   } = options;
 
   const appliedRules = {
-    offsetMinutes:
-      typeof rules.offsetMinutes === "number" ? rules.offsetMinutes : 90,
+    offsetMinutes: typeof rules.offsetMinutes === "number" ? rules.offsetMinutes : 90,
   };
 
   if (typeof horizonDays === "number") {
@@ -189,9 +181,7 @@ export function buildAlarmPlan(options = {}) {
         .find(Boolean) || null;
 
     const periodLabel =
-      typeof periodLabelForDate === "function"
-        ? periodLabelForDate(entry.date)
-        : null;
+      typeof periodLabelForDate === "function" ? periodLabelForDate(entry.date) : null;
     if (!isMorningServiceCode(serviceCode, service, periodLabel)) continue;
 
     const explicitStart = parseTimeToMinutes(entry.startTime);
@@ -200,9 +190,9 @@ export function buildAlarmPlan(options = {}) {
         ? FALLBACK_START_MINUTES_BY_CODE.DM
         : explicitStart != null
           ? explicitStart
-          : getServiceStartMinutes(service, periodLabel) ??
+          : (getServiceStartMinutes(service, periodLabel) ??
             FALLBACK_START_MINUTES_BY_CODE[serviceCode] ??
-            null;
+            null);
     if (serviceStartMinutes == null) continue;
 
     const serviceDate = parseISODate(entry.date);
@@ -212,23 +202,14 @@ export function buildAlarmPlan(options = {}) {
     if (!serviceStart) continue;
 
     const serviceStartDate = new Date(serviceDate);
-    serviceStartDate.setHours(
-      Math.floor(serviceStartMinutes / 60),
-      serviceStartMinutes % 60,
-      0,
-      0,
-    );
+    serviceStartDate.setHours(Math.floor(serviceStartMinutes / 60), serviceStartMinutes % 60, 0, 0);
 
-    const alarmDate = new Date(
-      serviceStartDate.getTime() - offsetMinutes * 60 * 1000,
-    );
+    const alarmDate = new Date(serviceStartDate.getTime() - offsetMinutes * 60 * 1000);
     if (alarmDate.getTime() <= nowMs) continue;
 
     const alarmAt = formatOffsetISO(alarmDate);
     const alarmDateISO = formatLocalDate(alarmDate);
-    const alarmTime = formatMinutesToTime(
-      alarmDate.getHours() * 60 + alarmDate.getMinutes(),
-    );
+    const alarmTime = formatMinutesToTime(alarmDate.getHours() * 60 + alarmDate.getMinutes());
 
     const id = `${entry.date}__${serviceCode}__start_${serviceStart.replace(
       ":",
@@ -241,9 +222,7 @@ export function buildAlarmPlan(options = {}) {
       serviceCode,
       serviceStart,
       alarmAt,
-      label: `Service ${serviceStart} - reveil ${formatOffsetLabel(
-        offsetMinutes,
-      )} avant`,
+      label: `Service ${serviceStart} - reveil ${formatOffsetLabel(offsetMinutes)} avant`,
       requiresUserActionToStop: true,
     });
   }

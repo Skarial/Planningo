@@ -21,10 +21,7 @@ export const Tetribus = {
     // mlange Fisher-Yates
     for (let i = this.pieceBag.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [this.pieceBag[i], this.pieceBag[j]] = [
-        this.pieceBag[j],
-        this.pieceBag[i],
-      ];
+      [this.pieceBag[i], this.pieceBag[j]] = [this.pieceBag[j], this.pieceBag[i]];
     }
   },
 
@@ -50,12 +47,7 @@ export const Tetribus = {
     {
       name: "I",
       color: "#00f0f0",
-      shapes: [
-        [[1, 1, 1, 1]],
-        [[1], [1], [1], [1]],
-        [[1, 1, 1, 1]],
-        [[1], [1], [1], [1]],
-      ],
+      shapes: [[[1, 1, 1, 1]], [[1], [1], [1], [1]], [[1, 1, 1, 1]], [[1], [1], [1], [1]]],
     },
     {
       name: "O",
@@ -269,13 +261,7 @@ export const Tetribus = {
       lineNumber: lineNumbers[pieceTemplate.name],
     };
 
-    if (
-      this.hasCollision(
-        this.currentPiece.x,
-        this.currentPiece.y,
-        this.currentPiece.rotation,
-      )
-    ) {
+    if (this.hasCollision(this.currentPiece.x, this.currentPiece.y, this.currentPiece.rotation)) {
       this.endGame();
     }
     this.render();
@@ -283,11 +269,7 @@ export const Tetribus = {
 
   moveDown: function () {
     if (
-      this.hasCollision(
-        this.currentPiece.x,
-        this.currentPiece.y + 1,
-        this.currentPiece.rotation,
-      )
+      this.hasCollision(this.currentPiece.x, this.currentPiece.y + 1, this.currentPiece.rotation)
     ) {
       this.lockPiece();
       this.clearLines();
@@ -301,11 +283,7 @@ export const Tetribus = {
   moveLeft: function () {
     if (
       !this.gameOver &&
-      !this.hasCollision(
-        this.currentPiece.x - 1,
-        this.currentPiece.y,
-        this.currentPiece.rotation,
-      )
+      !this.hasCollision(this.currentPiece.x - 1, this.currentPiece.y, this.currentPiece.rotation)
     ) {
       this.currentPiece.x--;
       this.render();
@@ -315,11 +293,7 @@ export const Tetribus = {
   moveRight: function () {
     if (
       !this.gameOver &&
-      !this.hasCollision(
-        this.currentPiece.x + 1,
-        this.currentPiece.y,
-        this.currentPiece.rotation,
-      )
+      !this.hasCollision(this.currentPiece.x + 1, this.currentPiece.y, this.currentPiece.rotation)
     ) {
       this.currentPiece.x++;
       this.render();
@@ -329,9 +303,7 @@ export const Tetribus = {
   rotate: function () {
     if (this.gameOver) return;
     const newRotation = (this.currentPiece.rotation + 1) % 4;
-    if (
-      !this.hasCollision(this.currentPiece.x, this.currentPiece.y, newRotation)
-    ) {
+    if (!this.hasCollision(this.currentPiece.x, this.currentPiece.y, newRotation)) {
       this.currentPiece.rotation = newRotation;
       this.render();
     }
@@ -395,10 +367,7 @@ export const Tetribus = {
       const newLevel = Math.floor(this.linesCleared / 10) + 1;
       if (newLevel > this.level) {
         this.level = newLevel;
-        this.dropSpeed = Math.max(
-          100,
-          this.INITIAL_SPEED - (this.level - 1) * this.SPEED_INCREASE,
-        );
+        this.dropSpeed = Math.max(100, this.INITIAL_SPEED - (this.level - 1) * this.SPEED_INCREASE);
         this.startGameLoop();
       }
       this.updateUI();
@@ -579,5 +548,3 @@ export const Tetribus = {
     return true;
   },
 };
-
-

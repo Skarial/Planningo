@@ -30,4 +30,3 @@ export async function storageExportAll() {
 export async function storageImportAll(_data) {
   throw new Error("storageImportAll non implémenté");
 }
-

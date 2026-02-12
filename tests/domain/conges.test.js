@@ -1,9 +1,13 @@
-﻿/*
-  Copyright (c) 2026 Jordan
-  All Rights Reserved.
-  See LICENSE for terms.
-*/
-
+﻿/*
+
+  Copyright (c) 2026 Jordan
+
+  All Rights Reserved.
+
+  See LICENSE for terms.
+
+*/
+
 import { test, assert } from "../run-tests.js";
 import {
   parseFRDate,
@@ -107,4 +111,3 @@ test("getGuidedStartDay utilise la période couvrant le 1er", () => {
   const day = getGuidedStartDay(2025, 7, config);
   assert(day === 4, "Jour guidé incorrect");
 });
-
