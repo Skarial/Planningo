@@ -12,7 +12,6 @@ import { test, assert } from "../run-tests.js";
 import { initMonthFromDateISO } from "../../js/state/month-navigation.js";
 import { getMonthCalendar } from "../../js/state/month-calendar-state.js";
 import { setActiveDateISO } from "../../js/state/active-date.js";
-import { DAY_STATUS } from "../../js/domain/day-status.js";
 
 function fakeGetServiceForDateISO() {
   return null;

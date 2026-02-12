@@ -16,24 +16,6 @@ import { Tetribus } from "../games/tetribus/tetribus.game.js";
 
 let started = false;
 
-function enterFullscreen() {
-  if (document.fullscreenElement) return;
-
-  const root = document.documentElement;
-
-  if (root.requestFullscreen) {
-    root.requestFullscreen().catch(() => {});
-  }
-}
-
-function exitFullscreen() {
-  if (!document.fullscreenElement) return;
-
-  if (document.exitFullscreen) {
-    document.exitFullscreen().catch(() => {});
-  }
-}
-
 function hideAllViews() {
   document.querySelectorAll("#app-main > section").forEach((el) => {
     el.hidden = true;

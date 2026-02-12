@@ -94,15 +94,6 @@ function normalizeRules(input) {
   return { offsetMinutes, horizonDays };
 }
 
-function formatOffsetLabel(minutes) {
-  const total = Math.max(0, Math.floor(minutes));
-  const h = Math.floor(total / 60);
-  const m = total % 60;
-  if (h > 0 && m > 0) return `${h}h${String(m).padStart(2, "0")}`;
-  if (h > 0) return `${h}h`;
-  return `${m}min`;
-}
-
 function formatDisplayDate(dateISO) {
   const value = String(dateISO || "");
   const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -248,7 +239,7 @@ async function sharePlan(plan) {
         text: "Plan d'alarmes Planningo",
       });
       return "share";
-    } catch (err) {
+    } catch {
       // Fallback si le partage est refusé par le navigateur/OS.
       // On laisse le download gérer la sortie.
     }

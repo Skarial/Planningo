@@ -27,7 +27,6 @@ import {
   shouldMarkAlarmResync,
 } from "../domain/day-edit.js";
 import { isDateInConges } from "../domain/conges.js";
-import { getPeriodStateForDate } from "../domain/periods.js";
 import { getServiceSuggestions } from "../domain/service-suggestions.js";
 import { markAlarmResyncPending } from "../state/alarm-resync.js";
 import { getAlarmSyncEnabled } from "../state/alarm-feature.js";

@@ -277,24 +277,6 @@ window.getPlanningForMonth = async function (monthISO) {
   return getPlanningForMonth(monthISO);
 };
 
-function normalizeNonMajorExtraMinutes(value) {
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric) || numeric <= 0) return 0;
-  return Math.round(numeric);
-}
-
-function normalizeMajorExtraMinutes(value) {
-  return normalizeNonMajorExtraMinutes(value);
-}
-
-function normalizeMissingMinutes(value) {
-  return normalizeNonMajorExtraMinutes(value);
-}
-
-function normalizeFormationMinutes(value) {
-  return normalizeNonMajorExtraMinutes(value);
-}
-
 // =======================
 // VERROUILLAGE MOIS PASSS
 // =======================

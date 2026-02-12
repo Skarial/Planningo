@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.108";
+export const APP_VERSION = "2.0.109";
 
 import { DB_VERSION } from "./data/db.js";
 
@@ -281,18 +281,6 @@ function stabilizeViewportAfterControlledReload() {
     updateViewportHeightVar();
     resetScrollState();
   }, 180);
-}
-
-function showToast(message) {
-  const toast = document.createElement("div");
-  toast.className = "toast-notification";
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  requestAnimationFrame(() => toast.classList.add("visible"));
-  setTimeout(() => {
-    toast.classList.remove("visible");
-    setTimeout(() => toast.remove(), 240);
-  }, 1800);
 }
 
 function disablePullToRefresh() {
@@ -573,4 +561,5 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 

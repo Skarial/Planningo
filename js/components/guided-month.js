@@ -66,7 +66,6 @@ async function findFirstIncompleteMonth(startDate) {
 }
 
 let guidedMonthDate = null;
-let guidedMonthDay = null;
 let guidedMonthISO = null;
 let guidedRestWarningText = "";
 const guidedRestWarningByMonth = new Map();
@@ -91,7 +90,6 @@ export async function showGuidedMonth(forcedDate = null) {
 
   if (forcedDate) {
     guidedMonthDate = new Date(forcedDate);
-    guidedMonthDay = null;
   } else if (!guidedMonthDate) {
     const today = new Date();
 
@@ -110,7 +108,6 @@ export async function showGuidedMonth(forcedDate = null) {
   guidedRestWarningText = guidedRestWarningByMonth.get(monthISO) || "";
   if (guidedMonthISO !== monthISO) {
     guidedMonthISO = monthISO;
-    guidedMonthDay = null;
   }
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
 
@@ -126,14 +123,12 @@ export async function showGuidedMonth(forcedDate = null) {
         entry && typeof entry.serviceCode === "string" && entry.serviceCode.trim() !== "";
       if (!hasServiceCode) {
         currentDay = d;
-        guidedMonthDay = currentDay;
         return;
       }
     }
 
     // Tous les jours du mois sont remplis.
     currentDay = daysInMonth + 1;
-    guidedMonthDay = currentDay;
   }
 
   async function computeMonthStats() {
@@ -355,13 +350,11 @@ export async function showGuidedMonth(forcedDate = null) {
       typeof restWarningText === "string" && restWarningText.trim() ? restWarningText.trim() : "";
     guidedRestWarningByMonth.set(monthISO, guidedRestWarningText);
     currentDay++;
-    guidedMonthDay = currentDay;
     await renderDay();
   }
 
   async function renderCompletedView() {
     root.classList.add("guided-complete-mode");
-    guidedMonthDay = daysInMonth + 1;
     hideRestWarning();
     const nextMonthDate = new Date(targetDate);
     nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
@@ -429,7 +422,6 @@ export async function showGuidedMonth(forcedDate = null) {
     btnMonth.textContent = "Voir mon planning";
     btnMonth.onclick = () => {
       guidedMonthDate = null;
-      guidedMonthDay = null;
       guidedMonthISO = null;
       showHome();
     };
@@ -524,7 +516,6 @@ export async function showGuidedMonth(forcedDate = null) {
       break;
     }
 
-    guidedMonthDay = currentDay;
     if (currentDay > daysInMonth) {
       renderCompletedView();
 
@@ -657,7 +648,6 @@ export async function showGuidedMonth(forcedDate = null) {
         guidedRestWarningText = "";
         guidedRestWarningByMonth.set(monthISO, "");
         currentDay--;
-        guidedMonthDay = currentDay;
         await renderDay();
       };
 

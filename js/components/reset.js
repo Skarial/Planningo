@@ -37,7 +37,7 @@ function bindHoldAction(button, onHold, status, holdText) {
     button.classList.remove("holding");
     try {
       await onHold();
-    } catch (err) {
+    } catch {
       status.show("Une erreur est survenue.");
     }
   }

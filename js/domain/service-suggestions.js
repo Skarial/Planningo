@@ -19,7 +19,7 @@ export function getServiceSuggestions({
   saisonConfig,
   date,
   prefs,
-  mode, // inutilise pour l'instant
+  mode: _mode, // inutilise pour l'instant
 }) {
   const safePrefs = prefs && typeof prefs === "object" ? prefs : {};
   const result = {

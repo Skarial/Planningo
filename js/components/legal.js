@@ -52,7 +52,7 @@ export async function renderLegalView() {
     if (!res.ok) throw new Error("license_fetch_failed");
     const text = await res.text();
     pre.textContent = text.trim();
-  } catch (err) {
+  } catch {
     pre.textContent = "Le texte de licence est disponible à la racine du projet (LICENSE).";
   }
 }

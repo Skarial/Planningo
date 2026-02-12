@@ -6,7 +6,6 @@
 
 // js/components/conges-periods.js
 
-import { showHome } from "../router.js";
 import { renderCongesView } from "./conges.js";
 import { renderSeasonView } from "./season.js";
 

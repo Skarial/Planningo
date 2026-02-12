@@ -46,26 +46,6 @@ export function initMenu() {
   const EDGE_SWIPE_WIDTH = 24;
   const EDGE_SWIPE_MIN = 32;
 
-  function isScrollableElement(el) {
-    if (!el || el === document.body || el === document.documentElement) {
-      return false;
-    }
-    const style = window.getComputedStyle(el);
-    const overflowY = style.overflowY;
-    if (overflowY !== "auto" && overflowY !== "scroll") return false;
-    return el.scrollHeight > el.clientHeight;
-  }
-
-  function isInsideScrollableArea(target) {
-    if (!target || !target.closest) return false;
-    let node = target;
-    while (node && node !== document.body) {
-      if (isScrollableElement(node)) return true;
-      node = node.parentElement;
-    }
-    return false;
-  }
-
   function isInteractiveTarget(target) {
     if (!target || !target.closest) return false;
     return Boolean(target.closest("input, textarea, select, button, a, [contenteditable='true']"));

@@ -251,9 +251,6 @@ export async function renderSummaryView() {
     let congesDays = 0;
     let totalMinutes = 0;
     let extraMinutes = 0;
-    let majorExtraMinutes = 0;
-    let nonMajorExtraMinutes = 0;
-    let missingMinutes = 0;
     let panierCount = 0;
 
     const cursor = new Date(start.getTime());
@@ -310,7 +307,6 @@ export async function renderSummaryView() {
 
             const dayMajorExtraMinutes = normalizeMajorExtraMinutes(entry.majorExtraMinutes);
             if (dayMajorExtraMinutes > 0) {
-              majorExtraMinutes += dayMajorExtraMinutes;
               extraMinutes += dayMajorExtraMinutes;
               totalMinutes += dayMajorExtraMinutes;
             }
@@ -319,13 +315,11 @@ export async function renderSummaryView() {
               entry.nonMajorExtraMinutes,
             );
             if (dayNonMajorExtraMinutes > 0) {
-              nonMajorExtraMinutes += dayNonMajorExtraMinutes;
               totalMinutes += dayNonMajorExtraMinutes;
             }
 
             const dayMissingMinutes = normalizeMissingMinutes(entry.missingMinutes);
             if (dayMissingMinutes > 0) {
-              missingMinutes += dayMissingMinutes;
               totalMinutes -= dayMissingMinutes;
             }
 
@@ -370,7 +364,7 @@ export async function renderSummaryView() {
       return true;
     });
 
-    filteredRows.forEach(([label, value], idx) => {
+    filteredRows.forEach(([label, value]) => {
       const row = document.createElement("div");
       row.className = "summary-row";
       if (label === "Total jours travaillés" || label === "Total heures travaillées") {
