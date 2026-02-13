@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.113";
+export const APP_VERSION = "2.0.114";
 
 import { DB_VERSION } from "./data/db.js";
 
@@ -415,16 +415,11 @@ function showVersionBanner(prevVersion, nextVersion) {
       </div>
       <div class="update-actions">
         <button class="btn-primary" id="version-reload">Mettre à jour</button>
-        <button class="btn-secondary" id="version-dismiss">OK</button>
       </div>
     </div>
   `;
 
   document.body.appendChild(banner);
-
-  document.getElementById("version-dismiss").addEventListener("click", () => {
-    banner.remove();
-  });
 
   document.getElementById("version-reload").addEventListener("click", () => {
     markControlledReloadPending();
