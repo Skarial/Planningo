@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.112";
+export const APP_VERSION = "2.0.113";
 
 import { DB_VERSION } from "./data/db.js";
 
@@ -92,7 +92,7 @@ async function initApp() {
     setActiveDateISO(toISODateLocal(new Date()));
   }
 
-  // 0b Banner version (si changement)
+  // 0a Banner version (si changement)
   notifyVersionChange();
 
   // 1 UI principale
@@ -561,8 +561,4 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
-
-
-
-
 

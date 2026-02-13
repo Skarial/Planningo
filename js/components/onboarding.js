@@ -33,7 +33,7 @@ const ONBOARDING_STEPS = [
     view: "edit-day",
   },
   {
-    title: "Congés & période",
+    title: "Congés / Période",
     body: "Entrez vos dates de congés ici. Elles se placent automatiquement dans le planning.",
     view: "conges-periods",
   },

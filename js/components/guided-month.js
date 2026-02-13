@@ -727,8 +727,7 @@ export async function showGuidedMonth(forcedDate = null) {
     btn.className = `guided-btn ${extraClass}`.trim();
 
     btn.onclick = async () => {
-      //  Conversion TADx  TDx pour l'enregistrement
-      const serviceCodeToSave = code.startsWith("TAD") ? code.replace(/^TAD/, "TD") : code;
+      const serviceCodeToSave = code;
 
       if (String(serviceCodeToSave).trim().toUpperCase() === "FORMATION") {
         await saveCurrentDaySelection(serviceCodeToSave, FORMATION_DEFAULT_MINUTES);

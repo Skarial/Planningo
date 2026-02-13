@@ -24,7 +24,7 @@ import {
   getServiceDisplayName,
   toISODateLocal,
 } from "../utils.js";
-import { getConfig } from "../data/db.js";
+import { getConfig, setConfig } from "../data/db.js";
 import { initMonthFromDateISO } from "../state/month-navigation.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
@@ -40,7 +40,7 @@ import {
   resolvePanierEnabled,
 } from "../domain/day-edit.js";
 import { getHolidayNameForDate } from "../domain/holidays-fr.js";
-import { isBaseMorningServiceCode } from "../domain/morning-service.js";
+import { getServiceCodeVariants, isBaseMorningServiceCode } from "../domain/morning-service.js";
 import {
   dismissAlarmResyncNotice,
   isAlarmResyncDismissed,
@@ -48,6 +48,8 @@ import {
 } from "../state/alarm-resync.js";
 import { getAlarmAutoImportOptions } from "../state/alarm-auto-import.js";
 import { getAlarmSyncEnabled } from "../state/alarm-feature.js";
+
+const TAX_REAL_NOTICE_HIDDEN_KEY = "tax_real_notice_hidden";
 
 function parseISODateLocal(dateISO) {
   const [year, month, day] = dateISO.split("-").map(Number);
@@ -99,6 +101,47 @@ function formatDuration(minutes) {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+function normalizeServiceCode(value) {
+  if (value == null) return "";
+  return String(value).trim().toUpperCase();
+}
+
+function buildServicesLookup(services) {
+  const lookup = new Map();
+  if (!Array.isArray(services)) return lookup;
+
+  services.forEach((service) => {
+    if (!service || typeof service.code !== "string") return;
+    const baseCode = normalizeServiceCode(service.code);
+    if (!baseCode) return;
+    lookup.set(baseCode, service);
+    getServiceCodeVariants(baseCode).forEach((variant) => {
+      const normalizedVariant = normalizeServiceCode(variant);
+      if (normalizedVariant) lookup.set(normalizedVariant, service);
+    });
+  });
+
+  return lookup;
+}
+
+function resolveServiceFromLookup(lookup, serviceCode) {
+  if (!(lookup instanceof Map)) return null;
+  const normalizedCode = normalizeServiceCode(serviceCode);
+  if (!normalizedCode) return null;
+
+  const direct = lookup.get(normalizedCode);
+  if (direct) return direct;
+
+  for (const variant of getServiceCodeVariants(normalizedCode)) {
+    const normalizedVariant = normalizeServiceCode(variant);
+    if (!normalizedVariant) continue;
+    const found = lookup.get(normalizedVariant);
+    if (found) return found;
+  }
+
+  return null;
 }
 
 function isMorningServiceCode(serviceCode) {
@@ -286,6 +329,57 @@ function bindMonthSwipe(container) {
   });
 }
 
+function createTaxRealNoticeCard() {
+  const card = document.createElement("section");
+  card.className = "home-tax-real-notice";
+  card.setAttribute("role", "status");
+  card.setAttribute("aria-live", "polite");
+
+  const title = document.createElement("h3");
+  title.className = "home-tax-real-notice-title";
+  title.textContent = "Nouveaut\u00e9 : Frais r\u00e9els";
+
+  const text = document.createElement("p");
+  text.className = "home-tax-real-notice-text";
+  text.textContent =
+    "Dans Statistiques / Frais r\u00e9els, estimez vos kilom\u00e8tres pour la d\u00e9claration d'imp\u00f4t annuel.";
+
+  const actions = document.createElement("div");
+  actions.className = "home-tax-real-notice-actions";
+
+  const discoverBtn = document.createElement("button");
+  discoverBtn.type = "button";
+  discoverBtn.className = "home-tax-real-discover-btn";
+  discoverBtn.textContent = "D\u00e9couvrir";
+  discoverBtn.addEventListener("click", () => {
+    import("../router.js").then(({ showSummaryView }) => {
+      showSummaryView({ initialTab: "tax" });
+    });
+  });
+
+  const hideWrap = document.createElement("label");
+  hideWrap.className = "home-tax-real-hide-wrap";
+
+  const hideCheckbox = document.createElement("input");
+  hideCheckbox.type = "checkbox";
+  hideCheckbox.className = "home-tax-real-hide-checkbox";
+  hideCheckbox.setAttribute("aria-label", "Ne plus afficher la nouveaut\u00e9 Frais r\u00e9els");
+  hideCheckbox.addEventListener("change", async () => {
+    if (!hideCheckbox.checked) return;
+    await setConfig(TAX_REAL_NOTICE_HIDDEN_KEY, true);
+    card.remove();
+  });
+
+  const hideText = document.createElement("span");
+  hideText.textContent = "Ne plus afficher";
+
+  hideWrap.append(hideCheckbox, hideText);
+  actions.append(discoverBtn, hideWrap);
+
+  card.append(title, text, actions);
+  return card;
+}
+
 // =======================
 // CALCUL HEURES JOUR
 // =======================
@@ -329,6 +423,12 @@ export async function renderHome() {
   initMonthFromDateISO(getActiveDateISO());
 
   bindMonthSwipe(container);
+
+  const taxRealNoticeHiddenEntry = await getConfig(TAX_REAL_NOTICE_HIDDEN_KEY);
+  const taxRealNoticeHidden = taxRealNoticeHiddenEntry?.value === true;
+  if (!taxRealNoticeHidden) {
+    bottom.appendChild(createTaxRealNoticeCard());
+  }
 
   // =======================
   // DAY HEADER - JOUR ACTIF
@@ -540,12 +640,21 @@ export async function renderHome() {
         panier.hidden = !resolvePanierEnabled(entryValue?.serviceCode, entryValue?.panierOverride);
       }
 
+      if (isCongesDay) {
+        service.hidden = false;
+        service.textContent = "Cong\u00E9s";
+        service.classList.remove("repos", "rest-warning");
+        service.classList.add("conges");
+        service.removeAttribute("title");
+        timeRow.hidden = true;
+        time.textContent = "";
+        duration.hidden = true;
+        duration.textContent = "";
+        updateExtraIndicators(null);
+        return;
+      }
+
       if (!entry || !entry.serviceCode) {
-        if (isCongesDay) {
-          service.hidden = false;
-          service.textContent = "Congés";
-          service.classList.add("conges");
-        }
         return;
       }
 
@@ -556,9 +665,11 @@ export async function renderHome() {
       const normalizedServiceCode = String(entry.serviceCode).trim().toUpperCase();
 
       let servicesCatalog = null;
+      let servicesLookup = null;
       async function loadServicesCatalog() {
         if (!servicesCatalog) {
           servicesCatalog = await getAllServices();
+          servicesLookup = buildServicesLookup(servicesCatalog);
         }
         return servicesCatalog;
       }
@@ -576,12 +687,8 @@ export async function renderHome() {
       try {
         const previousWorkedDay = await findPreviousWorkedDayEntry(date, window.__homeCongesConfig);
         if (previousWorkedDay) {
-          const services = await loadServicesCatalog();
-          const servicesByCode = new Map(
-            services
-              .filter((item) => item && item.code)
-              .map((item) => [String(item.code).trim().toUpperCase(), item]),
-          );
+          await loadServicesCatalog();
+          const servicesByCode = servicesLookup || new Map();
           const restCheck = computeDailyRestWarning({
             previousDateISO: previousWorkedDay.dateISO,
             previousEntry: previousWorkedDay.entry,
@@ -625,12 +732,8 @@ export async function renderHome() {
       if (entry.startTime && entry.endTime) return;
 
       try {
-        const services = await loadServicesCatalog();
-        const serviceCode = entry.serviceCode.toUpperCase();
-        const matchedService = services.find(
-          (item) =>
-            item && typeof item.code === "string" && item.code.toUpperCase() === serviceCode,
-        );
+        await loadServicesCatalog();
+        const matchedService = resolveServiceFromLookup(servicesLookup, entry.serviceCode);
 
         const periodLabel = getPeriodLabel(getPeriodStateForDate(window.__homeSaisonConfig, date));
         const timeInfo = buildServiceTimeLines(matchedService, periodLabel);

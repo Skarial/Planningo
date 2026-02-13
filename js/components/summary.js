@@ -20,6 +20,7 @@ import {
 } from "../domain/day-edit.js";
 import { getFixedServiceMinutes } from "../utils.js";
 import { getHolidayNameForDate } from "../domain/holidays-fr.js";
+import { getServiceCodeVariants } from "../domain/morning-service.js";
 
 function formatDuration(totalMinutes) {
   if (typeof totalMinutes !== "number" || totalMinutes < 0) return "00:00";
@@ -33,6 +34,47 @@ function parseTimeToMinutes(value) {
   const [h, m] = value.split(":").map((part) => Number(part));
   if (Number.isNaN(h) || Number.isNaN(m)) return null;
   return h * 60 + m;
+}
+
+function normalizeServiceCode(value) {
+  if (value == null) return "";
+  return String(value).trim().toUpperCase();
+}
+
+function buildServicesLookup(services) {
+  const lookup = new Map();
+  if (!Array.isArray(services)) return lookup;
+
+  services.forEach((service) => {
+    if (!service || typeof service.code !== "string") return;
+    const baseCode = normalizeServiceCode(service.code);
+    if (!baseCode) return;
+    lookup.set(baseCode, service);
+    getServiceCodeVariants(baseCode).forEach((variant) => {
+      const normalizedVariant = normalizeServiceCode(variant);
+      if (normalizedVariant) lookup.set(normalizedVariant, service);
+    });
+  });
+
+  return lookup;
+}
+
+function resolveServiceFromLookup(lookup, serviceCode) {
+  if (!(lookup instanceof Map)) return null;
+  const normalizedCode = normalizeServiceCode(serviceCode);
+  if (!normalizedCode) return null;
+
+  const direct = lookup.get(normalizedCode);
+  if (direct) return direct;
+
+  for (const variant of getServiceCodeVariants(normalizedCode)) {
+    const normalizedVariant = normalizeServiceCode(variant);
+    if (!normalizedVariant) continue;
+    const found = lookup.get(normalizedVariant);
+    if (found) return found;
+  }
+
+  return null;
 }
 
 function shouldAddExtraMinutes(code) {
@@ -141,14 +183,17 @@ function createStatus() {
   };
 }
 
-export async function renderSummaryView() {
-  const view = document.getElementById("view-summary");
+export async function renderSummaryView(options = {}) {
+  const { container = null, showHeader = true } = options;
+  const view = container || document.getElementById("view-summary");
   if (!view) return;
 
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "settings-view settings-page-variant summary-view";
+  root.className = showHeader
+    ? "settings-view settings-page-variant summary-view"
+    : "settings-view compact settings-page-variant summary-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
@@ -201,7 +246,10 @@ export async function renderSummaryView() {
 
   resultCard.append(resultTitle, resultGrid);
 
-  root.append(header, formCard, resultCard);
+  if (showHeader) {
+    root.append(header);
+  }
+  root.append(formCard, resultCard);
   view.appendChild(root);
 
   async function computeAndRender() {
@@ -234,12 +282,7 @@ export async function renderSummaryView() {
     const congesConfig = congesEntry?.value ?? null;
     const saisonConfig = saisonEntry?.value ?? null;
 
-    const serviceMap = new Map(
-      servicesCatalog.map((service) => [
-        typeof service.code === "string" ? service.code.toUpperCase() : "",
-        service,
-      ]),
-    );
+    const serviceMap = buildServicesLookup(servicesCatalog);
 
     const entryMap = new Map(entries.map((e) => [e.date, e]));
 
@@ -278,7 +321,7 @@ export async function renderSummaryView() {
               if (entry.startTime && entry.endTime) {
                 halfSundayDays++;
               } else {
-                const service = serviceMap.get(entry.serviceCode.toUpperCase()) || null;
+                const service = resolveServiceFromLookup(serviceMap, entry.serviceCode);
                 const label = getPeriodLabel(getPeriodStateForDate(saisonConfig, cursor));
                 const plageCount = getServicePlageCount(service, label);
                 if (plageCount >= 2) {
@@ -296,7 +339,7 @@ export async function renderSummaryView() {
                 extraMinutes += fixedMinutes;
               }
             } else {
-              const service = serviceMap.get(entry.serviceCode.toUpperCase()) || null;
+              const service = resolveServiceFromLookup(serviceMap, entry.serviceCode);
               const label = getPeriodLabel(getPeriodStateForDate(saisonConfig, cursor));
               const minutes = getServiceMinutes(service, label);
               totalMinutes += minutes;

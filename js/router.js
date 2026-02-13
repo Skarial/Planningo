@@ -144,6 +144,7 @@ function hideAllViews(previousView) {
     "feedback",
     "phone-change",
     "summary",
+    "tax-real",
     "edit-day",
     "exchanges",
     "tetribus",
@@ -250,12 +251,20 @@ export async function showPhoneChangeView() {
   renderPhoneChangeView();
 }
 
-export async function showSummaryView() {
+export async function showSummaryView(options = {}) {
   const view = activateView("summary");
   if (!view) return;
-  const { renderSummaryView } = await import("./components/summary.js");
+  const { renderSummaryTaxView } = await import("./components/summary-tax.js");
   if (currentView !== "summary") return;
-  renderSummaryView();
+  renderSummaryTaxView(options);
+}
+
+export async function showTaxRealView() {
+  const view = activateView("tax-real");
+  if (!view) return;
+  const { renderTaxRealView } = await import("./components/tax-real.js");
+  if (currentView !== "tax-real") return;
+  renderTaxRealView();
 }
 
 export async function showLegalView() {

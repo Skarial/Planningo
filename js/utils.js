@@ -93,17 +93,22 @@ export function getAdjacentMonths(year, monthIndex) {
 
 export function formatServiceLabel(serviceCode) {
   if (!serviceCode) return "";
+  const normalized = String(serviceCode).trim().toUpperCase();
 
-  if (serviceCode === "REPOS") return "RPS";
-  if (serviceCode === "DM") return "DM";
-  if (serviceCode === "DAM") return "DAM";
+  if (normalized === "RPS") return "REPOS";
+  if (normalized === "REPOS") return "REPOS";
+  if (normalized === "DM") return "DM";
+  if (normalized === "DAM") return "DAM";
 
-  //  Affichage TDx  TAD x
-  if (/^TD\d+$/i.test(serviceCode)) {
-    return serviceCode.replace(/^TD/i, "TAD ");
+  // Affichage TD* -> TAD *
+  if (/^TD(?=\s|\d|$)/i.test(normalized)) {
+    return normalized
+      .replace(/^TD\s*/i, "TAD ")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
-  return serviceCode;
+  return normalized;
 }
 
 function legacyServiceCode() {
@@ -113,12 +118,22 @@ function legacyServiceCode() {
 export function getServiceDisplayName(serviceCode, options = {}) {
   if (!serviceCode) return "";
   const { short = false } = options;
+  const normalized = String(serviceCode).trim().toUpperCase();
 
-  if (serviceCode === "FORMATION" || serviceCode === legacyServiceCode()) {
+  if (normalized === "FORMATION" || normalized === legacyServiceCode()) {
     return short ? "FORM" : "Formation";
   }
 
-  return serviceCode;
+  if (normalized === "RPS") return "REPOS";
+
+  if (/^TD(?=\s|\d|$)/i.test(normalized)) {
+    return normalized
+      .replace(/^TD\s*/i, "TAD ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  return normalized;
 }
 
 export function getFixedServiceMinutes(serviceCode) {

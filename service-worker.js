@@ -210,7 +210,3 @@ self.addEventListener("message", (event) => {
   }
 });
 
-
-
-
-

@@ -6,7 +6,12 @@
 
 // js/components/conges.js
 
-import { getConfig, setConfig } from "../data/storage.js";
+import {
+  deletePlanningEntry,
+  getConfig,
+  getPlanningEntriesInRange,
+  setConfig,
+} from "../data/storage.js";
 
 function isoToFR(iso) {
   if (!iso) return "";
@@ -176,6 +181,7 @@ export async function renderCongesView(options = {}) {
   saveBtn.addEventListener("click", async () => {
     const rows = periodsContainer.querySelectorAll(".settings-period");
     const nextPeriods = [];
+    const nextRangesISO = [];
     let invalid = false;
 
     rows.forEach((row) => {
@@ -197,6 +203,7 @@ export async function renderCongesView(options = {}) {
         end = tmp;
       }
 
+      nextRangesISO.push({ start, end });
       nextPeriods.push({
         start: isoToFR(start),
         end: isoToFR(end),
@@ -209,6 +216,20 @@ export async function renderCongesView(options = {}) {
     }
 
     await setConfig("conges", { periods: nextPeriods });
+
+    // Ecrase les services deja presents sur les jours de conges
+    if (nextRangesISO.length > 0) {
+      const datesToDelete = new Set();
+
+      for (const range of nextRangesISO) {
+        const entries = await getPlanningEntriesInRange(range.start, range.end);
+        entries.forEach((entry) => {
+          if (entry?.date) datesToDelete.add(entry.date);
+        });
+      }
+
+      await Promise.all([...datesToDelete].map((dateISO) => deletePlanningEntry(dateISO)));
+    }
     window.__homeCongesConfig = { periods: nextPeriods };
     status.show("Congés enregistrés");
   });

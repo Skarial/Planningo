@@ -1,15 +1,13 @@
-﻿/*
+/*
   Copyright (c) 2026 Jordan
   All Rights Reserved.
   See LICENSE for terms.
 */
 
-// js/components/conges-periods.js
+import { renderSummaryView } from "./summary.js";
+import { renderTaxRealView } from "./tax-real.js";
 
-import { renderCongesView } from "./conges.js";
-import { renderSeasonView } from "./season.js";
-
-const TABS = ["conges", "periods"];
+const TABS = ["summary", "tax"];
 let resizeListenerBound = false;
 let activeLayoutTrack = null;
 
@@ -27,25 +25,27 @@ function bindResizeListenerOnce() {
   );
 }
 
-export async function renderCongesPeriodsView() {
-  const view = document.getElementById("view-conges-periods");
+export async function renderSummaryTaxView(options = {}) {
+  const initialTab = options?.initialTab === "tax" ? "tax" : "summary";
+  const view = document.getElementById("view-summary");
   if (!view) return;
 
   view.innerHTML = "";
 
   const root = document.createElement("div");
-  root.className = "tabs-view settings-page-variant settings-card-spacing-md conges-periods-view";
+  root.className =
+    "tabs-view settings-page-variant settings-card-spacing-md conges-periods-view summary-tax-view";
 
   const header = document.createElement("div");
   header.className = "settings-header";
 
   const title = document.createElement("div");
   title.className = "settings-title";
-  title.textContent = "Congés / Période";
+  title.textContent = "Statistiques / Frais réels";
 
   const subtitle = document.createElement("div");
   subtitle.className = "settings-subtitle";
-  subtitle.textContent = "Gérer vos congés et la période saisonnière";
+  subtitle.textContent = "Suivre l'activit\u00E9 et estimer les frais kilom\u00E9triques";
 
   header.append(title, subtitle);
 
@@ -58,7 +58,7 @@ export async function renderCongesPeriodsView() {
     btn.type = "button";
     btn.className = "tabs-btn";
     btn.dataset.tab = tab;
-    btn.textContent = tab === "conges" ? "Congés" : "Période";
+    btn.textContent = tab === "summary" ? "Statistiques" : "Frais réels";
     tabs.appendChild(btn);
     tabButtons[tab] = btn;
   });
@@ -70,19 +70,19 @@ export async function renderCongesPeriodsView() {
   track.className = "tabs-track";
   content.appendChild(track);
 
-  const congesPage = document.createElement("div");
-  congesPage.className = "tab-page";
+  const summaryPage = document.createElement("div");
+  summaryPage.className = "tab-page";
 
-  const periodsPage = document.createElement("div");
-  periodsPage.className = "tab-page";
+  const taxPage = document.createElement("div");
+  taxPage.className = "tab-page";
 
-  track.append(congesPage, periodsPage);
+  track.append(summaryPage, taxPage);
 
   root.append(header, tabs, content);
   view.appendChild(root);
 
-  await renderCongesView({ container: congesPage, showHeader: false });
-  await renderSeasonView({ container: periodsPage, showHeader: false });
+  await renderSummaryView({ container: summaryPage, showHeader: false });
+  await renderTaxRealView({ container: taxPage, showHeader: false, showTabs: false });
 
   let activeIndex = 0;
 
@@ -113,7 +113,7 @@ export async function renderCongesPeriodsView() {
     if (!content.isConnected) return;
     const width = content.clientWidth || 1;
     track.style.width = `${width * TABS.length}px`;
-    [congesPage, periodsPage].forEach((page) => {
+    [summaryPage, taxPage].forEach((page) => {
       page.style.width = `${width}px`;
     });
     setActive(activeIndex, true);
@@ -199,5 +199,5 @@ export async function renderCongesPeriodsView() {
     layoutTrack();
   });
 
-  setActive(0);
+  setActive(initialTab === "tax" ? 1 : 0);
 }

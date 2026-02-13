@@ -64,7 +64,7 @@ export function openDB() {
     request.onsuccess = () => {
       const db = request.result;
       if (!migrationPromise) {
-        migrationPromise = ensureServiceCodeMigration(db);
+        migrationPromise = ensurePostUpgradeMigrations(db);
       }
       migrationPromise
         .then((didMigrate) => {
@@ -110,6 +110,26 @@ function handleUpgrade(event) {
 
 function legacyServiceCode() {
   return String.fromCharCode(65, 78, 78, 69, 88, 69);
+}
+
+function canonicalizeServiceCode(rawCode) {
+  if (rawCode == null) return "";
+  const normalized = String(rawCode).trim().toUpperCase();
+  if (!normalized) return "";
+  if (normalized === "RPS") return "REPOS";
+  if (/^TD(?=\s|\d|$)/i.test(normalized)) {
+    return normalized
+      .replace(/^TD\s*/i, "TAD ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  if (/^TAD(?=\s|\d|$)/i.test(normalized)) {
+    return normalized
+      .replace(/^TAD\s*/i, "TAD ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  return normalized;
 }
 
 function migrateLegacyServiceToFormation(tx) {
@@ -231,6 +251,91 @@ function ensureServiceCodeMigration(db) {
           delete prefs[legacyPrefField];
           configStore.put({ key: legacyPrefsKey, value: prefs });
         }
+      };
+    };
+
+    flagReq.onerror = () => reject(flagReq.error);
+    tx.oncomplete = () => {
+      const cleanupTx = db.transaction(STORES.CONFIG, "readwrite");
+      cleanupTx.objectStore(STORES.CONFIG).delete(inProgressKey);
+      cleanupTx.oncomplete = () => resolve(didMigrate);
+      cleanupTx.onerror = () => resolve(didMigrate);
+    };
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function ensurePostUpgradeMigrations(db) {
+  const formationMigrated = await ensureServiceCodeMigration(db);
+  const canonicalMigrated = await ensureCanonicalServiceCodeMigration(db);
+  return Boolean(formationMigrated || canonicalMigrated);
+}
+
+function ensureCanonicalServiceCodeMigration(db) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction([STORES.CONFIG, STORES.PLANNING, STORES.SERVICES], "readwrite");
+    const configStore = tx.objectStore(STORES.CONFIG);
+    const planningStore = tx.objectStore(STORES.PLANNING);
+    const servicesStore = tx.objectStore(STORES.SERVICES);
+
+    const key = "migration_service_codes_canonical_v1";
+    const inProgressKey = "migration_service_codes_canonical_v1_in_progress";
+    let didMigrate = false;
+    let planningDone = false;
+    let servicesDone = false;
+    let flagWritten = false;
+
+    function maybeFinalize() {
+      if (!planningDone || !servicesDone || flagWritten) return;
+      flagWritten = true;
+      configStore.put({ key, value: true });
+      didMigrate = true;
+    }
+
+    const flagReq = configStore.get(key);
+    flagReq.onsuccess = () => {
+      if (flagReq.result?.value === true) {
+        resolve(false);
+        return;
+      }
+
+      configStore.put({ key: inProgressKey, value: true });
+
+      planningStore.openCursor().onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (!cursor) {
+          planningDone = true;
+          maybeFinalize();
+          return;
+        }
+
+        const entry = cursor.value;
+        const canonicalCode = canonicalizeServiceCode(entry.serviceCode);
+        if (canonicalCode && canonicalCode !== entry.serviceCode) {
+          entry.serviceCode = canonicalCode;
+          cursor.update(entry);
+        }
+
+        cursor.continue();
+      };
+
+      servicesStore.openCursor().onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (!cursor) {
+          servicesDone = true;
+          maybeFinalize();
+          return;
+        }
+
+        const service = cursor.value;
+        const originalCode = String(service.code ?? "").trim();
+        const canonicalCode = canonicalizeServiceCode(originalCode);
+        if (canonicalCode && canonicalCode !== originalCode) {
+          servicesStore.delete(originalCode);
+          servicesStore.put({ ...service, code: canonicalCode });
+        }
+
+        cursor.continue();
       };
     };
 

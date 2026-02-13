@@ -14,6 +14,26 @@ import { openDB } from "./db.js";
 
 const STORES = ["services", "planning", "config"];
 
+function canonicalizeServiceCode(rawCode) {
+  if (rawCode == null) return "";
+  const normalized = String(rawCode).trim().toUpperCase();
+  if (!normalized) return "";
+  if (normalized === "RPS") return "REPOS";
+  if (/^TD(?=\s|\d|$)/i.test(normalized)) {
+    return normalized
+      .replace(/^TD\s*/i, "TAD ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  if (/^TAD(?=\s|\d|$)/i.test(normalized)) {
+    return normalized
+      .replace(/^TAD\s*/i, "TAD ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  return normalized;
+}
+
 // =======================
 // IMPORT PRINCIPAL
 // =======================
@@ -128,13 +148,27 @@ function normalizeExportData(rawData) {
       if (!serviceCode) return item;
 
       const legacyCode = String.fromCharCode(65, 78, 78, 69, 88, 69);
-      const normalizedCode = serviceCode === legacyCode ? "FORMATION" : serviceCode;
+      const normalizedCode =
+        serviceCode === legacyCode ? "FORMATION" : canonicalizeServiceCode(serviceCode);
 
       return {
         ...item,
         serviceCode: normalizedCode,
       };
     });
+  }
+
+  if (Array.isArray(data.stores.services)) {
+    const dedupe = new Map();
+    data.stores.services.forEach((item) => {
+      if (!item || typeof item !== "object") return;
+      const originalCode = item.code;
+      if (!originalCode) return;
+      const canonicalCode = canonicalizeServiceCode(originalCode);
+      if (!canonicalCode) return;
+      dedupe.set(canonicalCode, { ...item, code: canonicalCode });
+    });
+    data.stores.services = Array.from(dedupe.values());
   }
 
   return data;

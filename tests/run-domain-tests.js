@@ -13,6 +13,7 @@ import "./domain/alarm-auto-import.test.js";
 import "./domain/alarm-resync.test.js";
 import "./domain/day-edit.test.js";
 import "./domain/daily-rest-warning.test.js";
+import "./domain/tax-real.test.js";
 import "./exchange/domain.service-value.test.js";
 import "./exchange/domain.request-rules.test.js";
 import "./exchange/domain.message-rules.test.js";

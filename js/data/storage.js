@@ -30,6 +30,26 @@ function normalizeFormationMinutes(value) {
   return normalizeNonMajorExtraMinutes(value);
 }
 
+function canonicalizeServiceCode(rawCode) {
+  if (rawCode == null) return "";
+  const normalized = String(rawCode).trim().toUpperCase();
+  if (!normalized) return "";
+  if (normalized === "RPS") return "REPOS";
+  if (/^TD(?=\s|\d|$)/i.test(normalized)) {
+    return normalized
+      .replace(/^TD\s*/i, "TAD ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  if (/^TAD(?=\s|\d|$)/i.test(normalized)) {
+    return normalized
+      .replace(/^TAD\s*/i, "TAD ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  return normalized;
+}
+
 // =======================
 // SERVICES
 // =======================
@@ -71,9 +91,10 @@ export async function deletePlanningEntry(dateISO) {
 
 export async function savePlanningEntry(entry) {
   const { db } = await openDB();
+  const canonicalServiceCode = canonicalizeServiceCode(entry.serviceCode);
 
   // RGLE MTIER : service vide  suppression
-  if (!entry.serviceCode) {
+  if (!canonicalServiceCode) {
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORES.PLANNING, "readwrite");
       tx.objectStore(STORES.PLANNING).delete(entry.date);
@@ -86,7 +107,7 @@ export async function savePlanningEntry(entry) {
     const tx = db.transaction(STORES.PLANNING, "readwrite");
     tx.objectStore(STORES.PLANNING).put({
       date: entry.date,
-      serviceCode: entry.serviceCode,
+      serviceCode: canonicalServiceCode,
       locked: entry.locked ?? false,
       extra: entry.extra ?? false,
       panierOverride: normalizePanierOverride(entry.panierOverride),
@@ -120,7 +141,7 @@ export async function getPlanningForMonth(monthISO) {
       if (cursor.key.startsWith(monthISO)) {
         results.push({
           date: cursor.value.date,
-          serviceCode: cursor.value.serviceCode ?? "REPOS",
+          serviceCode: canonicalizeServiceCode(cursor.value.serviceCode ?? "REPOS"),
           locked: cursor.value.locked ?? false,
           extra: cursor.value.extra ?? false,
           panierOverride: normalizePanierOverride(cursor.value.panierOverride),
@@ -159,7 +180,7 @@ export async function getPlanningEntriesInRange(startISO, endISO) {
       if (key >= start && key <= end) {
         results.push({
           date: cursor.value.date,
-          serviceCode: cursor.value.serviceCode ?? "REPOS",
+          serviceCode: canonicalizeServiceCode(cursor.value.serviceCode ?? "REPOS"),
           locked: cursor.value.locked ?? false,
           extra: cursor.value.extra ?? false,
           panierOverride: normalizePanierOverride(cursor.value.panierOverride),
@@ -193,6 +214,7 @@ export async function getPlanningEntry(dateISO) {
       }
       resolve({
         ...request.result,
+        serviceCode: canonicalizeServiceCode(request.result.serviceCode),
         panierOverride: normalizePanierOverride(request.result.panierOverride),
         majorExtraMinutes: normalizeMajorExtraMinutes(request.result.majorExtraMinutes),
         nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(request.result.nonMajorExtraMinutes),
