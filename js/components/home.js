@@ -476,6 +476,7 @@ export async function renderHome() {
     console.error("Conteneur view-home introuvable");
     return;
   }
+  const previousScrollTop = container.scrollTop;
 
   const nextContent = document.createDocumentFragment();
   const card = document.createElement("div");
@@ -911,6 +912,7 @@ export async function renderHome() {
     },
 
     onDaySelected: (iso) => {
+      if (iso === getActiveDateISO()) return;
       setActiveDateISO(iso);
       initMonthFromDateISO(iso);
       renderHome();
@@ -919,4 +921,10 @@ export async function renderHome() {
 
   if (renderSession !== homeRenderSessionCounter) return;
   container.replaceChildren(nextContent);
+  if (previousScrollTop > 0) {
+    container.scrollTop = previousScrollTop;
+    requestAnimationFrame(() => {
+      container.scrollTop = previousScrollTop;
+    });
+  }
 }
