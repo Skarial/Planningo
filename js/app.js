@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "3.0.4";
+export const APP_VERSION = "3.0.5";
 
 import { DB_VERSION } from "./data/db.js";
 
@@ -465,7 +465,6 @@ function showUpdateBanner(registration) {
         <span>Une nouvelle version de l'application est prête.</span>
       </div>
       <div class="update-actions">
-        <button class="btn-secondary" id="update-dismiss">Plus tard</button>
         <button class="btn-primary" id="update-reload">Mettre à jour</button>
       </div>
     </div>
@@ -477,7 +476,6 @@ function showUpdateBanner(registration) {
   });
 
   const reloadButton = document.getElementById("update-reload");
-  const dismissButton = document.getElementById("update-dismiss");
   let resolved = false;
   let fallbackTimer = null;
 
@@ -508,7 +506,6 @@ function showUpdateBanner(registration) {
       hasWaitingWorker: Boolean(registration.waiting),
     });
     reloadButton.disabled = true;
-    dismissButton.disabled = true;
 
     navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
 
@@ -533,12 +530,6 @@ function showUpdateBanner(registration) {
       });
       finalizeReload("skip-waiting-error");
     }
-  });
-
-  dismissButton.addEventListener("click", () => {
-    cleanup();
-    swDiagLog("update dismissed");
-    banner.remove();
   });
 }
 
@@ -571,6 +562,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 
