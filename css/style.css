@@ -970,7 +970,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 .guided-root.guided-complete-mode .guided-stats {
-  margin-top: 20px;
+  margin: 20px auto 0;
 }
 
 .guided-primary-grid,
