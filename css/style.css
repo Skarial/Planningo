@@ -966,7 +966,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 .guided-root.guided-complete-mode .guided-stats + .guided-action {
-  margin-top: 88px;
+  margin-top: 55px;
 }
 
 .guided-root.guided-complete-mode .guided-stats {
