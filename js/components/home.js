@@ -50,6 +50,7 @@ import { getAlarmAutoImportOptions } from "../state/alarm-auto-import.js";
 import { getAlarmSyncEnabled } from "../state/alarm-feature.js";
 
 const TAX_REAL_NOTICE_HIDDEN_KEY = "tax_real_notice_hidden";
+const TAX_REAL_NOTICE_SESSION_KEY = "tax_real_notice_seen_session";
 
 function parseISODateLocal(dateISO) {
   const [year, month, day] = dateISO.split("-").map(Number);
@@ -329,11 +330,39 @@ function bindMonthSwipe(container) {
   });
 }
 
-function createTaxRealNoticeCard() {
-  const card = document.createElement("section");
+function markTaxRealNoticeSeenInSession() {
+  try {
+    sessionStorage.setItem(TAX_REAL_NOTICE_SESSION_KEY, "1");
+  } catch {}
+}
+
+function isTaxRealNoticeSeenInSession() {
+  try {
+    return sessionStorage.getItem(TAX_REAL_NOTICE_SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function removeTaxRealNoticeSheet() {
+  const existing = document.getElementById("tax-real-notice-sheet");
+  if (existing) existing.remove();
+}
+
+function createTaxRealNoticeSheet() {
+  const sheet = document.createElement("section");
+  sheet.id = "tax-real-notice-sheet";
+  sheet.className = "home-tax-real-sheet";
+  sheet.setAttribute("role", "dialog");
+  sheet.setAttribute("aria-label", "Nouveauté Frais réels");
+
+  const card = document.createElement("div");
   card.className = "home-tax-real-notice";
-  card.setAttribute("role", "status");
-  card.setAttribute("aria-live", "polite");
+
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.className = "home-tax-real-close-btn";
+  closeBtn.setAttribute("aria-label", "Fermer cette annonce");
 
   const title = document.createElement("h3");
   title.className = "home-tax-real-notice-title";
@@ -351,11 +380,10 @@ function createTaxRealNoticeCard() {
   discoverBtn.type = "button";
   discoverBtn.className = "home-tax-real-discover-btn";
   discoverBtn.textContent = "D\u00e9couvrir";
-  discoverBtn.addEventListener("click", () => {
-    import("../router.js").then(({ showSummaryView }) => {
-      showSummaryView({ initialTab: "tax" });
-    });
-  });
+  const laterBtn = document.createElement("button");
+  laterBtn.type = "button";
+  laterBtn.className = "home-tax-real-later-btn";
+  laterBtn.textContent = "Plus tard";
 
   const hideWrap = document.createElement("label");
   hideWrap.className = "home-tax-real-hide-wrap";
@@ -364,20 +392,43 @@ function createTaxRealNoticeCard() {
   hideCheckbox.type = "checkbox";
   hideCheckbox.className = "home-tax-real-hide-checkbox";
   hideCheckbox.setAttribute("aria-label", "Ne plus afficher la nouveaut\u00e9 Frais r\u00e9els");
+  async function closeSheet({ persist = false } = {}) {
+    if (persist) {
+      await setConfig(TAX_REAL_NOTICE_HIDDEN_KEY, true);
+    }
+    markTaxRealNoticeSeenInSession();
+    sheet.remove();
+  }
+
   hideCheckbox.addEventListener("change", async () => {
     if (!hideCheckbox.checked) return;
-    await setConfig(TAX_REAL_NOTICE_HIDDEN_KEY, true);
-    card.remove();
+    await closeSheet({ persist: true });
+  });
+
+  discoverBtn.addEventListener("click", async () => {
+    await closeSheet({ persist: hideCheckbox.checked });
+    import("../router.js").then(({ showSummaryView }) => {
+      showSummaryView({ initialTab: "tax" });
+    });
+  });
+
+  laterBtn.addEventListener("click", async () => {
+    await closeSheet({ persist: hideCheckbox.checked });
+  });
+
+  closeBtn.addEventListener("click", async () => {
+    await closeSheet({ persist: hideCheckbox.checked });
   });
 
   const hideText = document.createElement("span");
   hideText.textContent = "Ne plus afficher";
 
   hideWrap.append(hideCheckbox, hideText);
-  actions.append(discoverBtn, hideWrap);
+  actions.append(discoverBtn, laterBtn);
 
-  card.append(title, text, actions);
-  return card;
+  card.append(closeBtn, title, text, actions, hideWrap);
+  sheet.appendChild(card);
+  return sheet;
 }
 
 // =======================
@@ -423,11 +474,13 @@ export async function renderHome() {
   initMonthFromDateISO(getActiveDateISO());
 
   bindMonthSwipe(container);
+  removeTaxRealNoticeSheet();
 
   const taxRealNoticeHiddenEntry = await getConfig(TAX_REAL_NOTICE_HIDDEN_KEY);
   const taxRealNoticeHidden = taxRealNoticeHiddenEntry?.value === true;
-  if (!taxRealNoticeHidden) {
-    bottom.appendChild(createTaxRealNoticeCard());
+  if (!taxRealNoticeHidden && !isTaxRealNoticeSeenInSession()) {
+    container.appendChild(createTaxRealNoticeSheet());
+    markTaxRealNoticeSeenInSession();
   }
 
   // =======================
