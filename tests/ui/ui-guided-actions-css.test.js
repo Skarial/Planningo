@@ -1,0 +1,49 @@
+/*
+  Copyright (c) 2026 Jordan
+  All Rights Reserved.
+  See LICENSE for terms.
+*/
+
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+import { assert, test } from "../run-tests.js";
+
+const TEST_DIR = path.dirname(fileURLToPath(import.meta.url));
+const ROOT_DIR = path.resolve(TEST_DIR, "..", "..");
+
+function readRootFile(relativePath) {
+  return fs.readFileSync(path.join(ROOT_DIR, relativePath), "utf8");
+}
+
+function getBlock(source, selector) {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = source.match(new RegExp(`(?:^|\\n)\\s*${escaped}\\s*\\{([\\s\\S]*?)\\n\\}`, "m"));
+  return match ? match[1] : "";
+}
+
+test("ui-css - guided action buttons keep desktop thickness", () => {
+  const css = readRootFile("css/style.css");
+  const guidedAction = getBlock(css, ".guided-action");
+
+  assert(guidedAction.includes("height: 48px;"), "Desktop: .guided-action doit rester a 48px");
+  assert(
+    guidedAction.includes("font-size: 0.95rem;"),
+    "Desktop: .guided-action doit garder la taille texte d'origine",
+  );
+});
+
+test("ui-css - guided action buttons have mobile coarse-pointer override", () => {
+  const css = readRootFile("css/style.css");
+
+  const mediaMatch = css.match(
+    /@media\s*\(hover:\s*none\)\s*and\s*\(pointer:\s*coarse\)\s*\{([\s\S]*?)\n\}/,
+  );
+  assert(mediaMatch, "Media query tactile manquante pour .guided-action");
+
+  const mediaBody = mediaMatch[1];
+  assert(mediaBody.includes(".guided-action"), "Override mobile .guided-action manquant");
+  assert(mediaBody.includes("height: 54px;"), "Mobile: .guided-action doit etre plus epais");
+  assert(mediaBody.includes("min-height: 54px;"), "Mobile: min-height .guided-action manquant");
+});

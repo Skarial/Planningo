@@ -6,6 +6,7 @@
 
 import "./pwa/pwa-integrity.test.js";
 import "./ui/ui-smoke.test.js";
+import "./ui/ui-guided-actions-css.test.js";
 
 import { runAllTests, summary } from "./run-tests.js";
 

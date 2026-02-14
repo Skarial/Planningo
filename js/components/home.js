@@ -380,10 +380,6 @@ function createTaxRealNoticeSheet() {
   discoverBtn.type = "button";
   discoverBtn.className = "home-tax-real-discover-btn";
   discoverBtn.textContent = "D\u00e9couvrir";
-  const laterBtn = document.createElement("button");
-  laterBtn.type = "button";
-  laterBtn.className = "home-tax-real-later-btn";
-  laterBtn.textContent = "Plus tard";
 
   const hideWrap = document.createElement("label");
   hideWrap.className = "home-tax-real-hide-wrap";
@@ -412,10 +408,6 @@ function createTaxRealNoticeSheet() {
     });
   });
 
-  laterBtn.addEventListener("click", async () => {
-    await closeSheet({ persist: hideCheckbox.checked });
-  });
-
   closeBtn.addEventListener("click", async () => {
     await closeSheet({ persist: hideCheckbox.checked });
   });
@@ -424,7 +416,7 @@ function createTaxRealNoticeSheet() {
   hideText.textContent = "Ne plus afficher";
 
   hideWrap.append(hideCheckbox, hideText);
-  actions.append(discoverBtn, laterBtn);
+  actions.append(discoverBtn);
 
   card.append(closeBtn, title, text, actions, hideWrap);
   sheet.appendChild(card);
@@ -480,7 +472,6 @@ export async function renderHome() {
   const taxRealNoticeHidden = taxRealNoticeHiddenEntry?.value === true;
   if (!taxRealNoticeHidden && !isTaxRealNoticeSeenInSession()) {
     container.appendChild(createTaxRealNoticeSheet());
-    markTaxRealNoticeSeenInSession();
   }
 
   // =======================
