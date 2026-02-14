@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "3.0.3";
+export const APP_VERSION = "3.0.4";
 
 import { DB_VERSION } from "./data/db.js";
 
@@ -251,6 +251,14 @@ function markControlledReloadPending() {
   } catch {}
 }
 
+function hasControlledReloadMarker() {
+  try {
+    return sessionStorage.getItem(CONTROLLED_RELOAD_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 function consumeControlledReloadMarker() {
   try {
     const marked = sessionStorage.getItem(CONTROLLED_RELOAD_KEY) === "1";
@@ -397,6 +405,11 @@ function notifyVersionChange() {
   const key = "planningo_app_version";
   const lastVersion = localStorage.getItem(key);
   localStorage.setItem(key, APP_VERSION);
+
+  if (hasControlledReloadMarker()) {
+    swDiagLog("version banner skipped (controlled reload)");
+    return;
+  }
 
   if (!lastVersion || lastVersion === APP_VERSION) return;
   showVersionBanner(lastVersion, APP_VERSION);
