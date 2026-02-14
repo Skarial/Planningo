@@ -146,6 +146,12 @@ Commande unique :
 
 `powershell -ExecutionPolicy Bypass -File ./scripts/check-quality.ps1`
 
+## Deploiement cloud (telephone possible)
+
+Le projet peut etre pilote et deployee sans PC allume via GitHub Actions + GitHub Pages.
+
+Details: `docs/DEPLOIEMENT_CLOUD_TELEPHONE.md`
+
 ## Versionnement automatique au commit
 
 Le projet applique un bump de version automatique lors du commit.
