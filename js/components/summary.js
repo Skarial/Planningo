@@ -221,6 +221,19 @@ export async function renderSummaryView(options = {}) {
   const inputEnd = document.createElement("input");
   inputEnd.type = "date";
 
+  const dateRange = document.createElement("div");
+  dateRange.className = "settings-date-range";
+
+  const startField = document.createElement("div");
+  startField.className = "settings-date-field";
+  startField.append(labelStart, inputStart);
+
+  const endField = document.createElement("div");
+  endField.className = "settings-date-field";
+  endField.append(labelEnd, inputEnd);
+
+  dateRange.append(startField, endField);
+
   const status = createStatus();
 
   const actions = document.createElement("div");
@@ -231,7 +244,7 @@ export async function renderSummaryView(options = {}) {
   runBtn.textContent = "Calculer";
 
   actions.append(runBtn);
-  formCard.append(labelStart, inputStart, labelEnd, inputEnd, actions, status.node);
+  formCard.append(dateRange, actions, status.node);
 
   const resultCard = document.createElement("div");
   resultCard.className = "settings-card";

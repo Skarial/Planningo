@@ -61,6 +61,19 @@ export async function renderSeasonView(options = {}) {
   const inputEnd = document.createElement("input");
   inputEnd.type = "date";
 
+  const dateRange = document.createElement("div");
+  dateRange.className = "settings-date-range";
+
+  const startField = document.createElement("div");
+  startField.className = "settings-date-field";
+  startField.append(labelStart, inputStart);
+
+  const endField = document.createElement("div");
+  endField.className = "settings-date-field";
+  endField.append(labelEnd, inputEnd);
+
+  dateRange.append(startField, endField);
+
   const status = createStatus();
 
   const actions = document.createElement("div");
@@ -77,7 +90,7 @@ export async function renderSeasonView(options = {}) {
 
   actions.append(saveBtn, resetBtn);
 
-  card.append(labelStart, inputStart, labelEnd, inputEnd, actions, status.node);
+  card.append(dateRange, actions, status.node);
 
   if (showHeader) {
     root.append(header);

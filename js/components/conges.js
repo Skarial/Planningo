@@ -119,7 +119,7 @@ export async function renderCongesView(options = {}) {
     headerRow.append(title, removeBtn);
 
     const grid = document.createElement("div");
-    grid.className = "settings-period-grid";
+    grid.className = "settings-period-grid settings-date-range";
 
     const labelStart = document.createElement("label");
     labelStart.textContent = "Début";
@@ -134,7 +134,15 @@ export async function renderCongesView(options = {}) {
     if (period.start) inputStart.value = frToISO(period.start);
     if (period.end) inputEnd.value = frToISO(period.end);
 
-    grid.append(labelStart, inputStart, labelEnd, inputEnd);
+    const startField = document.createElement("div");
+    startField.className = "settings-date-field";
+    startField.append(labelStart, inputStart);
+
+    const endField = document.createElement("div");
+    endField.className = "settings-date-field";
+    endField.append(labelEnd, inputEnd);
+
+    grid.append(startField, endField);
     wrapper.append(headerRow, grid);
 
     removeBtn.addEventListener("click", () => {
