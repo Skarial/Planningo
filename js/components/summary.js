@@ -10,7 +10,6 @@ import { getPlanningEntriesInRange, getAllServices } from "../data/storage.js";
 import { getConfig } from "../data/db.js";
 import { isDateInConges } from "../domain/conges.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
-import { getPeriodLabel } from "../utils/period-label.js";
 import {
   normalizeFormationMinutes,
   normalizeMajorExtraMinutes,
@@ -21,19 +20,13 @@ import {
 import { getFixedServiceMinutes } from "../utils.js";
 import { getHolidayNameForDate } from "../domain/holidays-fr.js";
 import { getServiceCodeVariants } from "../domain/morning-service.js";
+import { computeServicePeriodMinutes } from "../domain/service-period-minutes.js";
 
 function formatDuration(totalMinutes) {
   if (typeof totalMinutes !== "number" || totalMinutes < 0) return "00:00";
   const h = Math.floor(totalMinutes / 60);
   const m = totalMinutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-}
-
-function parseTimeToMinutes(value) {
-  if (typeof value !== "string") return null;
-  const [h, m] = value.split(":").map((part) => Number(part));
-  if (Number.isNaN(h) || Number.isNaN(m)) return null;
-  return h * 60 + m;
 }
 
 function normalizeServiceCode(value) {
@@ -77,14 +70,6 @@ function resolveServiceFromLookup(lookup, serviceCode) {
   return null;
 }
 
-function shouldAddExtraMinutes(code) {
-  if (!code) return false;
-  const upper = String(code).toUpperCase();
-  if (upper === "DM" || upper === "DAM" || upper === "FORMATION") return false;
-  if (upper.startsWith("TAD")) return false;
-  return true;
-}
-
 function getEntryFixedMinutes(entry) {
   if (!entry || !entry.serviceCode) return null;
   const normalizedCode = String(entry.serviceCode).trim().toUpperCase();
@@ -95,49 +80,14 @@ function getEntryFixedMinutes(entry) {
   return getFixedServiceMinutes(normalizedCode);
 }
 
-function getServiceMinutes(service, periodLabel) {
+function getServicePlageCount(service, periodKey) {
   if (!service || !Array.isArray(service.periodes)) return 0;
 
   const matchingPeriod =
     service.periodes.find(
       (periode) =>
         periode &&
-        periode.libelle === periodLabel &&
-        Array.isArray(periode.plages) &&
-        periode.plages.length > 0,
-    ) ||
-    service.periodes.find(
-      (periode) => periode && Array.isArray(periode.plages) && periode.plages.length > 0,
-    );
-
-  if (!matchingPeriod || !Array.isArray(matchingPeriod.plages)) {
-    return 0;
-  }
-
-  let total = matchingPeriod.plages.reduce((sum, plage) => {
-    if (!plage || !plage.debut || !plage.fin) return sum;
-    const start = parseTimeToMinutes(plage.debut);
-    const end = parseTimeToMinutes(plage.fin);
-    if (start == null || end == null) return sum;
-    const diff = end - start;
-    return diff > 0 ? sum + diff : sum;
-  }, 0);
-
-  if (shouldAddExtraMinutes(service.code)) {
-    total += 5;
-  }
-
-  return total;
-}
-
-function getServicePlageCount(service, periodLabel) {
-  if (!service || !Array.isArray(service.periodes)) return 0;
-
-  const matchingPeriod =
-    service.periodes.find(
-      (periode) =>
-        periode &&
-        periode.libelle === periodLabel &&
+        periode.key === periodKey &&
         Array.isArray(periode.plages) &&
         periode.plages.length > 0,
     ) ||
@@ -335,8 +285,8 @@ export async function renderSummaryView(options = {}) {
                 halfSundayDays++;
               } else {
                 const service = resolveServiceFromLookup(serviceMap, entry.serviceCode);
-                const label = getPeriodLabel(getPeriodStateForDate(saisonConfig, cursor));
-                const plageCount = getServicePlageCount(service, label);
+                const periodKey = getPeriodStateForDate(saisonConfig, cursor);
+                const plageCount = getServicePlageCount(service, periodKey);
                 if (plageCount >= 2) {
                   fullSundayDays++;
                 } else if (plageCount === 1) {
@@ -353,8 +303,8 @@ export async function renderSummaryView(options = {}) {
               }
             } else {
               const service = resolveServiceFromLookup(serviceMap, entry.serviceCode);
-              const label = getPeriodLabel(getPeriodStateForDate(saisonConfig, cursor));
-              const minutes = getServiceMinutes(service, label);
+              const periodKey = getPeriodStateForDate(saisonConfig, cursor);
+              const minutes = computeServicePeriodMinutes(service, periodKey);
               totalMinutes += minutes;
               if (entry.extra) {
                 extraMinutes += minutes;

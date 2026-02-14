@@ -13,6 +13,7 @@ import {
 
 import { getConfig } from "../data/db.js";
 import { getServiceDisplayName, toISODateLocal } from "../utils.js";
+import { getRestWarningMessageLabel, getRestWarningPeriodLabel } from "../utils/rest-warning-labels.js";
 import { showAlarmView, showHome } from "../router.js";
 import { getGuidedStartDay, isDateInConges } from "../domain/conges.js";
 import { isBaseMorningServiceCode } from "../domain/morning-service.js";
@@ -328,8 +329,10 @@ export async function showGuidedMonth(forcedDate = null) {
         if (restCheck.shouldWarn) {
           const previousDateFr = formatDateFr(previousWorkedDay.dateISO);
           const currentDateFr = formatDateFr(iso);
+          const restLabelTitle = getRestWarningMessageLabel(restCheck.messageKey);
+          const periodLabel = getRestWarningPeriodLabel(restCheck.periodKey);
           const restLabel = formatRestMinutes(restCheck.restMinutes).replace(":", "h");
-          restWarningText = `Repos légal insuffisant\nEntre ${previousDateFr} (${restCheck.previousEndTime || "?"}) et ${currentDateFr} (${restCheck.currentStartTime || "?"})\nRepos constaté: ${restLabel} - Minimum légal: 11h00`;
+          restWarningText = `${restLabelTitle}\nPeriode active: ${periodLabel}\nEntre ${previousDateFr} (${restCheck.previousEndTime || "?"}) et ${currentDateFr} (${restCheck.currentStartTime || "?"})\nRepos constate: ${restLabel} - Minimum legal: 11h00`;
         }
       }
     }
@@ -459,7 +462,7 @@ export async function showGuidedMonth(forcedDate = null) {
 
   // =======================
 
-  const guidedStartDay = await getGuidedStartDay(year, monthIndex);
+  const guidedStartDay = getGuidedStartDay(year, monthIndex, congesConfig);
 
   // mois entirement en congs
 

@@ -5,10 +5,23 @@
 */
 
 import { getPeriodStateForDate } from "./periods.js";
-import { getPeriodLabel } from "../utils/period-label.js";
 
 const MINIMUM_DAILY_REST_MINUTES = 11 * 60;
 const DM_FALLBACK_START_MINUTES = 5 * 60 + 45;
+
+const REST_LEVEL = {
+  NONE: "none",
+  OK: "ok",
+  WARNING: "warning",
+};
+
+const REST_MESSAGE_KEY = {
+  INVALID_DATES: "rest.invalid_dates",
+  MISSING_TIME_BOUNDS: "rest.missing_time_bounds",
+  INVALID_REST: "rest.invalid_rest",
+  INSUFFICIENT: "rest.insufficient",
+  OK: "rest.ok",
+};
 
 function parseISODateLocal(dateISO) {
   if (typeof dateISO !== "string") return null;
@@ -67,19 +80,19 @@ function computeBoundsFromPlages(plages) {
   return { startMinutes, endMinutes };
 }
 
-function resolvePeriodLabelForDate(dateISO, saisonConfig) {
+function computePeriodKey({ dateISO, saisonConfig }) {
   const date = parseISODateLocal(dateISO);
   if (!date) return null;
-  return getPeriodLabel(getPeriodStateForDate(saisonConfig, date));
+  return getPeriodStateForDate(saisonConfig, date);
 }
 
-function resolveMatchingPeriod(service, periodLabel) {
+function resolveMatchingPeriod(service, periodKey) {
   if (!service || !Array.isArray(service.periodes)) return null;
   return (
     service.periodes.find(
       (periode) =>
         periode &&
-        periode.libelle === periodLabel &&
+        periode.key === periodKey &&
         Array.isArray(periode.plages) &&
         periode.plages.length > 0,
     ) ||
@@ -104,8 +117,8 @@ function resolveServiceBounds({ serviceCode, dateISO, entry, servicesByCode, sai
   }
 
   const service = servicesByCode.get(normalizedCode) || null;
-  const periodLabel = resolvePeriodLabelForDate(dateISO, saisonConfig);
-  const period = resolveMatchingPeriod(service, periodLabel);
+  const periodKey = computePeriodKey({ dateISO, saisonConfig });
+  const period = resolveMatchingPeriod(service, periodKey);
   const fromPlages = computeBoundsFromPlages(period?.plages);
   if (fromPlages) return fromPlages;
 
@@ -140,9 +153,21 @@ export function computeDailyRestWarning({
     ? Math.max(0, Math.floor(minimumMinutes))
     : MINIMUM_DAILY_REST_MINUTES;
 
+  const currentPeriodKey = computePeriodKey({ dateISO: currentDateISO, saisonConfig });
+  const previousPeriodKey = computePeriodKey({ dateISO: previousDateISO, saisonConfig });
+
   const dayDiff = computeDiffDays(previousDateISO, currentDateISO);
   if (dayDiff == null || dayDiff <= 0) {
-    return { shouldWarn: false, reason: "INVALID_DATES" };
+    return {
+      shouldWarn: false,
+      level: REST_LEVEL.NONE,
+      periodKey: currentPeriodKey,
+      previousPeriodKey,
+      currentPeriodKey,
+      minutes: null,
+      messageKey: REST_MESSAGE_KEY.INVALID_DATES,
+      reason: "INVALID_DATES",
+    };
   }
 
   const previousBounds = resolveServiceBounds({
@@ -164,16 +189,42 @@ export function computeDailyRestWarning({
   const currentStartMinutes = currentBounds?.startMinutes;
 
   if (!Number.isFinite(previousEndMinutes) || !Number.isFinite(currentStartMinutes)) {
-    return { shouldWarn: false, reason: "MISSING_TIME_BOUNDS" };
+    return {
+      shouldWarn: false,
+      level: REST_LEVEL.NONE,
+      periodKey: currentPeriodKey,
+      previousPeriodKey,
+      currentPeriodKey,
+      minutes: null,
+      messageKey: REST_MESSAGE_KEY.MISSING_TIME_BOUNDS,
+      reason: "MISSING_TIME_BOUNDS",
+    };
   }
 
   const restMinutes = dayDiff * 1440 + currentStartMinutes - previousEndMinutes;
   if (!Number.isFinite(restMinutes)) {
-    return { shouldWarn: false, reason: "INVALID_REST" };
+    return {
+      shouldWarn: false,
+      level: REST_LEVEL.NONE,
+      periodKey: currentPeriodKey,
+      previousPeriodKey,
+      currentPeriodKey,
+      minutes: null,
+      messageKey: REST_MESSAGE_KEY.INVALID_REST,
+      reason: "INVALID_REST",
+    };
   }
 
+  const shouldWarn = restMinutes < safeMinimum;
+
   return {
-    shouldWarn: restMinutes < safeMinimum,
+    shouldWarn,
+    level: shouldWarn ? REST_LEVEL.WARNING : REST_LEVEL.OK,
+    periodKey: currentPeriodKey,
+    previousPeriodKey,
+    currentPeriodKey,
+    minutes: restMinutes,
+    messageKey: shouldWarn ? REST_MESSAGE_KEY.INSUFFICIENT : REST_MESSAGE_KEY.OK,
     restMinutes,
     minimumMinutes: safeMinimum,
     previousDateISO,

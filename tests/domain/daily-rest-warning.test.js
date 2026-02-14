@@ -15,11 +15,11 @@ test("daily-rest-warning warns when rest is below 11h", () => {
   const servicesByCode = makeServicesByCode([
     {
       code: "2200",
-      periodes: [{ libelle: "Période principale", plages: [{ debut: "13:00", fin: "20:00" }] }],
+      periodes: [{ key: "default", libelle: "Période principale", plages: [{ debut: "13:00", fin: "20:00" }] }],
     },
     {
       code: "2201",
-      periodes: [{ libelle: "Période principale", plages: [{ debut: "05:45", fin: "13:00" }] }],
+      periodes: [{ key: "default", libelle: "Période principale", plages: [{ debut: "05:45", fin: "13:00" }] }],
     },
   ]);
 
@@ -43,11 +43,11 @@ test("daily-rest-warning does not warn when rest is at least 11h", () => {
   const servicesByCode = makeServicesByCode([
     {
       code: "2300",
-      periodes: [{ libelle: "Période principale", plages: [{ debut: "10:00", fin: "18:00" }] }],
+      periodes: [{ key: "default", libelle: "Période principale", plages: [{ debut: "10:00", fin: "18:00" }] }],
     },
     {
       code: "2301",
-      periodes: [{ libelle: "Période principale", plages: [{ debut: "06:00", fin: "14:00" }] }],
+      periodes: [{ key: "default", libelle: "Période principale", plages: [{ debut: "06:00", fin: "14:00" }] }],
     },
   ]);
 
@@ -68,11 +68,11 @@ test("daily-rest-warning does not warn when rest is exactly 11h", () => {
   const servicesByCode = makeServicesByCode([
     {
       code: "2400",
-      periodes: [{ libelle: "Période principale", plages: [{ debut: "12:00", fin: "18:00" }] }],
+      periodes: [{ key: "default", libelle: "Période principale", plages: [{ debut: "12:00", fin: "18:00" }] }],
     },
     {
       code: "2401",
-      periodes: [{ libelle: "Période principale", plages: [{ debut: "05:00", fin: "13:00" }] }],
+      periodes: [{ key: "default", libelle: "Période principale", plages: [{ debut: "05:00", fin: "13:00" }] }],
     },
   ]);
 

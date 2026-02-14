@@ -7,6 +7,7 @@
 // js/components/season.js
 
 import { getConfig, setConfig } from "../data/storage.js";
+import { setHomeSaisonConfig } from "../state/home-state.js";
 
 function createStatus() {
   const status = document.createElement("div");
@@ -107,7 +108,7 @@ export async function renderSeasonView(options = {}) {
     const start = inputStart.value.trim();
     const end = inputEnd.value.trim();
     await setConfig("saison", start && end ? { saisonDebut: start, saisonFin: end } : {});
-    window.__homeSaisonConfig = start && end ? { saisonDebut: start, saisonFin: end } : null;
+    setHomeSaisonConfig(start && end ? { saisonDebut: start, saisonFin: end } : null);
     status.show("Saison enregistrée");
   });
 
@@ -115,7 +116,7 @@ export async function renderSeasonView(options = {}) {
     await setConfig("saison", {});
     inputStart.value = "";
     inputEnd.value = "";
-    window.__homeSaisonConfig = null;
+    setHomeSaisonConfig(null);
     status.show("Saison réinitialisée");
   });
 }

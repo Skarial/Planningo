@@ -49,44 +49,6 @@ function formatDateFr(dateISO) {
   return `${dd}/${mm}/${yyyy}`;
 }
 
-function toUiServiceCode(rawCode) {
-  const normalized = normalizeServiceCode(rawCode);
-  if (!normalized) return "";
-  if (normalized === "RPS") return "REPOS";
-  if (/^TD(?=\s|\d|$)/i.test(normalized)) {
-    return normalized
-      .replace(/^TD\s*/i, "TAD ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-  if (/^TAD(?=\s|\d|$)/i.test(normalized)) {
-    return normalized
-      .replace(/^TAD\s*/i, "TAD ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-  return normalized;
-}
-
-function toStorageServiceCode(rawCode) {
-  const normalized = normalizeServiceCode(rawCode);
-  if (!normalized) return "";
-  if (normalized === "RPS") return "REPOS";
-  if (/^TD(?=\s|\d|$)/i.test(normalized)) {
-    return normalized
-      .replace(/^TD\s*/i, "TAD ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-  if (/^TAD(?=\s|\d|$)/i.test(normalized)) {
-    return normalized
-      .replace(/^TAD\s*/i, "TAD ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-  return normalized;
-}
-
 function navigateHome() {
   const baseUrl = `${location.pathname}${location.search}`;
   if (location.hash) {
@@ -397,7 +359,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   const isCongesDay = isDateInConges(parseISODateLocal(iso), congesEntry?.value ?? null);
 
   const initialCode = getInitialServiceCode(entry);
-  input.value = toUiServiceCode(initialCode);
+  input.value = normalizeServiceCode(initialCode);
   isPrefilled = input.value.length > 0;
   panierToggle.checked = getInitialPanierEnabled(entry);
   let majorExtraRaw = getInitialMajorExtraMinutes(entry);
@@ -570,8 +532,8 @@ export async function renderEditDayView(container, { dateISO } = {}) {
       btn.className = "guided-btn guided-btn-secondary";
       btn.textContent = getServiceDisplayName(code, { short: true });
       btn.addEventListener("click", () => {
-        input.value = toUiServiceCode(code);
-        panierToggle.checked = resolvePanierEnabled(toStorageServiceCode(input.value));
+        input.value = normalizeServiceCode(code);
+        panierToggle.checked = resolvePanierEnabled(normalizeServiceCode(input.value));
         syncFormationInputVisibility();
         renderSummaryText();
         suggestions.innerHTML = "";
@@ -583,7 +545,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   }
 
   input.addEventListener("input", () => {
-    panierToggle.checked = resolvePanierEnabled(toStorageServiceCode(input.value));
+    panierToggle.checked = resolvePanierEnabled(normalizeServiceCode(input.value));
     syncFormationInputVisibility();
     renderSummaryText();
     renderSuggestionsFiltered(input.value);
@@ -622,7 +584,7 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     const previousEntry = await getPlanningEntry(iso);
     const payload = buildSaveEntryPayload({
       dateISO: iso,
-      rawCode: toStorageServiceCode(input.value),
+      rawCode: normalizeServiceCode(input.value),
       previousEntry,
       panierEnabled: panierToggle.checked,
       rawFormationMinutes: formationRaw,

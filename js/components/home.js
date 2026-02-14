@@ -10,12 +10,20 @@
 // Cette vue remplace les anciennes pages :
 // - consulter date
 // - vue mensuelle dediee
-import { getAllServices } from "../data/storage.js";
+
 import { renderHomeMonthCalendar } from "./home-month-calendar.js";
-
-import { getPlanningEntry, getPlanningForMonth } from "../data/storage.js";
-
+import {
+  getAllServices,
+  getPlanningEntry,
+  getPlanningForMonthLocalFirst,
+} from "../data/storage.js";
 import { getActiveDateISO, setActiveDateISO } from "../state/active-date.js";
+import {
+  getHomeCongesConfig,
+  getHomeSaisonConfig,
+  setHomeCongesConfig,
+  setHomeSaisonConfig,
+} from "../state/home-state.js";
 
 import { isDateInConges } from "../domain/conges.js";
 import {
@@ -28,6 +36,10 @@ import { getConfig, setConfig } from "../data/db.js";
 import { initMonthFromDateISO } from "../state/month-navigation.js";
 import { getPeriodStateForDate } from "../domain/periods.js";
 import { getPeriodLabel } from "../utils/period-label.js";
+import {
+  getRestWarningMessageLabel,
+  getRestWarningPeriodLabel,
+} from "../utils/rest-warning-labels.js";
 import { computeDailyRestWarning } from "../domain/daily-rest-warning.js";
 import {
   formatMajorExtraMinutes,
@@ -51,6 +63,20 @@ import { getAlarmSyncEnabled } from "../state/alarm-feature.js";
 
 const TAX_REAL_NOTICE_HIDDEN_KEY = "tax_real_notice_hidden";
 const TAX_REAL_NOTICE_SESSION_KEY = "tax_real_notice_seen_session";
+let homeRenderSessionCounter = 0;
+let lastHomeRemoteMonthSignature = "";
+
+function buildMonthCalendarSignature(entries) {
+  if (!Array.isArray(entries)) return "";
+  return entries
+    .filter((entry) => entry && typeof entry.date === "string")
+    .map((entry) => {
+      const code = typeof entry?.serviceCode === "string" ? entry.serviceCode.trim().toUpperCase() : "";
+      return `${entry.date}:${code}`;
+    })
+    .sort()
+    .join("|");
+}
 
 function parseISODateLocal(dateISO) {
   const [year, month, day] = dateISO.split("-").map(Number);
@@ -147,6 +173,10 @@ function resolveServiceFromLookup(lookup, serviceCode) {
 
 function isMorningServiceCode(serviceCode) {
   return isBaseMorningServiceCode(serviceCode);
+}
+
+function getRestWarningTitle(restCheck) {
+  return getRestWarningMessageLabel(restCheck?.messageKey, { withThreshold: true });
 }
 
 function shouldAddExtraMinutes(service) {
@@ -428,6 +458,7 @@ function createTaxRealNoticeSheet() {
 // =======================
 
 export async function renderHome() {
+  const renderSession = ++homeRenderSessionCounter;
   const container = document.getElementById("view-home");
   if (!container) {
     console.error("Conteneur view-home introuvable");
@@ -451,15 +482,33 @@ export async function renderHome() {
   card.append(top, bottom);
   container.append(card);
 
+  const monthISO = getActiveDateISO().slice(0, 7);
+  let monthEntries = [];
+  const monthEntriesPromise = monthISO
+    ? getPlanningForMonthLocalFirst(monthISO, (remoteEntries) => {
+        if (renderSession !== homeRenderSessionCounter) return;
+
+        const remoteSignature = `${monthISO}|${buildMonthCalendarSignature(remoteEntries)}`;
+        if (remoteSignature === lastHomeRemoteMonthSignature) return;
+
+        const localSignature = `${monthISO}|${buildMonthCalendarSignature(monthEntries)}`;
+        lastHomeRemoteMonthSignature = remoteSignature;
+
+        if (remoteSignature !== localSignature) {
+          renderHome();
+        }
+      })
+    : Promise.resolve([]);
+
   // CONFIG CONGES (cache)
-  if (!window.__homeCongesConfig) {
+  if (!getHomeCongesConfig()) {
     const congesEntry = await getConfig("conges");
-    window.__homeCongesConfig = congesEntry?.value ?? null;
+    setHomeCongesConfig(congesEntry?.value ?? null);
   }
 
-  if (!window.__homeSaisonConfig) {
+  if (!getHomeSaisonConfig()) {
     const saisonEntry = await getConfig("saison");
-    window.__homeSaisonConfig = saisonEntry?.value ?? null;
+    setHomeSaisonConfig(saisonEntry?.value ?? null);
   }
   const alarmSyncEnabled = await getAlarmSyncEnabled();
 
@@ -481,7 +530,7 @@ export async function renderHome() {
   const iso = getActiveDateISO();
   if (iso) {
     const date = new Date(iso);
-    const isCongesDay = isDateInConges(date, window.__homeCongesConfig);
+    const isCongesDay = isDateInConges(date, getHomeCongesConfig());
 
     const section = document.createElement("section");
     section.className = "day-header";
@@ -729,7 +778,7 @@ export async function renderHome() {
       }
 
       try {
-        const previousWorkedDay = await findPreviousWorkedDayEntry(date, window.__homeCongesConfig);
+        const previousWorkedDay = await findPreviousWorkedDayEntry(date, getHomeCongesConfig());
         if (previousWorkedDay) {
           await loadServicesCatalog();
           const servicesByCode = servicesLookup || new Map();
@@ -739,11 +788,12 @@ export async function renderHome() {
             currentDateISO: iso,
             currentServiceCode: entry.serviceCode,
             servicesByCode,
-            saisonConfig: window.__homeSaisonConfig,
+            saisonConfig: getHomeSaisonConfig(),
           });
           if (restCheck.shouldWarn) {
             service.classList.add("rest-warning");
-            service.title = "Repos legal insuffisant (< 11h)";
+            const periodLabel = getRestWarningPeriodLabel(restCheck.periodKey);
+            service.title = `${getRestWarningTitle(restCheck)} - ${periodLabel}`;
           }
         }
       } catch {
@@ -779,7 +829,7 @@ export async function renderHome() {
         await loadServicesCatalog();
         const matchedService = resolveServiceFromLookup(servicesLookup, entry.serviceCode);
 
-        const periodLabel = getPeriodLabel(getPeriodStateForDate(window.__homeSaisonConfig, date));
+        const periodLabel = getPeriodLabel(getPeriodStateForDate(getHomeSaisonConfig(), date));
         const timeInfo = buildServiceTimeLines(matchedService, periodLabel);
 
         if (timeInfo) {
@@ -830,15 +880,14 @@ export async function renderHome() {
   calendarAnchor.id = "home-calendar-anchor";
   bottom.appendChild(calendarAnchor);
 
-  const monthISO = getActiveDateISO().slice(0, 7);
-  const monthEntries = monthISO ? await getPlanningForMonth(monthISO) : [];
+  monthEntries = await monthEntriesPromise;
   const monthMap = new Map(monthEntries.map((entry) => [entry.date, entry]));
 
   renderHomeMonthCalendar(calendarAnchor, {
     getServiceForDateISO: (iso) => monthMap.get(iso) || null,
 
     isDateInConges: (date) => {
-      const congesEntry = window.__homeCongesConfig;
+      const congesEntry = getHomeCongesConfig();
       return isDateInConges(date, congesEntry);
     },
 

@@ -12,6 +12,7 @@ import {
   getPlanningEntriesInRange,
   setConfig,
 } from "../data/storage.js";
+import { setHomeCongesConfig } from "../state/home-state.js";
 
 function isoToFR(iso) {
   if (!iso) return "";
@@ -238,7 +239,7 @@ export async function renderCongesView(options = {}) {
 
       await Promise.all([...datesToDelete].map((dateISO) => deletePlanningEntry(dateISO)));
     }
-    window.__homeCongesConfig = { periods: nextPeriods };
+    setHomeCongesConfig({ periods: nextPeriods });
     status.show("Congés enregistrés");
   });
 
@@ -246,7 +247,7 @@ export async function renderCongesView(options = {}) {
     await setConfig("conges", { periods: [] });
     periodsContainer.innerHTML = "";
     periodsContainer.appendChild(createPeriodRow({}, 0));
-    window.__homeCongesConfig = null;
+    setHomeCongesConfig(null);
     status.show("Congés supprimés");
   });
 }

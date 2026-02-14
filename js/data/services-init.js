@@ -6,6 +6,7 @@
 
 import { getAllServices, addService } from "./storage.js";
 import { SERVICES_CATALOG } from "./services-catalog.js";
+import { normalizeServicePeriods } from "./period-key.js";
 
 export async function initServicesIfNeeded() {
   const existing = await getAllServices();
@@ -19,6 +20,6 @@ export async function initServicesIfNeeded() {
     if (!service || typeof service.code !== "string") continue;
     const code = service.code.toUpperCase();
     if (existingCodes.has(code)) continue;
-    await addService(service);
+    await addService(normalizeServicePeriods(service));
   }
 }

@@ -7,6 +7,9 @@
 // Storage.js
 
 import { enforceMaxMonthsRetention, openDB, STORES } from "./db.js";
+import { normalizeServicePeriods } from "./period-key.js";
+import { normalizeServiceCode } from "../domain/service-normalization.js";
+import { fetchPlanningMonth } from "./api-client.js";
 
 function normalizePanierOverride(value) {
   return typeof value === "boolean" ? value : null;
@@ -30,26 +33,6 @@ function normalizeFormationMinutes(value) {
   return normalizeNonMajorExtraMinutes(value);
 }
 
-function canonicalizeServiceCode(rawCode) {
-  if (rawCode == null) return "";
-  const normalized = String(rawCode).trim().toUpperCase();
-  if (!normalized) return "";
-  if (normalized === "RPS") return "REPOS";
-  if (/^TD(?=\s|\d|$)/i.test(normalized)) {
-    return normalized
-      .replace(/^TD\s*/i, "TAD ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-  if (/^TAD(?=\s|\d|$)/i.test(normalized)) {
-    return normalized
-      .replace(/^TAD\s*/i, "TAD ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-  return normalized;
-}
-
 // =======================
 // SERVICES
 // =======================
@@ -60,7 +43,10 @@ export async function getAllServices() {
     const tx = db.transaction(STORES.SERVICES, "readonly");
     const store = tx.objectStore(STORES.SERVICES);
     const req = store.getAll();
-    req.onsuccess = () => resolve(req.result || []);
+    req.onsuccess = () => {
+      const services = Array.isArray(req.result) ? req.result : [];
+      resolve(services.map((service) => normalizeServicePeriods(service)));
+    };
     req.onerror = () => reject(req.error);
   });
 }
@@ -69,7 +55,7 @@ export async function addService(service) {
   const { db } = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.SERVICES, "readwrite");
-    tx.objectStore(STORES.SERVICES).put(service);
+    tx.objectStore(STORES.SERVICES).put(normalizeServicePeriods(service));
     tx.oncomplete = resolve;
     tx.onerror = () => reject(tx.error);
   });
@@ -91,7 +77,7 @@ export async function deletePlanningEntry(dateISO) {
 
 export async function savePlanningEntry(entry) {
   const { db } = await openDB();
-  const canonicalServiceCode = canonicalizeServiceCode(entry.serviceCode);
+  const canonicalServiceCode = normalizeServiceCode(entry.serviceCode);
 
   // RGLE MTIER : service vide  suppression
   if (!canonicalServiceCode) {
@@ -141,7 +127,7 @@ export async function getPlanningForMonth(monthISO) {
       if (cursor.key.startsWith(monthISO)) {
         results.push({
           date: cursor.value.date,
-          serviceCode: canonicalizeServiceCode(cursor.value.serviceCode ?? "REPOS"),
+          serviceCode: normalizeServiceCode(cursor.value.serviceCode ?? "REPOS"),
           locked: cursor.value.locked ?? false,
           extra: cursor.value.extra ?? false,
           panierOverride: normalizePanierOverride(cursor.value.panierOverride),
@@ -157,6 +143,51 @@ export async function getPlanningForMonth(monthISO) {
 
     tx.onerror = () => reject(tx.error);
   });
+}
+
+function normalizeRemoteMonthEntries(remoteEntries) {
+  const entries = Array.isArray(remoteEntries) ? remoteEntries : [];
+  return entries
+    .filter((entry) => entry && typeof entry.date === "string")
+    .map((entry) => ({
+      date: entry.date,
+      serviceCode: normalizeServiceCode(entry.serviceCode ?? "REPOS"),
+      locked: false,
+      extra: false,
+      panierOverride: null,
+      majorExtraMinutes: 0,
+      nonMajorExtraMinutes: 0,
+      missingMinutes: 0,
+      formationMinutes: 0,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export async function getPlanningForMonthSmart(monthISO) {
+  try {
+    const remote = await fetchPlanningMonth(monthISO);
+    return normalizeRemoteMonthEntries(remote?.entries);
+  } catch {
+    return getPlanningForMonth(monthISO);
+  }
+}
+
+export async function getPlanningForMonthLocalFirst(monthISO, onRemoteEntries) {
+  const localEntries = await getPlanningForMonth(monthISO);
+
+  void (async () => {
+    try {
+      const remote = await fetchPlanningMonth(monthISO);
+      const normalizedRemoteEntries = normalizeRemoteMonthEntries(remote?.entries);
+      if (typeof onRemoteEntries === "function") {
+        try {
+          onRemoteEntries(normalizedRemoteEntries);
+        } catch {}
+      }
+    } catch {}
+  })();
+
+  return localEntries;
 }
 
 export async function getPlanningEntriesInRange(startISO, endISO) {
@@ -180,7 +211,7 @@ export async function getPlanningEntriesInRange(startISO, endISO) {
       if (key >= start && key <= end) {
         results.push({
           date: cursor.value.date,
-          serviceCode: canonicalizeServiceCode(cursor.value.serviceCode ?? "REPOS"),
+          serviceCode: normalizeServiceCode(cursor.value.serviceCode ?? "REPOS"),
           locked: cursor.value.locked ?? false,
           extra: cursor.value.extra ?? false,
           panierOverride: normalizePanierOverride(cursor.value.panierOverride),
@@ -214,7 +245,7 @@ export async function getPlanningEntry(dateISO) {
       }
       resolve({
         ...request.result,
-        serviceCode: canonicalizeServiceCode(request.result.serviceCode),
+        serviceCode: normalizeServiceCode(request.result.serviceCode),
         panierOverride: normalizePanierOverride(request.result.panierOverride),
         majorExtraMinutes: normalizeMajorExtraMinutes(request.result.majorExtraMinutes),
         nonMajorExtraMinutes: normalizeNonMajorExtraMinutes(request.result.nonMajorExtraMinutes),

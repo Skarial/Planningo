@@ -5,6 +5,8 @@
 */
 
 // js/data/db.js
+import { normalizeServicePeriods } from "./period-key.js";
+import { normalizeServiceCode } from "../domain/service-normalization.js";
 
 // =======================
 // CONFIGURATION
@@ -48,6 +50,10 @@ function executeQuery(db, storeName, operation) {
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
+}
+
+function putNormalizedService(servicesStore, service) {
+  servicesStore.put(normalizeServicePeriods(service));
 }
 
 // =======================
@@ -112,26 +118,6 @@ function legacyServiceCode() {
   return String.fromCharCode(65, 78, 78, 69, 88, 69);
 }
 
-function canonicalizeServiceCode(rawCode) {
-  if (rawCode == null) return "";
-  const normalized = String(rawCode).trim().toUpperCase();
-  if (!normalized) return "";
-  if (normalized === "RPS") return "REPOS";
-  if (/^TD(?=\s|\d|$)/i.test(normalized)) {
-    return normalized
-      .replace(/^TD\s*/i, "TAD ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-  if (/^TAD(?=\s|\d|$)/i.test(normalized)) {
-    return normalized
-      .replace(/^TAD\s*/i, "TAD ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-  return normalized;
-}
-
 function migrateLegacyServiceToFormation(tx) {
   if (!tx) return;
   const planningStore = tx.objectStore(STORES.PLANNING);
@@ -155,7 +141,7 @@ function migrateLegacyServiceToFormation(tx) {
     const service = cursor.value;
     if (service.code === legacyCode) {
       servicesStore.delete(service.code);
-      servicesStore.put({ ...service, code: "FORMATION" });
+      putNormalizedService(servicesStore, { ...service, code: "FORMATION" });
     }
     cursor.continue();
   };
@@ -218,7 +204,7 @@ function ensureServiceCodeMigration(db) {
         const service = cursor.value;
         if (service.code === legacyCode) {
           servicesStore.delete(service.code);
-          servicesStore.put({ ...service, code: "FORMATION" });
+          putNormalizedService(servicesStore, { ...service, code: "FORMATION" });
         }
         cursor.continue();
       };
@@ -310,7 +296,7 @@ function ensureCanonicalServiceCodeMigration(db) {
         }
 
         const entry = cursor.value;
-        const canonicalCode = canonicalizeServiceCode(entry.serviceCode);
+        const canonicalCode = normalizeServiceCode(entry.serviceCode);
         if (canonicalCode && canonicalCode !== entry.serviceCode) {
           entry.serviceCode = canonicalCode;
           cursor.update(entry);
@@ -329,10 +315,10 @@ function ensureCanonicalServiceCodeMigration(db) {
 
         const service = cursor.value;
         const originalCode = String(service.code ?? "").trim();
-        const canonicalCode = canonicalizeServiceCode(originalCode);
+        const canonicalCode = normalizeServiceCode(originalCode);
         if (canonicalCode && canonicalCode !== originalCode) {
           servicesStore.delete(originalCode);
-          servicesStore.put({ ...service, code: canonicalCode });
+          putNormalizedService(servicesStore, { ...service, code: canonicalCode });
         }
 
         cursor.continue();
@@ -362,7 +348,7 @@ export async function getAllServices() {
 export async function addService(service) {
   const { db } = await openDB();
   return executeTransaction(db, STORES.SERVICES, "readwrite", (store) => {
-    store.put(service);
+    putNormalizedService(store, service);
   });
 }
 
@@ -378,8 +364,8 @@ window.savePlanningEntry = async function (entry) {
 
 window.getPlanningForMonth = async function (monthISO) {
   // Legacy global kept for compatibility: delegate to canonical storage path.
-  const { getPlanningForMonth } = await import("./storage.js");
-  return getPlanningForMonth(monthISO);
+  const { getPlanningForMonthSmart } = await import("./storage.js");
+  return getPlanningForMonthSmart(monthISO);
 };
 
 // =======================

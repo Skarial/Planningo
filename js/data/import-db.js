@@ -7,6 +7,7 @@
 // js/data/import-db.js
 
 import { openDB } from "./db.js";
+import { normalizeServicePeriods } from "./period-key.js";
 
 // =======================
 // STORES CONNUS
@@ -183,6 +184,11 @@ function clearStore(db, storeName) {
   });
 }
 
+function normalizeRecordForStore(storeName, record) {
+  if (storeName !== "services") return record;
+  return normalizeServicePeriods(record);
+}
+
 function restoreStore(db, storeName, records) {
   return new Promise((resolve, reject) => {
     if (!Array.isArray(records)) {
@@ -194,7 +200,7 @@ function restoreStore(db, storeName, records) {
     const store = tx.objectStore(storeName);
 
     for (const record of records) {
-      store.put(record);
+      store.put(normalizeRecordForStore(storeName, record));
     }
 
     tx.oncomplete = resolve;

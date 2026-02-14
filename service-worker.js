@@ -53,6 +53,8 @@ const ESSENTIAL_ASSETS = [
   "./js/data/storage.js",
   "./js/data/storage.memory.js",
   "./js/data/storage.selector.js",
+  "./js/data/api-client.js",
+  "./js/data/period-key.js",
   "./js/state/active-date.js",
   "./js/state/home-mode.js",
   "./js/state/month-calendar-state.js",
@@ -67,6 +69,7 @@ const ESSENTIAL_ASSETS = [
   "./js/domain/service-panier.js",
   "./js/domain/service-suggestions.js",
   "./js/domain/services-availability.js",
+  "./js/domain/service-normalization.js",
   "./js/utils/period-label.js",
   "./js/components/home.js",
   "./js/components/home-month-calendar.js",
@@ -211,14 +214,4 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
-
-
-
-
-
-
-
-
-
-
 
