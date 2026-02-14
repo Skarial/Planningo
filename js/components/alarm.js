@@ -235,7 +235,7 @@ async function sharePlan(plan) {
     try {
       await navigator.share({
         files: [file],
-        title: "Plan de reveil",
+        title: "Plan de réveil",
         text: "Plan d'alarmes Planningo",
       });
       return "share";
@@ -344,7 +344,7 @@ export async function renderAlarmView(options = {}) {
   const enableSyncRow = document.createElement("label");
   enableSyncRow.className = "settings-toggle";
   const enableSyncLabel = document.createElement("span");
-  enableSyncLabel.textContent = "Activer le reveil intelligent (Android)";
+  enableSyncLabel.textContent = "Activer le réveil intelligent (Android)";
   const enableSyncToggle = document.createElement("input");
   enableSyncToggle.type = "checkbox";
   enableSyncRow.append(enableSyncLabel, enableSyncToggle);
@@ -373,12 +373,12 @@ export async function renderAlarmView(options = {}) {
 
   const actionBtn = document.createElement("button");
   actionBtn.className = "settings-btn alarm-import-btn";
-  actionBtn.textContent = "Importer les alarmes dans le reveil";
+  actionBtn.textContent = "Importer les alarmes dans le réveil";
 
   const settingsToggleBtn = document.createElement("button");
   settingsToggleBtn.type = "button";
   settingsToggleBtn.className = "alarm-settings-toggle";
-  settingsToggleBtn.textContent = "Afficher les reglages avances ▾";
+  settingsToggleBtn.textContent = "Afficher les réglages avancés ▾";
 
   const settingsPanel = document.createElement("div");
   settingsPanel.className = "alarm-settings-panel";
@@ -502,7 +502,7 @@ export async function renderAlarmView(options = {}) {
     <p><strong>Important</strong> : le réveil intelligent s'occupe uniquement des <strong>services du matin</strong>.</p>
     <p><strong>Règle utilisée</strong> : <strong>DM</strong>, <strong>TAD 1/3/5</strong>, et <strong>codes service numériques impairs</strong> (ex : 2001, 2101, 2201...)</p>
     <p><strong>Avance (minutes)</strong> : nombre de minutes où le réveil va sonner avant le début du service.</p>
-    <p>Ensuite, utiliséz <strong>Importer dans Réveil</strong> pour envoyer le fichier vers l'application Réveil.</p>
+    <p>Ensuite, utilisez <strong>Importer dans Réveil</strong> pour envoyer le fichier vers l'application Réveil.</p>
   `;
 
   const noticeCloseBtn = document.createElement("button");
@@ -571,7 +571,7 @@ export async function renderAlarmView(options = {}) {
     if (!enabled) {
       clearAlarmResyncPending();
     }
-    status.show(enabled ? "Rappels reveil actives." : "Rappels reveil désactivés.");
+    status.show(enabled ? "Rappels réveil activés." : "Rappels réveil désactivés.");
   });
 
   let currentRules = await loadRules();
@@ -605,7 +605,7 @@ export async function renderAlarmView(options = {}) {
 
     const link = document.createElement("a");
     link.href = downloadUrl.toString();
-    link.download = "planningo-reveil.apk";
+    link.download = "planningo-réveil.apk";
     link.rel = "noopener noreferrer";
     link.style.display = "none";
     document.body.appendChild(link);
@@ -680,8 +680,8 @@ export async function renderAlarmView(options = {}) {
     const isHidden = settingsPanel.hidden;
     settingsPanel.hidden = !isHidden;
     settingsToggleBtn.textContent = isHidden
-      ? "Masquer les reglages avances ▴"
-      : "Afficher les reglages avances ▾";
+      ? "Masquer les réglages avancés ▴"
+      : "Afficher les réglages avancés ▾";
   });
 
   diagnoseBtn.addEventListener("click", () => {

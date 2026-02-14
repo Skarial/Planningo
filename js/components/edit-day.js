@@ -445,8 +445,8 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     extraInput.value = selectedExtraType === "major" ? majorExtraRaw : nonMajorExtraRaw;
     extraInput.placeholder =
       selectedExtraType === "major"
-        ? "Nombre de minutes majorees (ex : 60)"
-        : "Nombre de minutes non majorees (ex : 60)";
+        ? "Nombre de minutes majorées (ex : 60)"
+        : "Nombre de minutes non majorées (ex : 60)";
     updateExtraTypeButtons();
   }
 

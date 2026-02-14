@@ -583,7 +583,7 @@ export async function renderHome() {
     alarmResyncDismissBtn.textContent = "";
     alarmResyncDismissBtn.setAttribute(
       "aria-label",
-      "Masquer le rappel de resynchronisation du reveil",
+      "Masquer le rappel de resynchronisation du réveil",
     );
 
     const alarmResyncActions = document.createElement("div");
