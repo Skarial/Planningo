@@ -3241,59 +3241,6 @@ body.onboarding-lock {
   transform: scale(0.96);
 }
 
-/* Diagnostic SW (active uniquement avec ?swdiag=1) */
-.sw-diag-panel {
-  position: fixed;
-  right: calc(10px + var(--safe-right));
-  bottom: calc(10px + var(--safe-bottom));
-  width: min(92vw, 360px);
-  z-index: 11000;
-  background: rgba(16, 22, 34, 0.95);
-  color: #e7edf7;
-  border: 1px solid rgba(126, 147, 177, 0.45);
-  border-radius: 10px;
-  box-shadow: 0 10px 24px rgba(4, 8, 14, 0.35);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  padding: 10px;
-}
-
-.sw-diag-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.sw-diag-head strong {
-  font-size: 0.8rem;
-  letter-spacing: 0.3px;
-}
-
-#sw-diag-refresh {
-  height: 26px;
-  min-height: 26px;
-  padding: 0 9px;
-  border-radius: 6px;
-  border: 1px solid rgba(143, 166, 200, 0.42);
-  background: rgba(58, 96, 143, 0.38);
-  color: #eff5ff;
-  font-size: 0.74rem;
-  font-weight: 600;
-}
-
-#sw-diag-body {
-  margin: 0;
-  max-height: 34vh;
-  overflow: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-  font-size: 0.73rem;
-  line-height: 1.35;
-  color: #dbe8fa;
-}
-
 @keyframes slideDown {
   from {
     opacity: 0;
