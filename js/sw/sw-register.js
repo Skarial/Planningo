@@ -45,9 +45,24 @@ export function registerServiceWorker(onUpdateAvailable) {
     return;
   }
 
-  window.addEventListener("load", async () => {
+  const safeUpdateCheck = () => {
+    if (!swRegistration) return;
+    swRegistration.update().catch(() => {});
+  };
+
+  const scheduleFastChecks = () => {
+    [1000, 5000, 15000].forEach((delayMs) => {
+      setTimeout(() => {
+        safeUpdateCheck();
+      }, delayMs);
+    });
+  };
+
+  const startRegistration = async () => {
     try {
-      swRegistration = await navigator.serviceWorker.register("./service-worker.js");
+      swRegistration = await navigator.serviceWorker.register("./service-worker.js", {
+        updateViaCache: "none",
+      });
 
       swDiagLog("registered", {
         scope: swRegistration.scope,
@@ -93,21 +108,29 @@ export function registerServiceWorker(onUpdateAvailable) {
         });
       });
 
-      // Check periodique pour une app qui reste ouverte
-      const UPDATE_INTERVAL = 15 * 60 * 1000;
+      // Detection proactive rapide + check periodique pour une app ouverte
+      scheduleFastChecks();
+      safeUpdateCheck();
+      const UPDATE_INTERVAL = 5 * 60 * 1000;
       setInterval(() => {
-        swRegistration.update().catch(() => {});
+        safeUpdateCheck();
       }, UPDATE_INTERVAL);
 
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") {
-          swRegistration.update().catch(() => {});
+          safeUpdateCheck();
         }
+      });
+
+      window.addEventListener("online", () => {
+        safeUpdateCheck();
       });
     } catch (err) {
       console.error("[SW] echec enregistrement", err);
     }
-  });
+  };
+
+  startRegistration();
 }
 
 export function getServiceWorkerRegistration() {
