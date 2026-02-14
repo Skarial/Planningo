@@ -263,7 +263,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   border-radius: 0;
   border: none;
   background: transparent;
-  color: var(--color-soft);
+  color: var(--color-accent);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -1678,6 +1678,11 @@ body.onboarding-lock {
   flex-direction: column;
   gap: 6px;
   min-width: 0;
+}
+
+.settings-date-field input[type="date"] {
+  width: 100%;
+  max-width: 190px;
 }
 
 .settings-card label {
