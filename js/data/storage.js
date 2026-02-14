@@ -180,11 +180,11 @@ export async function getPlanningForMonthLocalFirst(monthISO, onRemoteEntries) {
       const remote = await fetchPlanningMonth(monthISO);
       const normalizedRemoteEntries = normalizeRemoteMonthEntries(remote?.entries);
       if (typeof onRemoteEntries === "function") {
-        try {
-          onRemoteEntries(normalizedRemoteEntries);
-        } catch {}
+        onRemoteEntries(normalizedRemoteEntries);
       }
-    } catch {}
+    } catch (error) {
+      console.warn("[storage] remote month refresh failed", error);
+    }
   })();
 
   return localEntries;

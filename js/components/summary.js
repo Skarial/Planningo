@@ -21,17 +21,13 @@ import { getFixedServiceMinutes } from "../utils.js";
 import { getHolidayNameForDate } from "../domain/holidays-fr.js";
 import { getServiceCodeVariants } from "../domain/morning-service.js";
 import { computeServicePeriodMinutes } from "../domain/service-period-minutes.js";
+import { normalizeServiceCode } from "../domain/service-normalization.js";
 
 function formatDuration(totalMinutes) {
   if (typeof totalMinutes !== "number" || totalMinutes < 0) return "00:00";
   const h = Math.floor(totalMinutes / 60);
   const m = totalMinutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-}
-
-function normalizeServiceCode(value) {
-  if (value == null) return "";
-  return String(value).trim().toUpperCase();
 }
 
 function buildServicesLookup(services) {

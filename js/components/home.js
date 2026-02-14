@@ -53,6 +53,7 @@ import {
 } from "../domain/day-edit.js";
 import { getHolidayNameForDate } from "../domain/holidays-fr.js";
 import { getServiceCodeVariants, isBaseMorningServiceCode } from "../domain/morning-service.js";
+import { normalizeServiceCode } from "../domain/service-normalization.js";
 import {
   dismissAlarmResyncNotice,
   isAlarmResyncDismissed,
@@ -130,11 +131,6 @@ function formatDuration(minutes) {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-}
-
-function normalizeServiceCode(value) {
-  if (value == null) return "";
-  return String(value).trim().toUpperCase();
 }
 
 function buildServicesLookup(services) {
