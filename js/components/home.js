@@ -65,6 +65,8 @@ const TAX_REAL_NOTICE_HIDDEN_KEY = "tax_real_notice_hidden";
 const TAX_REAL_NOTICE_SESSION_KEY = "tax_real_notice_seen_session";
 let homeRenderSessionCounter = 0;
 let lastHomeRemoteMonthSignature = "";
+let homeMonthEntriesCacheISO = "";
+let homeMonthEntriesCache = [];
 
 function buildMonthCalendarSignature(entries) {
   if (!Array.isArray(entries)) return "";
@@ -484,21 +486,26 @@ export async function renderHome() {
 
   const monthISO = getActiveDateISO().slice(0, 7);
   let monthEntries = [];
-  const monthEntriesPromise = monthISO
-    ? getPlanningForMonthLocalFirst(monthISO, (remoteEntries) => {
-        if (renderSession !== homeRenderSessionCounter) return;
+  const monthEntriesPromise =
+    monthISO && homeMonthEntriesCacheISO === monthISO
+      ? Promise.resolve(homeMonthEntriesCache)
+      : monthISO
+        ? getPlanningForMonthLocalFirst(monthISO, (remoteEntries) => {
+            if (renderSession !== homeRenderSessionCounter) return;
 
-        const remoteSignature = `${monthISO}|${buildMonthCalendarSignature(remoteEntries)}`;
-        if (remoteSignature === lastHomeRemoteMonthSignature) return;
+            const remoteSignature = `${monthISO}|${buildMonthCalendarSignature(remoteEntries)}`;
+            if (remoteSignature === lastHomeRemoteMonthSignature) return;
 
-        const localSignature = `${monthISO}|${buildMonthCalendarSignature(monthEntries)}`;
-        lastHomeRemoteMonthSignature = remoteSignature;
+            const localSignature = `${monthISO}|${buildMonthCalendarSignature(monthEntries)}`;
+            lastHomeRemoteMonthSignature = remoteSignature;
 
-        if (remoteSignature !== localSignature) {
-          renderHome();
-        }
-      })
-    : Promise.resolve([]);
+            if (remoteSignature !== localSignature) {
+              homeMonthEntriesCacheISO = monthISO;
+              homeMonthEntriesCache = remoteEntries;
+              renderHome();
+            }
+          })
+        : Promise.resolve([]);
 
   // CONFIG CONGES (cache)
   if (!getHomeCongesConfig()) {
@@ -881,6 +888,8 @@ export async function renderHome() {
   bottom.appendChild(calendarAnchor);
 
   monthEntries = await monthEntriesPromise;
+  homeMonthEntriesCacheISO = monthISO;
+  homeMonthEntriesCache = monthEntries;
   const monthMap = new Map(monthEntries.map((entry) => [entry.date, entry]));
 
   renderHomeMonthCalendar(calendarAnchor, {
