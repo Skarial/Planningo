@@ -8,11 +8,11 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.125";
+export const APP_VERSION = "2.0.126";
 
 import { DB_VERSION } from "./data/db.js";
 
-import { registerServiceWorker } from "./sw/sw-register.js";
+import { getServiceWorkerRegistration, registerServiceWorker } from "./sw/sw-register.js";
 
 import { initServicesIfNeeded } from "./data/services-init.js";
 import { getActiveDateISO, setActiveDateISO } from "./state/active-date.js";
@@ -33,9 +33,11 @@ import { installGlobalUiFeedback } from "./utils/ui-feedback.js";
 const CONTROLLED_RELOAD_KEY = "planningo_controlled_reload";
 const SW_DIAGNOSTIC_KEY = "planningo_sw_diag";
 const SW_RELOAD_FALLBACK_MS = 4500;
+const SW_DIAG_PANEL_ID = "sw-diag-panel";
 let viewportObserversBound = false;
 let swReloadInFlight = false;
 let appRouteBindingsReady = false;
+let swDiagPanelBound = false;
 
 function isServiceWorkerDiagnosticEnabled() {
   try {
@@ -54,6 +56,108 @@ function isServiceWorkerDiagnosticEnabled() {
 function swDiagLog(...args) {
   if (!isServiceWorkerDiagnosticEnabled()) return;
   console.info("[SW-DIAG]", ...args);
+}
+
+function summarizeWorkerScript(scriptURL) {
+  if (!scriptURL) return "none";
+  try {
+    const parsed = new URL(scriptURL, location.href);
+    return parsed.pathname.split("/").pop() || scriptURL;
+  } catch {
+    return scriptURL;
+  }
+}
+
+async function readDeployedCacheVersion() {
+  try {
+    const response = await fetch(`./service-worker.js?diag=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) return "unavailable";
+    const source = await response.text();
+    const match = source.match(/const\s+CACHE_VERSION\s*=\s*"([^"]+)"/);
+    if (!match) return "unknown";
+    return match[1];
+  } catch {
+    return "unreachable";
+  }
+}
+
+function getOrCreateSwDiagPanel() {
+  let panel = document.getElementById(SW_DIAG_PANEL_ID);
+  if (panel) return panel;
+
+  panel = document.createElement("section");
+  panel.id = SW_DIAG_PANEL_ID;
+  panel.className = "sw-diag-panel";
+  panel.innerHTML = `
+    <div class="sw-diag-head">
+      <strong>Diagnostic mise a jour</strong>
+      <button type="button" id="sw-diag-refresh">Rafraichir</button>
+    </div>
+    <pre id="sw-diag-body">Chargement...</pre>
+  `;
+  document.body.appendChild(panel);
+  return panel;
+}
+
+async function renderSwDiagnosticPanel() {
+  if (!isServiceWorkerDiagnosticEnabled()) return;
+  if (!("serviceWorker" in navigator)) return;
+
+  const panel = getOrCreateSwDiagPanel();
+  const body = panel.querySelector("#sw-diag-body");
+  if (!body) return;
+
+  const registration =
+    getServiceWorkerRegistration() || (await navigator.serviceWorker.getRegistration().catch(() => null));
+  const deployedVersion = await readDeployedCacheVersion();
+  const controller = navigator.serviceWorker.controller || null;
+  const active = registration?.active || null;
+  const waiting = registration?.waiting || null;
+  const installing = registration?.installing || null;
+  const now = new Date().toLocaleTimeString("fr-FR", { hour12: false });
+
+  body.textContent = [
+    `app_version: ${APP_VERSION}`,
+    `cache_version_deployed: ${deployedVersion}`,
+    `sw_controller: ${controller ? `${controller.state} (${summarizeWorkerScript(controller.scriptURL)})` : "none"}`,
+    `sw_active: ${active ? `${active.state} (${summarizeWorkerScript(active.scriptURL)})` : "none"}`,
+    `sw_waiting: ${waiting ? `${waiting.state} (${summarizeWorkerScript(waiting.scriptURL)})` : "none"}`,
+    `sw_installing: ${installing ? `${installing.state} (${summarizeWorkerScript(installing.scriptURL)})` : "none"}`,
+    `online: ${navigator.onLine ? "yes" : "no"}`,
+    `updated_at: ${now}`,
+  ].join("\n");
+}
+
+function ensureSwDiagnosticPanel() {
+  if (!isServiceWorkerDiagnosticEnabled()) return;
+  if (swDiagPanelBound) return;
+  swDiagPanelBound = true;
+
+  const panel = getOrCreateSwDiagPanel();
+  const refreshButton = panel.querySelector("#sw-diag-refresh");
+  if (refreshButton) {
+    refreshButton.addEventListener("click", () => {
+      renderSwDiagnosticPanel().catch(() => {});
+    });
+  }
+
+  window.addEventListener("online", () => renderSwDiagnosticPanel().catch(() => {}), { passive: true });
+  window.addEventListener("offline", () => renderSwDiagnosticPanel().catch(() => {}), { passive: true });
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    renderSwDiagnosticPanel().catch(() => {});
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      renderSwDiagnosticPanel().catch(() => {});
+    }
+  });
+
+  setInterval(() => {
+    if (document.visibilityState !== "visible") return;
+    renderSwDiagnosticPanel().catch(() => {});
+  }, 10000);
+
+  renderSwDiagnosticPanel().catch(() => {});
 }
 
 function triggerControlledReload(reason) {
@@ -113,6 +217,7 @@ async function initApp() {
 
   // 3 Service Worker + bannire
   await registerServiceWorker(showUpdateBanner);
+  ensureSwDiagnosticPanel();
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.addEventListener("controllerchange", () => {
       swDiagLog("controllerchange");
@@ -558,6 +663,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 
