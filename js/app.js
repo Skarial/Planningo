@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.129";
+export const APP_VERSION = "3.0.0";
 
 import { DB_VERSION } from "./data/db.js";
 
