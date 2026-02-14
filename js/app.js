@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "2.0.119";
+export const APP_VERSION = "2.0.120";
 
 import { DB_VERSION } from "./data/db.js";
 
@@ -28,6 +28,7 @@ import {
 import { initMenu } from "./components/menu.js";
 import { showOnboardingIfNeeded } from "./components/onboarding.js";
 import { installRuntimeDebugLogging } from "./debug/runtime-log.js";
+import { installGlobalUiFeedback } from "./utils/ui-feedback.js";
 
 const CONTROLLED_RELOAD_KEY = "planningo_controlled_reload";
 const SW_DIAGNOSTIC_KEY = "planningo_sw_diag";
@@ -80,6 +81,7 @@ window.addEventListener("pageshow", () => {
 });
 
 async function initApp() {
+  installGlobalUiFeedback();
   bindViewportObservers();
   updateViewportHeightVar();
   resetScrollState();
@@ -556,9 +558,4 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
-
-
-
-
-
 

@@ -375,6 +375,15 @@ export async function renderAlarmView(options = {}) {
   actionBtn.className = "settings-btn alarm-import-btn";
   actionBtn.textContent = "Importer les alarmes dans le reveil";
 
+  const settingsToggleBtn = document.createElement("button");
+  settingsToggleBtn.type = "button";
+  settingsToggleBtn.className = "alarm-settings-toggle";
+  settingsToggleBtn.textContent = "Afficher les reglages avances ▾";
+
+  const settingsPanel = document.createElement("div");
+  settingsPanel.className = "alarm-settings-panel";
+  settingsPanel.hidden = true;
+
   const sectionInstall = document.createElement("section");
   sectionInstall.className = "alarm-section alarm-section-install";
   const sectionInstallTitle = document.createElement("h3");
@@ -446,13 +455,14 @@ export async function renderAlarmView(options = {}) {
 
   const status = createStatus();
 
+  settingsPanel.append(labelOffset, inputOffset, actions);
+
   sectionSettings.append(
     sectionSettingsTitle,
     enableSyncRow,
-    labelOffset,
-    inputOffset,
-    actions,
     actionBtn,
+    settingsToggleBtn,
+    settingsPanel,
   );
 
   installPanel.append(installApkBtn);
@@ -664,6 +674,14 @@ export async function renderAlarmView(options = {}) {
     installToggleBtn.textContent = isHidden
       ? "Masquer l'installation ▴"
       : "Afficher l'installation ▾";
+  });
+
+  settingsToggleBtn.addEventListener("click", () => {
+    const isHidden = settingsPanel.hidden;
+    settingsPanel.hidden = !isHidden;
+    settingsToggleBtn.textContent = isHidden
+      ? "Masquer les reglages avances ▴"
+      : "Afficher les reglages avances ▾";
   });
 
   diagnoseBtn.addEventListener("click", () => {

@@ -140,6 +140,44 @@ export async function renderEditDayView(container, { dateISO } = {}) {
 
   const card = document.createElement("div");
   card.className = "settings-card edit-day-card";
+
+  function createDisclosureBlock(titleText, contentNode) {
+    const block = document.createElement("div");
+    block.className = "edit-day-disclosure";
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.type = "button";
+    toggleBtn.className = "edit-day-disclosure-toggle";
+
+    const title = document.createElement("span");
+    title.className = "edit-day-disclosure-title";
+    title.textContent = titleText;
+
+    const state = document.createElement("span");
+    state.className = "edit-day-disclosure-state";
+
+    const panel = document.createElement("div");
+    panel.className = "edit-day-disclosure-panel";
+    panel.hidden = true;
+    panel.appendChild(contentNode);
+
+    function syncDisclosure() {
+      const expanded = !panel.hidden;
+      toggleBtn.setAttribute("aria-expanded", expanded ? "true" : "false");
+      state.textContent = expanded ? "Masquer ▴" : "Afficher ▾";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      panel.hidden = !panel.hidden;
+      syncDisclosure();
+    });
+
+    toggleBtn.append(title, state);
+    block.append(toggleBtn, panel);
+    syncDisclosure();
+    return block;
+  }
+
   const summary = document.createElement("div");
   summary.className = "edit-day-summary-block";
 
@@ -193,10 +231,6 @@ export async function renderEditDayView(container, { dateISO } = {}) {
 
   const hoursSection = document.createElement("section");
   hoursSection.className = "edit-day-section";
-
-  const hoursTitle = document.createElement("p");
-  hoursTitle.className = "edit-day-section-title";
-  hoursTitle.textContent = "Heures";
 
   const extraTypeLabel = document.createElement("label");
   extraTypeLabel.className = "edit-day-label";
@@ -258,10 +292,6 @@ export async function renderEditDayView(container, { dateISO } = {}) {
   const optionsSection = document.createElement("section");
   optionsSection.className = "edit-day-section";
 
-  const optionsTitle = document.createElement("p");
-  optionsTitle.className = "edit-day-section-title";
-  optionsTitle.textContent = "Options";
-
   const panierRow = document.createElement("div");
   panierRow.className = "edit-day-panier-row";
 
@@ -311,11 +341,22 @@ export async function renderEditDayView(container, { dateISO } = {}) {
     formationInput,
     suggestions,
   );
-  hoursSection.append(hoursTitle, extraTypeLabel, extraTypeRow, extraLabel, extraInput);
+  hoursSection.append(extraTypeLabel, extraTypeRow, extraLabel, extraInput);
   missingSection.append(missingHelp, missingInput);
   optionsSection.append(panierRow, panierDetails);
 
-  card.append(summary, serviceSection, optionsSection, hoursSection, missingSection, actions);
+  const optionsDisclosure = createDisclosureBlock("Options", optionsSection);
+  const hoursDisclosure = createDisclosureBlock("Heures", hoursSection);
+  const missingDisclosure = createDisclosureBlock("Deductions", missingSection);
+
+  card.append(
+    summary,
+    serviceSection,
+    optionsDisclosure,
+    hoursDisclosure,
+    missingDisclosure,
+    actions,
+  );
   root.appendChild(card);
 
   let isPrefilled = false;

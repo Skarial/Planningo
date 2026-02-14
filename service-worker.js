@@ -35,10 +35,12 @@ const ESSENTIAL_ASSETS = [
   "./js/router.js",
   "./js/sw/sw-register.js",
   "./js/utils.js",
+  "./js/utils/ui-feedback.js",
   "./js/debug/runtime-log.js",
   "./js/state/feature-flags.js",
   "./js/components/menu.js",
   "./js/components/onboarding.js",
+  "./js/components/ui-toast.js",
   "./js/data/db.js",
   "./js/data/device.js",
   "./js/data/import-db.js",
@@ -209,10 +211,4 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
-
-
-
-
-
-
 

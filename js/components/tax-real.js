@@ -113,7 +113,7 @@ function createYearControl(selectedYear, onYearDelta) {
 
   const text = document.createElement("span");
   text.className = "tax-real-year-text";
-  text.textContent = `(${selectedYear})`;
+  text.textContent = `${selectedYear}`;
 
   const controls = document.createElement("div");
   controls.className = "tax-real-distance-stepper";
@@ -145,8 +145,9 @@ function buildRecapCard(data, onDistanceDelta, onYearDelta) {
 
   const title = document.createElement("div");
   title.className = "tax-real-card-title";
-  title.textContent = "Estimation Kilométrique";
+  title.textContent = "Estimation Kilom\u00e9trique ";
   const yearControl = createYearControl(data.selectedYear, onYearDelta);
+  title.appendChild(yearControl);
 
   const list = document.createElement("div");
   list.className = "tax-real-list";
@@ -165,7 +166,11 @@ function buildRecapCard(data, onDistanceDelta, onYearDelta) {
   foot.className = "tax-real-footnote";
   foot.textContent = "Estimation indicative basée sur vos saisies.";
 
-  card.append(title, yearControl, list, foot);
+  const calcMethod = document.createElement("p");
+  calcMethod.className = "tax-real-footnote";
+  calcMethod.textContent = "Calcul : distance x 2 x jours travaill\u00e9s";
+
+  card.append(title, list, calcMethod, foot);
   return card;
 }
 
@@ -282,6 +287,11 @@ export async function renderTaxRealView(options = {}) {
 
   await renderRecap();
   stack.appendChild(recapHost);
+
+  const disclaimer = document.createElement("p");
+  disclaimer.className = "tax-real-updated";
+  disclaimer.textContent = "Ne remplace pas un conseil fiscal.";
+  stack.appendChild(disclaimer);
 
   const updated = document.createElement("p");
   updated.className = "tax-real-updated";

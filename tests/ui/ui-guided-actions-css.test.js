@@ -47,3 +47,17 @@ test("ui-css - guided action buttons have mobile coarse-pointer override", () =>
   assert(mediaBody.includes("height: 48px;"), "Mobile: hauteur .guided-action inattendue");
   assert(mediaBody.includes("min-height: 48px;"), "Mobile: min-height .guided-action manquant");
 });
+
+test("ui-css - active rest day keeps selected blue color", () => {
+  const css = readRootFile("css/style.css");
+  const activeRest = getBlock(css, ".day-circle.rest.active");
+
+  assert(
+    activeRest.includes("background: var(--color-day-selected);"),
+    "Jour repos/conges actif doit rester bleu",
+  );
+  assert(
+    activeRest.includes("border-color: var(--color-day-selected);"),
+    "Bordure du jour repos/conges actif doit suivre la couleur selectionnee",
+  );
+});
