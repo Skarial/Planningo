@@ -321,8 +321,18 @@ function bindMonthSwipe(container) {
     return Boolean(menu && (menu.classList.contains("open") || menu.classList.contains("opening")));
   }
 
+  function isInteractiveSwipeTarget(target) {
+    if (!target || typeof target.closest !== "function") return false;
+    return Boolean(
+      target.closest(
+        ".day-circle, button, a, input, select, textarea, label, [role='button'], [data-no-swipe]",
+      ),
+    );
+  }
+
   container.addEventListener("touchstart", (e) => {
     if (isMenuBlocking()) return;
+    if (isInteractiveSwipeTarget(e.target)) return;
     const touch = e.touches[0];
     startX = touch.clientX;
     startY = touch.clientY;

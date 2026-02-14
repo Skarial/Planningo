@@ -8,7 +8,7 @@
 /*
   Application Planningo
 */
-export const APP_VERSION = "3.0.7";
+export const APP_VERSION = "3.0.8";
 
 import { DB_VERSION } from "./data/db.js";
 
@@ -562,6 +562,7 @@ function prewarmSecondaryViews() {
 
   setTimeout(preload, 1200);
 }
+
 
 
 
