@@ -1154,6 +1154,36 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     min-height: 44px;
     padding: 0 10px;
   }
+
+  .guided-root.guided-complete-mode .guided-services {
+    gap: 8px;
+  }
+
+  .guided-complete-title {
+    margin-top: 8px;
+    transform: none;
+  }
+
+  .guided-complete-subtitle {
+    margin-top: 4px;
+    transform: none;
+  }
+
+  .guided-root.guided-complete-mode .guided-day-number.guided-day-complete {
+    margin-top: 10px;
+  }
+
+  .guided-root.guided-complete-mode .saisie-content {
+    padding-top: 24px;
+  }
+
+  .guided-root.guided-complete-mode .guided-stats {
+    margin-top: 10px;
+  }
+
+  .guided-root.guided-complete-mode .guided-stats + .guided-action {
+    margin-top: 20px;
+  }
 }
 
 /* ==========================================================================
