@@ -44,6 +44,6 @@ test("ui-css - guided action buttons have mobile coarse-pointer override", () =>
 
   const mediaBody = mediaMatch[1];
   assert(mediaBody.includes(".guided-action"), "Override mobile .guided-action manquant");
-  assert(mediaBody.includes("height: 54px;"), "Mobile: .guided-action doit etre plus epais");
-  assert(mediaBody.includes("min-height: 54px;"), "Mobile: min-height .guided-action manquant");
+  assert(mediaBody.includes("height: 48px;"), "Mobile: hauteur .guided-action inattendue");
+  assert(mediaBody.includes("min-height: 48px;"), "Mobile: min-height .guided-action manquant");
 });

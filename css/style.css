@@ -1070,10 +1070,11 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 
 @media (hover: none) and (pointer: coarse) {
   .guided-action {
-    height: 54px;
-    min-height: 54px;
-    font-size: 1rem;
-    padding: 0 14px;
+    height: 48px;
+    min-height: 48px;
+    font-size: 0.98rem;
+    font-weight: 700;
+    padding: 0 12px;
   }
 }
 
