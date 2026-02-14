@@ -465,7 +465,7 @@ export async function renderHome() {
     return;
   }
 
-  container.innerHTML = "";
+  const nextContent = document.createDocumentFragment();
   const card = document.createElement("div");
   card.className = "home-main-card";
 
@@ -480,7 +480,7 @@ export async function renderHome() {
   top.appendChild(daySummary);
 
   card.append(top, bottom);
-  container.append(card);
+  nextContent.append(card);
 
   const monthISO = getActiveDateISO().slice(0, 7);
   let monthEntries = [];
@@ -520,7 +520,7 @@ export async function renderHome() {
   const taxRealNoticeHiddenEntry = await getConfig(TAX_REAL_NOTICE_HIDDEN_KEY);
   const taxRealNoticeHidden = taxRealNoticeHiddenEntry?.value === true;
   if (!taxRealNoticeHidden && !isTaxRealNoticeSeenInSession()) {
-    container.appendChild(createTaxRealNoticeSheet());
+    nextContent.appendChild(createTaxRealNoticeSheet());
   }
 
   // =======================
@@ -897,4 +897,7 @@ export async function renderHome() {
       renderHome();
     },
   });
+
+  if (renderSession !== homeRenderSessionCounter) return;
+  container.replaceChildren(nextContent);
 }
